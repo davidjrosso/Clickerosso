@@ -5,7 +5,7 @@ cd "$(dirname "$0")/.."
 [[ -x "$UNITY_EDITOR" ]] || { echo "UNITY_EDITOR is not executable" >&2; exit 2; }
 mkdir -p TestResults/Unity
 "$UNITY_EDITOR" -batchmode -nographics -projectPath "$PWD" \
-  -executeMethod ReactorDeCaos.Editor.ProjectSetup.Prepare -quit \
+  -executeMethod ReactorDeCaos.Editor.ProjectSetup.PrepareBatch \
   -logFile "$PWD/TestResults/Unity/prepare.log"
 for platform in EditMode PlayMode; do
   result="$PWD/TestResults/Unity/$platform.xml"

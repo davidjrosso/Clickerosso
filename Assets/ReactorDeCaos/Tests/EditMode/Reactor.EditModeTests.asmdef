@@ -1,6 +1,6 @@
 {
   "name": "Reactor.EditModeTests",
-  "references": ["Reactor.Core", "Reactor.Persistence", "Reactor.Runtime"],
+  "references": ["Reactor.Core", "Reactor.Persistence", "Reactor.Runtime", "Reactor.Editor", "Unity.TextMeshPro"],
   "includePlatforms": ["Editor"],
   "optionalUnityReferences": ["TestAssemblies"]
 }

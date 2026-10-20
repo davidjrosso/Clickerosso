@@ -25,6 +25,23 @@ Se usa entrada táctil/ratón mediante uGUI. El guardado está en
 `Application.persistentDataPath/reactor-save.json`, con copia `.bak`.
 No se otorgan recompensas por tiempo desconectado.
 
+### Si faltan recursos de TextMesh Pro
+
+Espera a que termine de importar los paquetes y ejecuta
+**Reactor de Caos → Prepare Project**. La preparación espera al evento de
+finalización de TMP Essentials antes de generar la fuente; termina cuando
+aparece `Reactor project prepared` en la consola.
+
+Si la importación automática falla, usa
+**Window → Text Mesh Pro → Import TMP Essential Resources**, pulsa
+**Import TMP Essentials**, espera a que termine y vuelve a ejecutar
+**Prepare Project**. Los **Examples & Extras** son opcionales. El manifiesto
+incluye el módulo Physics para que sus scripts también puedan compilar si
+los has importado; no es necesario borrar esos archivos.
+
+En la consola puedes limpiar los mensajes anteriores después de corregirlos.
+Abre `Main.unity` y pulsa Play cuando no haya errores nuevos.
+
 ## Pruebas
 
 Desde la raíz:

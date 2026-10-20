@@ -5,6 +5,6 @@ cd "$(dirname "$0")/.."
 [[ -x "$UNITY_EDITOR" ]] || { echo "UNITY_EDITOR is not executable" >&2; exit 2; }
 mkdir -p TestResults/Unity
 "$UNITY_EDITOR" -batchmode -nographics -projectPath "$PWD" -buildTarget Android \
-  -executeMethod ReactorDeCaos.Editor.ProjectSetup.BuildAndroid -quit \
+  -executeMethod ReactorDeCaos.Editor.ProjectSetup.BuildAndroidBatch \
   -logFile "$PWD/TestResults/Unity/android-build.log"
 test -s Builds/Android/ReactorDeCaos-development.apk

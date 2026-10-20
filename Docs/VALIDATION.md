@@ -105,3 +105,28 @@ actualizado y un parche con los dos archivos afectados. No se volvió a
 ejecutar la suite .NET porque estos cambios no afectan al dominio ni al
 almacenamiento. La compilación del Editor y Play Mode todavía deben repetirse
 en Unity; esta corrección no acredita que toda la aplicación esté validada.
+
+## Corrección de TMP Essentials y ejemplos importados
+
+El usuario comunicó recursos esenciales TMP ausentes y errores de
+`Physics`/`RaycastHit` en CameraController de Examples & Extras.
+
+- Se añadió `com.unity.modules.physics: 1.0.0` para compilar esos ejemplos
+  sin borrar archivos del proyecto del usuario.
+- La preparación comprueba TMP Settings y el shader real, no la mera
+  existencia de una carpeta.
+- La creación de fuentes y datos espera `AssetDatabase.importPackageCompleted`;
+  también maneja cancelación, fallo y tiempo máximo de espera.
+- Los comandos batch usan PrepareBatch/BuildAndroidBatch sin `-quit`,
+  y salen explícitamente con éxito o error después de la preparación.
+- Se contrastó el flujo con el importador oficial de uGUI en su rama 6000.0.
+  El paquete Essentials oficial contiene TMP Settings y TMP_SDF.shader,
+  sin scripts C# que obliguen a recargar el dominio durante esa importación.
+- Se añadieron dos pruebas EditMode sobre recursos TMP y material, atlas y
+  caracteres de la fuente. **Pendientes de ejecución en Unity.**
+- Se ejecutó de nuevo `Tools/test-core.sh`: 36 aprobadas, 0 fallidas y 0
+  omitidas. Confirma que los casos exclusivos del Editor quedan excluidos
+  correctamente del proyecto .NET; no ejecuta esas dos pruebas nuevas.
+
+No se ha ejecutado el Editor localmente para validar esta corrección.
+Las pruebas anteriores de .NET no prueban el importador ni estos nuevos casos.
