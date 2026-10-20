@@ -3,8 +3,8 @@ using System.IO;
 using TMPro;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
-using UnityEditor.PackageManager;
 using UnityEngine;
+using PackageInfo = UnityEditor.PackageManager.PackageInfo;
 
 namespace ReactorDeCaos.Editor
 {

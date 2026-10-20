@@ -88,3 +88,20 @@ el borrador del entorno. La publicación corresponde al usuario en los ajustes
 del producto. Guardar el borrador no lo publica ni valida una tarea nueva.
 El trabajo se conserva en Git local; no se ha subido al remoto. La restauración
 de commits exclusivamente locales en una tarea nueva no está verificada.
+
+## Corrección tras la primera apertura del usuario
+
+El usuario ejecutó la importación en Unity y comunicó dos bloqueos:
+
+- CS0104: `PackageInfo` ambiguo entre UnityEditor y UnityEditor.PackageManager.
+  ProjectSetup ahora usa un alias explícito al tipo de Package Manager.
+- Dependencia inexistente `com.unity.modules.inputlegacy@1.0.0`.
+  Eliminada del manifiesto; la API de entrada clásica pertenece al motor y
+  no requiere ese paquete UPM. Se mantienen uGUI, StandaloneInputModule y
+  los ejes de InputManager.
+
+Se comprobó la sintaxis JSON del manifiesto y se prepararon un proyecto ZIP
+actualizado y un parche con los dos archivos afectados. No se volvió a
+ejecutar la suite .NET porque estos cambios no afectan al dominio ni al
+almacenamiento. La compilación del Editor y Play Mode todavía deben repetirse
+en Unity; esta corrección no acredita que toda la aplicación esté validada.
