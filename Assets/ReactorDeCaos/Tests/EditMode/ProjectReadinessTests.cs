@@ -3,6 +3,7 @@ using NUnit.Framework;
 using ReactorDeCaos.Editor;
 using TMPro;
 using UnityEngine;
+using UnityEditor;
 
 namespace ReactorDeCaos.Tests
 {
@@ -29,6 +30,42 @@ namespace ReactorDeCaos.Tests
             Assert.That(game.Cost("quantum"), Is.EqualTo(2500));
             Assert.That(game.Cost("auxiliary"), Is.EqualTo(12000));
             Assert.That(game.Unlocked("auxiliary"), Is.False);
+        }
+
+        [Test]
+        public void PresentationCatalogHasValidImportedSpritesAndTransparency()
+        {
+            var assets = Resources.Load<PresentationAssets>("Presentation");
+            Assert.That(assets, Is.Not.Null);
+            Assert.That(assets.core, Is.Not.Null);
+            Assert.That(assets.iconAtlas, Is.Not.Null);
+            Assert.That(assets.icons.Length, Is.EqualTo(9));
+            var ids = new System.Collections.Generic.HashSet<string>();
+            foreach (var icon in assets.icons)
+            {
+                Assert.That(ids.Add(icon.id), Is.True);
+                Assert.That(icon.uv.width, Is.GreaterThan(0));
+                Assert.That(icon.uv.height, Is.GreaterThan(0));
+                Assert.That(icon.uv.xMin, Is.GreaterThanOrEqualTo(0));
+                Assert.That(icon.uv.yMin, Is.GreaterThanOrEqualTo(0));
+                Assert.That(icon.uv.xMax, Is.LessThanOrEqualTo(1));
+                Assert.That(icon.uv.yMax, Is.LessThanOrEqualTo(1));
+            }
+            foreach (string id in new[] { "tap", "combo", "overload", "coil", "plasma", "quantum", "auxiliary", "reward", "settings" })
+                Assert.That(ids.Contains(id), Is.True, id);
+            foreach (string name in new[] { "ReactorCore", "InterfaceAtlas" })
+            {
+                var importer = (TextureImporter)AssetImporter.GetAtPath("Assets/ReactorDeCaos/Resources/Art/" + name + ".png");
+                Assert.That(importer.mipmapEnabled, Is.False);
+                Assert.That(importer.alphaIsTransparency, Is.True);
+                Assert.That(importer.isReadable, Is.False);
+                Assert.That(importer.wrapMode, Is.EqualTo(TextureWrapMode.Clamp));
+            }
+            var coreImporter = (TextureImporter)AssetImporter.GetAtPath(AssetDatabase.GetAssetPath(assets.core));
+            Assert.That(coreImporter.textureType, Is.EqualTo(TextureImporterType.Sprite));
+            Assert.That(coreImporter.spriteImportMode, Is.EqualTo(SpriteImportMode.Single));
+            foreach (string name in new[] { "Tap", "Purchase", "Overload", "OverloadEnd", "OverloadHum", "Milestone" })
+                Assert.That(Resources.Load<AudioClip>("Audio/" + name), Is.Not.Null, name);
         }
 
         [Test]

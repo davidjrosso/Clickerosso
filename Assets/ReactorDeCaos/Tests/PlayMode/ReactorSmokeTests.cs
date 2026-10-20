@@ -7,12 +7,15 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
+using UnityEngine.UI;
 
 namespace ReactorDeCaos.Tests
 {
     public sealed class ReactorSmokeTests
     {
         private string path;
+        private string previousPreferences;
+        private bool hadPreferences;
         private readonly Dictionary<string, byte[]> previousFiles = new Dictionary<string, byte[]>();
 
         [UnitySetUp]
@@ -21,6 +24,9 @@ namespace ReactorDeCaos.Tests
             var existing = Object.FindFirstObjectByType<ReactorApp>();
             if (existing != null) Object.Destroy(existing.gameObject);
             yield return null;
+            hadPreferences = PlayerPrefs.HasKey(PresentationPreferences.StorageKey);
+            previousPreferences = PlayerPrefs.GetString(PresentationPreferences.StorageKey, "");
+            PlayerPrefs.DeleteKey(PresentationPreferences.StorageKey);
             path = Path.Combine(Application.persistentDataPath, "reactor-save.json");
             previousFiles.Clear();
             foreach (string suffix in new[] { "", ".bak", ".tmp" })
@@ -44,6 +50,9 @@ namespace ReactorDeCaos.Tests
                 if (File.Exists(file)) File.Delete(file);
             }
             foreach (var saved in previousFiles) File.WriteAllBytes(saved.Key, saved.Value);
+            if (hadPreferences) PlayerPrefs.SetString(PresentationPreferences.StorageKey, previousPreferences);
+            else PlayerPrefs.DeleteKey(PresentationPreferences.StorageKey);
+            PlayerPrefs.Save();
         }
 
         [UnityTest]
@@ -169,6 +178,107 @@ namespace ReactorDeCaos.Tests
             double before = app.Game.Energy;
             ExecuteEvents.Execute(hits[0].gameObject, eventData, ExecuteEvents.pointerClickHandler);
             Assert.That(app.Game.Energy, Is.EqualTo(before));
+            yield return null;
+            LogAssert.NoUnexpectedReceived();
+        }
+
+        [UnityTest]
+        public IEnumerator PresentationAssetsAndEffectsAreIntegratedIntoTheMainScene()
+        {
+            var app = Object.FindFirstObjectByType<ReactorApp>();
+            Assert.That(app.Hud.CoreImage.sprite, Is.Not.Null);
+            Assert.That(app.Hud.CoreImage.preserveAspect, Is.True);
+            Assert.That(app.Hud.CoreImage.material.shader.name, Is.EqualTo("UI/Default"));
+            var mask = app.Hud.EffectsRoot.GetComponentInParent<RectMask2D>();
+            Assert.That(mask, Is.Not.Null);
+            Assert.That(app.Hud.CoreVisual.IsChildOf(mask.transform), Is.True);
+            Assert.That(app.Hud.OverloadButton.transform.IsChildOf(mask.transform), Is.False);
+            foreach (var button in app.Hud.ShopButtons)
+            {
+                var icon = button.transform.Find("Icon").GetComponent<Image>();
+                Assert.That(icon.sprite, Is.Not.Null);
+                Assert.That(icon.raycastTarget, Is.False);
+            }
+            foreach (var graphic in app.Hud.EffectsRoot.GetComponentsInChildren<Graphic>(true))
+                Assert.That(graphic.raycastTarget, Is.False);
+            Assert.That(app.GetComponents<AudioSource>().Length, Is.EqualTo(4));
+            double energy = app.Game.Energy;
+            int originalStage = app.Game.Stage;
+            for (int visualStage = 0; visualStage < 5; visualStage++)
+            {
+                app.GetComponent<ReactorFeedback>().Animate(visualStage, false);
+                for (int ring = 0; ring < 4; ring++)
+                    Assert.That(app.Hud.EvolutionRings[ring].gameObject.activeSelf, Is.EqualTo(ring < visualStage));
+            }
+            Assert.That(app.Game.Energy, Is.EqualTo(energy));
+            Assert.That(app.Game.Stage, Is.EqualTo(originalStage));
+            yield return null;
+            LogAssert.NoUnexpectedReceived();
+        }
+
+        [UnityTest]
+        public IEnumerator SettingsBlockReactorInputPersistAndMuteImmediately()
+        {
+            var app = Object.FindFirstObjectByType<ReactorApp>();
+            app.Tap();
+            double before = app.Game.Energy;
+            app.Hud.SettingsButton.onClick.Invoke();
+            Assert.That(app.Hud.Menu.IsOpen, Is.True);
+            Canvas.ForceUpdateCanvases();
+            Vector3 center = app.Hud.TapButton.transform.TransformPoint(((RectTransform)app.Hud.TapButton.transform).rect.center);
+            var eventData = new PointerEventData(EventSystem.current)
+                { position = RectTransformUtility.WorldToScreenPoint(null, center) };
+            var hits = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(eventData, hits);
+            Assert.That(hits.Count, Is.GreaterThan(0));
+            Assert.That(hits[0].gameObject, Is.Not.EqualTo(app.Hud.TapButton.gameObject));
+            ExecuteEvents.Execute(hits[0].gameObject, eventData, ExecuteEvents.pointerClickHandler);
+            Assert.That(app.Game.Energy, Is.EqualTo(before));
+            // Restore defaults independently of which settings row the raycast hit.
+            app.Preferences.sound = true;
+            app.Preferences.reducedMotion = false;
+            app.Preferences.SaveAndNotify();
+            app.Hud.Menu.Options[0].onClick.Invoke();
+            app.Hud.Menu.Options[2].onClick.Invoke();
+            foreach (var source in app.GetComponents<AudioSource>()) Assert.That(source.isPlaying, Is.False);
+            var loaded = PresentationPreferences.Load();
+            Assert.That(loaded.sound, Is.False);
+            Assert.That(loaded.reducedMotion, Is.True);
+            Assert.That(app.Game.Energy, Is.EqualTo(before));
+            app.Hud.Menu.SetOpen(false);
+            app.Tap();
+            Assert.That(app.Game.Energy, Is.GreaterThan(before));
+            yield return null;
+            LogAssert.NoUnexpectedReceived();
+        }
+
+        [UnityTest]
+        public IEnumerator ReducedPresentationKeepsRewardsAndOverloadTransitionsIntact()
+        {
+            var app = Object.FindFirstObjectByType<ReactorApp>();
+            var feedback = app.GetComponent<ReactorFeedback>();
+            var control = new GameEngine(app.Game.Snapshot(), Resources.Load<EconomySettings>("Economy").values);
+            app.Preferences.reducedFlashes = app.Preferences.reducedMotion = app.Preferences.limitedEffects = true;
+            app.Preferences.sound = false;
+            app.Preferences.SaveAndNotify();
+            for (int i = 0; i < 1000; i++) { app.Tap(); control.Tap(); }
+            Assert.That(app.Game.Energy, Is.EqualTo(control.Energy));
+            Assert.That(app.Hud.EffectsRoot.childCount, Is.EqualTo(50));
+            Assert.That(app.GetComponents<AudioSource>().Length, Is.EqualTo(4));
+            app.ActivateOverload(); control.ActivateOverload();
+            feedback.Animate(app.Game.Stage, true, 1);
+            Assert.That(Label(app, "OverloadLabel").text, Does.Contain("SOBRECARGA ×"));
+            Assert.That(Label(app, "Combo").text, Does.Contain("COMBO ×"));
+            Assert.That(app.Hud.CoreFlash.color.a, Is.Zero);
+            Assert.That(app.Hud.CoreVisual.anchoredPosition, Is.EqualTo(Vector2.zero));
+            foreach (Transform child in app.Hud.EffectsRoot)
+                if (child.name.StartsWith("Spark")) Assert.That(child.gameObject.activeSelf, Is.False);
+            app.Game.Advance(11); control.Advance(11);
+            feedback.Animate(app.Game.Stage, false);
+            feedback.Animate(app.Game.Stage, false);
+            Assert.That(feedback.OverloadEndCount, Is.EqualTo(1));
+            Assert.That(app.Game.Energy, Is.EqualTo(control.Energy));
+            Assert.That(app.Game.Snapshot().IsValid(), Is.True);
             yield return null;
             LogAssert.NoUnexpectedReceived();
         }

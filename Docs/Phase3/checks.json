@@ -1,0 +1,111 @@
+{
+  "date": "2026-10-20",
+  "baselineCommit": "7f48e34895c121eba80582644e1e6fbf6abb0c79",
+  "images": [
+    {
+      "file": "Assets/ReactorDeCaos/Resources/Art/ReactorCore.png",
+      "size": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "sha256": "ffec24a5d2a10337366393aa51fdb078d7c8675ad974ffe043f172eb1e8bb1f1",
+      "alphaRange": [
+        0,
+        255
+      ]
+    },
+    {
+      "file": "Assets/ReactorDeCaos/Resources/Art/InterfaceAtlas.png",
+      "size": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "sha256": "cae8dd309be7ae2014ac8a8218d297b3fe5309d11fc9f69f2043beb96430e82e",
+      "alphaRange": [
+        0,
+        255
+      ]
+    },
+    {
+      "file": "Assets/ReactorDeCaos/Resources/Art/ReactorBackdrop.png",
+      "size": [
+        1024,
+        1536
+      ],
+      "mode": "RGB",
+      "sha256": "e6aad4a6d99d856405cdbf9ad9128e01172c64d0b0f259b38b4392e86638fc06"
+    }
+  ],
+  "audio": [
+    {
+      "file": "Assets/ReactorDeCaos/Resources/Audio/Milestone.wav",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 0.65,
+      "peak16Bit": 13899
+    },
+    {
+      "file": "Assets/ReactorDeCaos/Resources/Audio/Overload.wav",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 0.65,
+      "peak16Bit": 12075
+    },
+    {
+      "file": "Assets/ReactorDeCaos/Resources/Audio/OverloadEnd.wav",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 0.55,
+      "peak16Bit": 14399
+    },
+    {
+      "file": "Assets/ReactorDeCaos/Resources/Audio/OverloadHum.wav",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.0,
+      "peak16Bit": 6035
+    },
+    {
+      "file": "Assets/ReactorDeCaos/Resources/Audio/Purchase.wav",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 0.28,
+      "peak16Bit": 13288
+    },
+    {
+      "file": "Assets/ReactorDeCaos/Resources/Audio/Tap.wav",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 0.08498866213151927,
+      "peak16Bit": 12591
+    }
+  ],
+  "economySha256": "d30763aeb01369a489a4f3950b3e928fef9bd20b3baac7d75c6efae629ab23d3",
+  "corePersistenceAndEconomyUnchanged": true,
+  "uniqueAssetGuids": 65,
+  "presentationReferencesResolved": true,
+  "dotnetTests": {
+    "total": 69,
+    "executed": 69,
+    "passed": 69,
+    "failed": 0
+  },
+  "officialApiAssemblies": [
+    "Reactor.Core",
+    "Reactor.EditModeTests",
+    "Reactor.Editor",
+    "Reactor.Persistence",
+    "Reactor.PlayModeTests",
+    "Reactor.Runtime"
+  ],
+  "unityNative": {
+    "exitCode": 198,
+    "message": "No valid Unity Editor license found. Please activate your license.",
+    "editMode": "not run",
+    "playMode": "not run",
+    "sceneRendering": "not verified",
+    "device": "not tested"
+  }
+}

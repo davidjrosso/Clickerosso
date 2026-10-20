@@ -4,14 +4,14 @@ MVP de un arcade incremental offline para Android, con Unity 2D y C#.
 Toca el núcleo, encadena combos, activa la sobrecarga e invierte en mejoras
 y generadores automáticos.
 
-**Estado de fase 2:** cuatro familias de generadores, doce hitos persistentes y
-evolución visual por capas. **69 pruebas** de economía y persistencia aprobadas
-con .NET; simulaciones de 30 minutos con tres estilos de juego.
-Los seis ensamblados compilan contra
-las API oficiales de Unity 6000.0.85f1. El Editor está instalado, pero su arranque
-se detuvo por falta de licencia; PlayMode y renderizado siguen sin verificar.
-Consulta [economía, resultados y pruebas de fase 2](Docs/PHASE2.md) y
-[la evidencia](Docs/VALIDATION.md).
+**Estado de fase 3:** núcleo, fondo y nueve iconos originales generados con IA
+integrados en la escena existente; VFX limitados, transiciones de sobrecarga,
+recompensas y ajustes de accesibilidad. La economía de fase 2 se conserva.
+**69 pruebas** de economía/guardado aprobadas y seis ensamblados compilados contra
+las API oficiales de Unity 6000.0.85f1. El Editor vuelve a detenerse por falta
+de licencia: importación, PlayMode, renderizado y audio en escena siguen pendientes.
+Consulta [arte, integración y recorrido de prueba](Docs/PHASE3.md),
+[guía visual](Docs/ART.md), [economía](Docs/PHASE2.md) y [evidencia](Docs/VALIDATION.md).
 
 ## Abrir y jugar
 
@@ -26,6 +26,9 @@ Consulta [economía, resultados y pruebas de fase 2](Docs/PHASE2.md) y
    `Assets/ReactorDeCaos/Scenes/Main.unity` y pulsa **Play**.
 5. Toca el núcleo central. Tras cargar el medidor, pulsa **Activar sobrecarga**.
    Desplaza la tienda para acceder a las tres mejoras y los cuatro generadores.
+6. En **AJUSTES**, arriba a la derecha, configura sonido, destellos, movimiento,
+   efectos y vibración. Las preferencias persisten aparte del progreso.
+   La vibración está desactivada de inicio; la cámara y la interfaz no tiemblan.
 
 Se usa entrada táctil/ratón mediante uGUI. El guardado está en
 `Application.persistentDataPath/reactor-save.json`, con copia `.bak`.
@@ -102,7 +105,7 @@ firmada ni certificada para Google Play.
 - `Scripts/Runtime`: ciclo de vida, entrada, interfaz y feedback.
 - `Editor/ProjectSetup.cs`: preparación del proyecto y compilación Android.
 - `Scenes/Main.unity`: escena de entrada, con referencias GUID estables.
-- `Resources`: ilustración, fuente y sonidos realmente incluidos.
+- `Resources`: catálogo Presentation, núcleo, atlas de iconos, fondo, fuente y sonidos incluidos.
 - `Tests/EditMode`: pruebas compartidas entre .NET y Unity.
 - `Tests/PlayMode`: integración de escena, UI y pausa.
 - `Docs/DESIGN.md`: reglas, alcance y criterios de aceptación.

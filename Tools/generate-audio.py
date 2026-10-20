@@ -12,6 +12,9 @@ for name, duration, frequencies in [
     ('Tap', .085, [650, 1050]),
     ('Purchase', .28, [440, 554.37, 659.25]),
     ('Overload', .65, [220, 330, 440, 660]),
+    ('OverloadEnd', .55, [220, 440]),
+    ('Milestone', .65, [523.25, 659.25, 783.99]),
+    ('OverloadHum', 2, [55, 110, 220]),
 ]:
     frames = []
     for index in range(int(sample_rate * duration)):
@@ -22,6 +25,11 @@ for name, duration, frequencies in [
         signal = sum(math.sin(2 * math.pi * f * time) for f in frequencies) / len(frequencies)
         if name == 'Tap':
             signal = math.sin(2 * math.pi * (900 * time - 1200 * time * time))
+        if name == 'OverloadEnd':
+            signal = math.sin(2 * math.pi * (660 * time - 320 * time * time))
+        if name == 'OverloadHum':
+            # Integer cycles across two seconds: continuous low-level loop.
+            envelope = .45 + .1 * math.sin(2 * math.pi * 2 * time)
         frames.append(struct.pack('<h', int(32767 * .45 * envelope * signal)))
     with wave.open(str(root / (name + '.wav')), 'wb') as output:
         output.setnchannels(1)

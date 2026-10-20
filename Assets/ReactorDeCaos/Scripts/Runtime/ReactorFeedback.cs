@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 namespace ReactorDeCaos
 {
+    // Presentation observes engine state; it never advances time or grants income.
     public sealed class ReactorFeedback : MonoBehaviour
     {
         private sealed class Particle
@@ -11,56 +12,74 @@ namespace ReactorDeCaos
             public RectTransform rect;
             public Graphic graphic;
             public Vector2 origin, velocity;
-            public float age, duration, size;
+            public float age, duration, size, endSize;
             public Color color;
             public bool wave;
         }
 
         private ReactorHud hud;
+        private PresentationPreferences preferences;
         private Particle[] numbers, waves, sparks;
-        private int numberIndex, waveIndex, sparkIndex;
-        private float pulse;
-        private AudioSource audioSource;
-        private AudioClip tapSound, purchaseSound, overloadSound;
-        private float lastSound;
+        private int numberIndex, waveIndex, sparkIndex, voiceIndex;
+        private float pulse, flash, comboMix, overloadMix;
+        private readonly AudioSource[] tapVoices = new AudioSource[2];
+        private AudioSource eventVoice, humVoice;
+        private AudioClip tapSound, purchaseSound, overloadSound, endSound, rewardSound;
+        private float lastSound = -10, lastBurst = -10, lastHaptic = -10;
+        private bool wasOverloaded, suspended;
+        public int OverloadEndCount { get; private set; }
 
         public void Initialize(ReactorHud view)
         {
             hud = view;
+            preferences = view.Preferences;
             numbers = new Particle[12]; waves = new Particle[6]; sparks = new Particle[32];
             for (int i = 0; i < numbers.Length; i++)
             {
-                var label = hud.Label("Gain" + i, hud.EffectsRoot, "", 48, ReactorHud.Cyan, .5f, .65f, .5f, .65f);
-                label.rectTransform.sizeDelta = new Vector2(400, 90);
-                numbers[i] = Make(label, 1.0f, 1, false);
+                var label = hud.Label("Gain" + i, hud.EffectsRoot, "", 42, ReactorHud.Cyan, .5f, .5f, .5f, .5f);
+                label.rectTransform.sizeDelta = new Vector2(400, 80);
+                numbers[i] = Make(label, 1, 1, false);
             }
             for (int i = 0; i < waves.Length; i++)
             {
                 RingGraphic ring = ReactorHud.Ring("Wave" + i, hud.EffectsRoot, ReactorHud.Cyan);
-                ring.rectTransform.anchorMin = ring.rectTransform.anchorMax = new Vector2(.5f, .65f);
-                ring.thickness = 4;
-                waves[i] = Make(ring, .55f, 200, true);
+                ring.rectTransform.anchorMin = ring.rectTransform.anchorMax = new Vector2(.5f, .5f);
+                ring.thickness = 3;
+                waves[i] = Make(ring, .55f, 190, true);
             }
             for (int i = 0; i < sparks.Length; i++)
             {
-                RectTransform rect = ReactorHud.Rect("Spark" + i, hud.EffectsRoot, .5f, .65f, .5f, .65f);
+                RectTransform rect = ReactorHud.Rect("Spark" + i, hud.EffectsRoot, .5f, .5f, .5f, .5f);
                 var graphic = rect.gameObject.AddComponent<Image>();
                 graphic.raycastTarget = false;
-                rect.sizeDelta = new Vector2(7, 7);
+                rect.sizeDelta = new Vector2(5, 10);
                 sparks[i] = Make(graphic, .45f, 1, false);
             }
-            audioSource = gameObject.AddComponent<AudioSource>();
-            audioSource.playOnAwake = false;
-            audioSource.spatialBlend = 0;
+            for (int i = 0; i < tapVoices.Length; i++) tapVoices[i] = Voice();
+            eventVoice = Voice(); humVoice = Voice(); humVoice.loop = true;
+            humVoice.clip = Resources.Load<AudioClip>("Audio/OverloadHum");
             tapSound = Resources.Load<AudioClip>("Audio/Tap");
             purchaseSound = Resources.Load<AudioClip>("Audio/Purchase");
             overloadSound = Resources.Load<AudioClip>("Audio/Overload");
+            endSound = Resources.Load<AudioClip>("Audio/OverloadEnd");
+            rewardSound = Resources.Load<AudioClip>("Audio/Milestone");
+            preferences.Changed += ApplyPreferences;
+            ApplyPreferences();
+        }
+
+        private AudioSource Voice()
+        {
+            AudioSource voice = gameObject.AddComponent<AudioSource>();
+            voice.playOnAwake = false;
+            voice.spatialBlend = 0;
+            voice.volume = 0;
+            return voice;
         }
 
         private static Particle Make(Graphic graphic, float duration, float size, bool wave)
         {
             var particle = new Particle { graphic = graphic, rect = graphic.rectTransform,
-                duration = duration, size = size, wave = wave, age = duration };
+                duration = duration, size = size, endSize = size * 2.5f, wave = wave, age = duration };
             graphic.gameObject.SetActive(false);
             return particle;
         }
@@ -69,7 +88,7 @@ namespace ReactorDeCaos
         {
             particle.age = 0;
             particle.origin = Vector2.zero;
-            particle.velocity = velocity;
+            particle.velocity = preferences.reducedMotion ? Vector2.zero : velocity;
             particle.color = color;
             particle.graphic.color = color;
             particle.rect.anchoredPosition = Vector2.zero;
@@ -78,73 +97,190 @@ namespace ReactorDeCaos
             particle.graphic.gameObject.SetActive(true);
         }
 
-        public void Tap(double amount, bool overloaded)
+        private void Wave(Color color, bool inward = false, bool special = false)
         {
-            Color color = overloaded ? ReactorHud.Warm : ReactorHud.Cyan;
+            Particle wave = waves[waveIndex];
+            waveIndex = (waveIndex + 1) % waves.Length;
+            wave.duration = special ? .8f : .55f;
+            wave.size = inward ? 430 : 180;
+            wave.endSize = inward ? 190 : special ? 530 : 440;
+            color.a = preferences.reducedFlashes ? .25f : special ? .7f : .45f;
+            Emit(wave, Vector2.zero, color);
+        }
+
+        public void Tap(double amount, bool overloaded, float comboStrength = 0)
+        {
+            Color color = overloaded ? ReactorHud.Warm : Color.Lerp(ReactorHud.Cyan, ReactorHud.Violet, comboStrength * .6f);
             Particle number = numbers[numberIndex];
             numberIndex = (numberIndex + 1) % numbers.Length;
             ((TextMeshProUGUI)number.graphic).text = "+" + NumberFormat.Stat(amount);
-            Emit(number, new Vector2(Random.Range(-30f, 30f), 145), color);
-            number.origin = new Vector2(Random.Range(-75f, 75f), 20);
-            Emit(waves[waveIndex], Vector2.zero, color);
-            waveIndex = (waveIndex + 1) % waves.Length;
-            for (int i = 0; i < (overloaded ? 8 : 4); i++)
+            Emit(number, new Vector2(Random.Range(-25f, 25f), 115), color);
+            number.origin = new Vector2(Random.Range(-65f, 65f), 25);
+            number.rect.anchoredPosition = number.origin;
+            // Every tap reacts immediately; bursts are rate-limited and always reuse the same pools.
+            if (Time.unscaledTime - lastBurst >= (preferences.limitedEffects ? .2f : .04f))
             {
-                Vector2 direction = Random.insideUnitCircle.normalized;
-                Emit(sparks[sparkIndex], direction * Random.Range(150, overloaded ? 440 : 330), color);
-                sparkIndex = (sparkIndex + 1) % sparks.Length;
+                Wave(color);
+                int count = preferences.limitedEffects || preferences.reducedMotion ? 0 : overloaded ? 8 : 2 + Mathf.FloorToInt(comboStrength * 3);
+                for (int i = 0; i < count; i++)
+                {
+                    Vector2 direction = Random.insideUnitCircle.normalized;
+                    Color sparkColor = color; sparkColor.a = preferences.reducedFlashes ? .3f : .8f;
+                    Emit(sparks[sparkIndex], direction * Random.Range(150, overloaded ? 400 : 280), sparkColor);
+                    sparks[sparkIndex].rect.localEulerAngles = new Vector3(0, 0, Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90);
+                    sparkIndex = (sparkIndex + 1) % sparks.Length;
+                }
+                lastBurst = Time.unscaledTime;
             }
-            pulse = overloaded ? 1.5f : 1;
-            hud.CoreVisual.localScale = Vector3.one * (1 + pulse * .075f);
-            // Rate-limit sound on very fast multitouch input.
-            if (Time.unscaledTime - lastSound > .06f)
+            pulse = overloaded ? 1.25f : 1;
+            // Slow local highlight, never a full-screen strobe; repeated taps sustain it.
+            flash = preferences.reducedFlashes ? 0 : .12f;
+            ApplyCoreMotion();
+            if (Time.unscaledTime - lastSound >= .06f)
             {
-                audioSource.pitch = overloaded ? 1.2f : 1;
-                Play(tapSound, overloaded ? .22f : .16f);
+                AudioSource voice = tapVoices[voiceIndex]; voiceIndex = (voiceIndex + 1) % tapVoices.Length;
+                voice.pitch = 1 + comboStrength * .15f + (overloaded ? .1f : 0);
+                Play(voice, tapSound, overloaded ? .18f : .13f);
                 lastSound = Time.unscaledTime;
             }
         }
 
-        public void Purchase() { audioSource.pitch = 1; Play(purchaseSound, .3f); }
+        public void Purchase() { Play(eventVoice, purchaseSound, .25f); }
 
         public void Celebrate()
         {
-            pulse = 1.8f;
-            Emit(waves[waveIndex], Vector2.zero, ReactorHud.Warm);
-            waveIndex = (waveIndex + 1) % waves.Length;
-            audioSource.pitch = 1;
-            hud.CoreVisual.localScale = Vector3.one * (1 + pulse * .075f);
-            hud.Orbit.color = ReactorHud.Warm;
-            Play(overloadSound, .3f);
+            pulse = 1.3f;
+            Wave(ReactorHud.Warm, false, true);
+            Play(eventVoice, rewardSound, .25f);
+            Haptic();
         }
 
-        private void Play(AudioClip clip, float volume)
+        public void StartOverload()
         {
-            if (clip != null) audioSource.PlayOneShot(clip, volume);
+            wasOverloaded = true;
+            pulse = 1.4f;
+            flash = preferences.reducedFlashes ? 0 : .18f;
+            Wave(ReactorHud.Magenta, false, true);
+            Play(eventVoice, overloadSound, .28f);
+            Haptic();
         }
 
-        public void Animate(int stage, bool overloaded)
+        private void Haptic()
         {
+            if (!suspended && preferences.vibration && Application.isMobilePlatform && Time.unscaledTime - lastHaptic >= 2)
+            {
+                Handheld.Vibrate();
+                lastHaptic = Time.unscaledTime;
+            }
+        }
+
+        private void Play(AudioSource voice, AudioClip clip, float volume)
+        {
+            if (clip == null || !preferences.sound || suspended) return;
+            // Four fixed sources total. No PlayOneShot accumulation on fast input.
+            voice.clip = clip; voice.volume = volume; voice.Play();
+        }
+
+        public void SetSuspended(bool value)
+        {
+            suspended = value;
+            ApplyPreferences();
+        }
+
+        private void ApplyPreferences()
+        {
+            if (!preferences.sound || suspended)
+            {
+                foreach (var voice in tapVoices) voice.Stop();
+                eventVoice.Stop(); humVoice.Stop();
+            }
+            if (preferences.reducedFlashes) { flash = 0; hud.CoreFlash.color = Color.clear; }
+            if (preferences.limitedEffects || preferences.reducedMotion || preferences.reducedFlashes)
+            {
+                Clear(sparks); Clear(waves);
+            }
+            if (preferences.reducedMotion)
+            {
+                hud.CoreVisual.localEulerAngles = Vector3.zero;
+                hud.CoreVisual.anchoredPosition = Vector2.zero;
+                foreach (var particle in numbers) particle.velocity = Vector2.zero;
+            }
+        }
+
+        private static void Clear(Particle[] pool)
+        {
+            foreach (var particle in pool)
+            {
+                particle.age = particle.duration;
+                particle.graphic.gameObject.SetActive(false);
+            }
+        }
+
+        public void Animate(int stage, bool overloaded, float comboStrength = 0)
+        {
+            if (suspended) return;
             float dt = Mathf.Min(Time.unscaledDeltaTime, .1f);
+            if (wasOverloaded && !overloaded)
+            {
+                OverloadEndCount++;
+                Wave(ReactorHud.Cyan, true, true);
+                Play(eventVoice, endSound, .22f);
+                hud.ShowNotice("Sobrecarga finalizada. Vuelve a cargar.");
+            }
+            wasOverloaded = overloaded;
             pulse = Mathf.MoveTowards(pulse, 0, dt * 4);
-            hud.CoreVisual.localScale = Vector3.one * (1 + pulse * .075f);
-            hud.CoreVisual.localEulerAngles += new Vector3(0, 0, dt * (overloaded ? 35 : 6 + stage * 5));
-            hud.Orbit.color = overloaded || stage >= 3 ? ReactorHud.Warm
-                : stage == 0 ? ReactorHud.Cyan : ReactorHud.Violet;
+            flash = Mathf.MoveTowards(flash, 0, dt * .35f);
+            comboMix = Mathf.MoveTowards(comboMix, Mathf.Clamp01(comboStrength), dt * 1.5f);
+            overloadMix = Mathf.MoveTowards(overloadMix, overloaded ? 1 : 0, dt * 1.4f);
+            ApplyCoreMotion();
+            Color baseColor = Color.Lerp(ReactorHud.Cyan, ReactorHud.Violet, Mathf.Clamp01(stage * .15f + comboMix * .4f));
+            Color stateColor = Color.Lerp(baseColor, ReactorHud.Warm, overloadMix);
+            hud.CoreImage.color = Color.Lerp(Color.white, new Color(1, .65f, .89f), overloadMix * .65f);
+            Color glowColor = Color.Lerp(baseColor, ReactorHud.Magenta, overloadMix);
+            glowColor.a = (preferences.limitedEffects ? .18f : .24f) + comboMix * .08f + overloadMix * .15f;
+            hud.CoreGlow.color = glowColor;
+            hud.CoreFlash.color = new Color(.7f, 1, 1, preferences.reducedFlashes ? 0 : flash);
+            hud.Orbit.color = stateColor;
+            if (!preferences.reducedMotion)
+                hud.Orbit.rectTransform.localEulerAngles += new Vector3(0, 0, dt * (8 + stage * 3 + comboMix * 10 + overloadMix * 20));
             for (int i = 0; i < hud.EvolutionRings.Length; i++)
             {
                 RingGraphic ring = hud.EvolutionRings[i];
                 bool visible = stage > i;
                 if (ring.gameObject.activeSelf != visible) ring.gameObject.SetActive(visible);
                 if (!visible) continue;
-                ring.color = overloaded ? ReactorHud.Warm : i < 2 ? ReactorHud.Violet : ReactorHud.Cyan;
-                ring.rectTransform.localEulerAngles += new Vector3(0, 0,
-                    dt * (i % 2 == 0 ? -1 : 1) * (overloaded ? 35 + 10 * i : 8 + 4 * i));
+                ring.color = Color.Lerp(i < 2 ? ReactorHud.Violet : ReactorHud.Cyan, ReactorHud.Warm, overloadMix);
+                if (!preferences.reducedMotion)
+                    ring.rectTransform.localEulerAngles += new Vector3(0, 0,
+                        dt * (i % 2 == 0 ? -1 : 1) * (8 + 4 * i + overloadMix * 25));
+            }
+            if (preferences.sound && overloaded && humVoice.clip != null)
+            {
+                humVoice.volume = overloadMix * .09f;
+                if (!humVoice.isPlaying) humVoice.Play();
+            }
+            else
+            {
+                humVoice.volume = Mathf.MoveTowards(humVoice.volume, 0, dt * .15f);
+                if (humVoice.volume <= 0) humVoice.Stop();
             }
             Tick(numbers, dt); Tick(waves, dt); Tick(sparks, dt);
         }
 
-        private static void Tick(Particle[] pool, float dt)
+        private void ApplyCoreMotion()
+        {
+            if (preferences.reducedMotion)
+            {
+                hud.CoreVisual.localScale = Vector3.one * (1 + pulse * .015f);
+                hud.CoreVisual.anchoredPosition = Vector2.zero;
+                return;
+            }
+            hud.CoreVisual.localScale = new Vector3(1 + pulse * .055f, 1 - pulse * .025f, 1);
+            // Only the core moves. Prices, buttons and camera never shake.
+            hud.CoreVisual.anchoredPosition = new Vector2(Mathf.Sin(Time.unscaledTime * 32) * pulse * 2, 0);
+        }
+
+        private void Tick(Particle[] pool, float dt)
         {
             foreach (Particle particle in pool)
             {
@@ -154,10 +290,16 @@ namespace ReactorDeCaos
                 if (t >= 1) { particle.graphic.gameObject.SetActive(false); continue; }
                 particle.rect.anchoredPosition = particle.origin + particle.velocity * particle.age;
                 Color color = particle.color;
-                color.a = (1 - t) * particle.color.a;
+                color.a *= 1 - t;
                 particle.graphic.color = color;
-                if (particle.wave) particle.rect.sizeDelta = Vector2.one * particle.size * (1 + t * 1.6f);
+                if (particle.wave)
+                    particle.rect.sizeDelta = Vector2.one * (preferences.reducedMotion ? 260 : Mathf.Lerp(particle.size, particle.endSize, t));
             }
+        }
+
+        private void OnDestroy()
+        {
+            if (preferences != null) preferences.Changed -= ApplyPreferences;
         }
     }
 }

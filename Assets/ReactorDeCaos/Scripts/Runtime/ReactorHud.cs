@@ -13,6 +13,17 @@ namespace ReactorDeCaos
         public static readonly Color Warm = new Color(1, .69f, .27f);
         private static readonly Color Panel = new Color(.025f, .045f, .09f, .96f);
         private static readonly Color Muted = new Color(.55f, .66f, .78f);
+        public static readonly Color Magenta = new Color(1, .24f, .67f);
+        public Image CoreImage { get; private set; }
+        public GlowGraphic CoreGlow { get; private set; }
+        public GlowGraphic CoreFlash { get; private set; }
+        public PresentationPreferences Preferences { get; private set; }
+        public PresentationMenu Menu { get; private set; }
+        public Button SettingsButton { get; private set; }
+        private PresentationSprites sprites;
+        private CanvasGroup rewardCard;
+        private TextMeshProUGUI rewardText, tapHint;
+        private float rewardUntil;
         public RectTransform EffectsRoot { get; private set; }
         public RectTransform CoreVisual { get; private set; }
         public RingGraphic Orbit { get; private set; }
@@ -36,6 +47,8 @@ namespace ReactorDeCaos
 
         public void Build(ReactorApp app)
         {
+            Preferences = app.Preferences;
+            sprites = new PresentationSprites(Resources.Load<PresentationAssets>("Presentation"));
             Font = Resources.Load<TMP_FontAsset>("Fonts/ReactorFont");
             if (Font == null)
             {
@@ -79,14 +92,24 @@ namespace ReactorDeCaos
             safe = Rect("SafeArea", canvas, 0, 0, 1, 1);
             ApplySafeArea();
             Image("Header", safe, Panel, .035f, .825f, .965f, .98f);
-            Label("Brand", safe, "REACTOR / DE CAOS", 26, Muted, .065f, .945f, .94f, .97f, TextAlignmentOptions.Left);
+            Label("Brand", safe, "REACTOR / DE CAOS", 26, Muted, .065f, .945f, .80f, .97f, TextAlignmentOptions.Left);
             energy = Label("Energy", safe, "0", 78, Color.white, .06f, .871f, .78f, .941f, TextAlignmentOptions.Left);
-            Label("Unit", safe, "ENERGÍA", 22, Cyan, .68f, .89f, .94f, .925f);
+            Label("Unit", safe, "ENERGÍA", 22, Cyan, .68f, .878f, .94f, .899f);
             rate = Label("Rate", safe, "0 / s", 27, Cyan, .065f, .836f, .61f, .867f, TextAlignmentOptions.Left);
             stage = Label("Stage", safe, "", 21, Warm, .55f, .836f, .94f, .867f, TextAlignmentOptions.Right);
             combo = Label("Combo", safe, "COMBO ×1", 29, Cyan, .16f, .77f, .84f, .805f);
 
-            CoreVisual = Rect("CoreVisual", safe, .27f, .535f, .73f, .77f);
+            RectTransform reactorViewport = Rect("ReactorViewport", safe, .08f, .515f, .92f, .765f);
+            reactorViewport.gameObject.AddComponent<RectMask2D>();
+            CoreVisual = Rect("CoreVisual", reactorViewport, .16f, .04f, .84f, .96f);
+            CoreGlow = Rect("CoreGlow", CoreVisual, -.06f, -.06f, 1.06f, 1.06f).gameObject.AddComponent<GlowGraphic>();
+            CoreGlow.raycastTarget = false;
+            CoreImage = Image("CoreSprite", CoreVisual, Color.white, .02f, .02f, .98f, .98f);
+            CoreImage.sprite = sprites.Core;
+            CoreImage.preserveAspect = true;
+            CoreFlash = Rect("CoreFlash", CoreVisual, .24f, .24f, .76f, .76f).gameObject.AddComponent<GlowGraphic>();
+            CoreFlash.raycastTarget = false;
+            CoreFlash.color = Color.clear;
             Orbit = Ring("Orbit", CoreVisual, Cyan);
             Orbit.thickness = 3;
             Orbit.fraction = .82f;
@@ -102,7 +125,8 @@ namespace ReactorDeCaos
             }
             TapButton = Button("TapReactor", safe, new Color(0, 0, 0, 0), .16f, .49f, .84f, .77f);
             TapButton.onClick.AddListener(app.Tap);
-            Label("TapHint", safe, "TOCA PARA GENERAR", 23, Color.white, .15f, .48f, .85f, .51f);
+            EffectsRoot = Rect("Effects", reactorViewport, 0, 0, 1, 1);
+            tapHint = Label("TapHint", safe, "TOCA PARA GENERAR", 23, Color.white, .15f, .48f, .85f, .51f);
             milestone = Label("Milestone", safe, "", 22, Muted, .05f, .447f, .95f, .479f);
             OverloadButton = Button("ActivateOverload", safe, new Color(.19f, .08f, .3f, .98f), .045f, .369f, .955f, .444f);
             OverloadButton.onClick.AddListener(app.ActivateOverload);
@@ -141,15 +165,30 @@ namespace ReactorDeCaos
                 button.onClick.AddListener(() => app.Buy(entry.Id));
                 ShopButtons[i] = button;
                 Image("Accent", button.transform, entry.IsGenerator ? Violet : Cyan, 0, 0, .006f, 1);
-                shopText[i] = Label("Description", button.transform, "", 40, Color.white, .028f, .05f, .98f, .96f, TextAlignmentOptions.Left);
+                Image icon = Image("Icon", button.transform, Color.white, .015f, .17f, .145f, .83f);
+                icon.sprite = sprites.Icon(entry.Id);
+                icon.preserveAspect = true;
+                shopText[i] = Label("Description", button.transform, "", 36, Color.white, .16f, .05f, .98f, .96f, TextAlignmentOptions.Left);
             }
             notice = Label("Notice", safe, "", 20, Warm, .045f, .007f, .955f, .044f);
-            EffectsRoot = Rect("Effects", safe, 0, 0, 1, 1);
+            Image card = Image("RewardCard", safe, Panel, .05f, .447f, .95f, .51f);
+            rewardCard = card.gameObject.AddComponent<CanvasGroup>();
+            rewardCard.blocksRaycasts = false;
+            Image rewardIcon = Image("RewardIcon", card.transform, Color.white, .015f, .04f, .14f, .96f);
+            rewardIcon.sprite = sprites.Icon("reward"); rewardIcon.preserveAspect = true;
+            rewardText = Label("RewardText", card.transform, "", 26, Warm, .16f, .03f, .98f, .97f, TextAlignmentOptions.Left);
+            rewardCard.gameObject.SetActive(false);
+            SettingsButton = Button("Settings", safe, Panel, .81f, .9f, .955f, .98f);
+            Image settingsIcon = Image("SettingsIcon", SettingsButton.transform, Color.white, .27f, .4f, .73f, .94f);
+            settingsIcon.sprite = sprites.Icon("settings"); settingsIcon.preserveAspect = true;
+            Label("SettingsLabel", SettingsButton.transform, "AJUSTES", 24, Cyan, .02f, .03f, .98f, .36f);
+            Menu = new PresentationMenu(this, safe, SettingsButton, Preferences);
             Refresh(app.Game, true);
         }
 
         private void OnDestroy()
         {
+            sprites?.Dispose();
             if (ownsRuntimeFont) ReactorFont.Release(Font);
         }
 
@@ -158,6 +197,32 @@ namespace ReactorDeCaos
             if (notice == null) return;
             notice.text = text;
             noticeUntil = Time.unscaledTime + 4;
+        }
+
+        public void ShowReward(MilestoneDefinition reward)
+        {
+            rewardText.text = "HITO · " + reward.title + "\n<size=80%>" + reward.rewardDescription + "</size>";
+            rewardUntil = Time.unscaledTime + 3.5f;
+            rewardCard.gameObject.SetActive(true);
+            rewardCard.alpha = 1;
+            tapHint.gameObject.SetActive(false);
+            milestone.gameObject.SetActive(false);
+        }
+
+        private void Update()
+        {
+            if (rewardCard == null || !rewardCard.gameObject.activeSelf) return;
+            float remaining = rewardUntil - Time.unscaledTime;
+            if (remaining <= 0)
+            {
+                rewardCard.gameObject.SetActive(false);
+                tapHint.gameObject.SetActive(true);
+                milestone.gameObject.SetActive(true);
+                return;
+            }
+            rewardCard.alpha = Mathf.Clamp01(remaining / .4f);
+            float entry = Mathf.Clamp01((3.5f - remaining) / .3f);
+            rewardCard.transform.localScale = Vector3.one * (Preferences.reducedMotion ? 1 : .96f + .04f * entry);
         }
 
         public void Refresh(GameEngine game, bool force = false)
@@ -243,7 +308,7 @@ namespace ReactorDeCaos
             return image;
         }
 
-        private static Button Button(string name, Transform parent, Color color, float x0, float y0, float x1, float y1)
+        internal static Button Button(string name, Transform parent, Color color, float x0, float y0, float x1, float y1)
         {
             Image image = Image(name, parent, color, x0, y0, x1, y1);
             image.raycastTarget = true;

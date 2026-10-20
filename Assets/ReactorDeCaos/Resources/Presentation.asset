@@ -1,0 +1,80 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f93afa043afd9f7e8c9cb720300d41c, type: 3}
+  m_Name: Presentation
+  m_EditorClassIdentifier:
+  core: {fileID: 21300000, guid: 18e455a51897cf4395d4727cf722e1f2, type: 3}
+  iconAtlas: {fileID: 2800000, guid: b08f8c872764d8b9c59eb584e7f5f8b3, type: 3}
+  icons:
+  - id: tap
+    uv:
+      serializedVersion: 2
+      x: 0.064593301
+      y: 0.666666667
+      width: 0.227272727
+      height: 0.291068581
+  - id: combo
+    uv:
+      serializedVersion: 2
+      x: 0.326953748
+      y: 0.728867624
+      width: 0.342902711
+      height: 0.157894737
+  - id: overload
+    uv:
+      serializedVersion: 2
+      x: 0.677033493
+      y: 0.666666667
+      width: 0.283891547
+      height: 0.300637959
+  - id: coil
+    uv:
+      serializedVersion: 2
+      x: 0.067783094
+      y: 0.366028708
+      width: 0.226475279
+      height: 0.275917065
+  - id: plasma
+    uv:
+      serializedVersion: 2
+      x: 0.364433812
+      y: 0.359649123
+      width: 0.269537480
+      height: 0.299840510
+  - id: quantum
+    uv:
+      serializedVersion: 2
+      x: 0.669856459
+      y: 0.356459330
+      width: 0.297448166
+      height: 0.296650718
+  - id: auxiliary
+    uv:
+      serializedVersion: 2
+      x: 0.040669856
+      y: 0.072567783
+      width: 0.286283892
+      height: 0.248006380
+  - id: reward
+    uv:
+      serializedVersion: 2
+      x: 0.354066986
+      y: 0.059808612
+      width: 0.291068581
+      height: 0.287878788
+  - id: settings
+    uv:
+      serializedVersion: 2
+      x: 0.691387560
+      y: 0.072567783
+      width: 0.258373206
+      height: 0.263157895

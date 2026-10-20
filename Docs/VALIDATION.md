@@ -229,3 +229,25 @@ Se revisaron las API de creación y liberación de TMP_FontAsset en el código
 oficial de uGUI/6000.0. Se comprobaron los archivos, metadatos y ZIP.
 **El nuevo caso PlayMode y el arranque corregido no se han ejecutado en Unity
 en este entorno.** No hubo cambios en economía ni persistencia.
+
+
+## Fase 3 — 2026-10-20
+
+Se generaron realmente tres imágenes originales con image_gen.imagegen y se
+integraron como núcleo, atlas de nueve iconos y fondo del HUD de Main. Se
+comprobaron sus dimensiones y alfa, referencias del catálogo y metadatos únicos.
+Se conservaron economía, persistencia y hash del asset de balance de fase 2.
+
+- `Tools/test-core.sh`: 69 aprobadas, 0 fallidas, 0 omitidas.
+- `Tools/check-unity-api.py`: seis ensamblados compilados con API oficiales,
+  incluidas las nuevas pruebas nativas de recursos, UI y accesibilidad.
+- WAV: seis archivos mono a 44.1 kHz; muestras sin saturación. No equivale a
+  comprobar su mezcla ni su reproducción dentro del motor.
+- `Tools/test-unity.sh`: salida 198 en preparación; mensaje literal:
+  `No valid Unity Editor license found. Please activate your license.`
+  No se ejecutaron EditMode ni PlayMode; tampoco se inspeccionó Main ejecutándose.
+
+Resultados estructurados: [Phase3/checks.json](Phase3/checks.json).
+Recursos definitivos propuestos, provisionales, límites y pasos para completar
+la validación: [PHASE3.md](PHASE3.md). Sigue pendiente la aprobación visual en
+Unity, escucha real, Android, haptics y medición de rendimiento en dispositivo.

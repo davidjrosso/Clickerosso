@@ -6,6 +6,7 @@ namespace ReactorDeCaos
 {
     public sealed class ReactorApp : MonoBehaviour
     {
+        public PresentationPreferences Preferences { get; private set; }
         public GameEngine Game { get; private set; }
         public ReactorHud Hud { get; private set; }
         private SaveStore saves;
@@ -28,6 +29,7 @@ namespace ReactorDeCaos
             GameState state = saves.Load();
             Game = new GameEngine(state, settings != null ? settings.values : null);
             previousMilestones = Game.CompletedMilestoneCount;
+            Preferences = PresentationPreferences.Load();
             Hud = gameObject.AddComponent<ReactorHud>();
             try
             {
@@ -50,6 +52,7 @@ namespace ReactorDeCaos
         private void Update()
         {
             if (!initialized || paused) return;
+            if (Input.GetKeyDown(KeyCode.Escape)) Hud.Menu.SetOpen(!Hud.Menu.IsOpen);
             if (skipNextFrame) { skipNextFrame = false; return; }
             // Time spent suspended never becomes offline production.
             float seconds = Mathf.Min(Time.unscaledDeltaTime, 86400f);
@@ -69,11 +72,12 @@ namespace ReactorDeCaos
             if (Time.unscaledTime >= nextMilestoneNotice && Game.TryTakeMilestone(out var reward))
             {
                 Hud.ShowNotice("HITO · " + reward.title + " · " + reward.rewardDescription);
+                Hud.ShowReward(reward);
                 feedback.Celebrate();
                 nextMilestoneNotice = Time.unscaledTime + 3.5f;
             }
             Hud.Refresh(Game);
-            feedback.Animate(Game.Stage, Game.Overload.Active);
+            feedback.Animate(Game.Stage, Game.Overload.Active, ComboIntensity);
         }
 
         public void Tap()
@@ -83,7 +87,7 @@ namespace ReactorDeCaos
             if (Game.ComboMultiplier > previousCombo && Game.ComboMultiplier >= Game.ComboCap)
                 Hud.ShowNotice("Combo máximo ×" + NumberFormat.Stat(Game.ComboCap));
             previousCombo = Game.ComboMultiplier;
-            feedback.Tap(reward, Game.Overload.Active);
+            feedback.Tap(reward, Game.Overload.Active, ComboIntensity);
             Hud.Refresh(Game, true);
         }
 
@@ -101,10 +105,14 @@ namespace ReactorDeCaos
         public void ActivateOverload()
         {
             if (!initialized || paused || !Game.ActivateOverload()) return;
-            feedback.Celebrate();
+            feedback.StartOverload();
             Hud.ShowNotice("SOBRECARGA · producción y toques ×" + NumberFormat.Stat(Game.OverloadMultiplier));
             Hud.Refresh(Game, true);
         }
+
+        // Visual normalization only: the engine remains the sole source of rewards.
+        private float ComboIntensity => Game.ComboCap <= 1 ? 0
+            : Mathf.Clamp01((float)((Game.ComboMultiplier - 1) / (Game.ComboCap - 1)));
 
         private void Save()
         {
@@ -120,6 +128,7 @@ namespace ReactorDeCaos
         private void OnApplicationPause(bool value)
         {
             paused = value;
+            if (feedback != null) feedback.SetSuspended(value);
             if (value) Save();
             else skipNextFrame = true;
         }
