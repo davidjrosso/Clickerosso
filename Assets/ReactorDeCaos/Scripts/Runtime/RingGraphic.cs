@@ -3,6 +3,8 @@ using UnityEngine.UI;
 
 namespace ReactorDeCaos
 {
+    // MaskableGraphic needs this renderer before OnEnable registers with a RectMask2D.
+    [RequireComponent(typeof(RectTransform), typeof(CanvasRenderer))]
     public sealed class RingGraphic : MaskableGraphic
     {
         public float thickness = 3;

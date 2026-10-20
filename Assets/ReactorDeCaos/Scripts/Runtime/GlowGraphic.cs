@@ -4,6 +4,7 @@ using UnityEngine.UI;
 namespace ReactorDeCaos
 {
     // Standard uGUI material: soft radial mesh, no render pipeline or bloom dependency.
+    [RequireComponent(typeof(RectTransform), typeof(CanvasRenderer))]
     public sealed class GlowGraphic : MaskableGraphic
     {
         protected override void OnPopulateMesh(VertexHelper mesh)

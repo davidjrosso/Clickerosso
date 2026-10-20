@@ -186,6 +186,8 @@ namespace ReactorDeCaos.Tests
         public IEnumerator PresentationAssetsAndEffectsAreIntegratedIntoTheMainScene()
         {
             var app = Object.FindFirstObjectByType<ReactorApp>();
+            foreach (var graphic in app.GetComponentsInChildren<Graphic>(true))
+                Assert.That(graphic.GetComponent<CanvasRenderer>(), Is.Not.Null, graphic.name);
             Assert.That(app.Hud.CoreImage.sprite, Is.Not.Null);
             Assert.That(app.Hud.CoreImage.preserveAspect, Is.True);
             Assert.That(app.Hud.CoreImage.material.shader.name, Is.EqualTo("UI/Default"));

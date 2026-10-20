@@ -251,3 +251,30 @@ Resultados estructurados: [Phase3/checks.json](Phase3/checks.json).
 Recursos definitivos propuestos, provisionales, límites y pasos para completar
 la validación: [PHASE3.md](PHASE3.md). Sigue pendiente la aprobación visual en
 Unity, escucha real, Android, haptics y medición de rendimiento en dispositivo.
+
+## Corrección de CanvasRenderer ausente — fase 3
+
+El usuario ejecutó la escena y comunicó MissingComponentException al desactivar
+EvolutionRing0–3 y Wave0–5, y al recortar CoreGlow. RingGraphic y GlowGraphic
+heredaban de MaskableGraphic pero no declaraban su dependencia CanvasRenderer.
+La compilación C# no detecta este requisito del ciclo de vida de uGUI.
+
+Ambas clases ahora declaran RequireComponent(RectTransform, CanvasRenderer).
+Unity añade el renderer al crear el componente, antes de registrarlo con la
+máscara en OnEnable; cubre órbita, anillos, ondas y ambos halos. Se conserva el
+recorte RectMask2D, los pools, la escena, el balance y los guardados.
+
+Se añadió una prueba PlayMode que crea ambos gráficos bajo una máscara activa,
+los desactiva inmediatamente y comprueba tres ciclos de activación, recorte y
+reutilización sin excepciones. La prueba de Main comprueba también el renderer
+en todos sus Graphic, incluidos objetos inactivos.
+
+La compilación de los seis ensamblados con las API oficiales pasa. Estas pruebas
+nativas siguen pendientes de ejecución: el último arranque del Editor en este
+entorno terminó con código 198 por falta de licencia. No se ha vuelto a ejecutar
+la suite económica, ya que solo cambian dependencias de gráficos y sus pruebas.
+
+Para aplicar el arreglo a una copia existente: detener Play, reemplazar
+Scripts/Runtime/RingGraphic.cs y GlowGraphic.cs por las versiones corregidas,
+esperar la recompilación, limpiar la consola y volver a Play en Main. No hace
+falta añadir componentes manualmente ni borrar Library o los guardados.

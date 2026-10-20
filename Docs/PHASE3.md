@@ -93,3 +93,13 @@ pruebas nativas, Android, vibración, orientación/áreas seguras y rendimiento.
 No se entregan capturas de una ejecución inexistente ni APK validado. No hay
 errores de C# detectados en la compilación de API; esto no descarta errores que
 solo aparezcan al importar o ejecutar el motor.
+
+## Arreglo tras la primera ejecución: CanvasRenderer
+
+Si aparecen MissingComponentException en EvolutionRing, Wave o CoreGlow, la
+versión inicial de fase 3 carecía de la dependencia CanvasRenderer en los dos
+gráficos personalizados. Las versiones corregidas de `RingGraphic.cs` y
+`GlowGraphic.cs` incluyen RequireComponent para que Unity lo añada antes de
+habilitarlos. Detén Play, actualiza ambos archivos en `Scripts/Runtime`, espera
+la compilación, limpia la consola y vuelve a Play. No hace falta modificar la
+escena ni los objetos creados en ejecución. Véase la evidencia en VALIDATION.md.
