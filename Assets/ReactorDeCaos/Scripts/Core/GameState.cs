@@ -10,6 +10,9 @@ namespace ReactorDeCaos
         public int version = 1;
         public double energy;
         public double lifetimeEnergy;
+        // Optional low-order fields; old version-1 saves deserialize these as zero.
+        public double energyRemainder;
+        public double lifetimeRemainder;
         public int tapLevel;
         public int comboLevel;
         public int overloadLevel;
@@ -24,7 +27,9 @@ namespace ReactorDeCaos
         public bool IsValid()
         {
             return version == 1 && ValidNumber(energy) && ValidNumber(lifetimeEnergy)
-                && lifetimeEnergy >= energy
+                && CompensatedSum.IsValid(energy, energyRemainder)
+                && CompensatedSum.IsValid(lifetimeEnergy, lifetimeRemainder)
+                && (lifetimeEnergy > energy || (lifetimeEnergy == energy && lifetimeRemainder >= energyRemainder))
                 && ValidLevel(tapLevel) && ValidLevel(comboLevel)
                 && ValidLevel(overloadLevel) && ValidLevel(coils) && ValidLevel(plasma);
         }

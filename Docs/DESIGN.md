@@ -5,7 +5,7 @@
 | Sistema | Regla |
 |---|---|
 | Toque | 1 + nivel de potencia |
-| Combo | Ventana de 1 segundo; +0,25 cada 5 toques; máximo inicial ×3 |
+| Combo | Gracia de 1,5 s; +0,25 cada 5 toques; máximo inicial ×3; pierde un escalón cada 0,75 s después de la gracia |
 | Sobrecarga | +4% por toque; activación manual al 100%; ×3 durante 10 s |
 | Recarga | Se detiene mientras está activa la sobrecarga |
 | Potencia | +1 por nivel; coste inicial 15, crecimiento ×1,55 |
@@ -20,9 +20,26 @@ de 100 niveles/unidades. El combo solo multiplica ingresos manuales; la
 sobrecarga multiplica ingresos manuales y automáticos. Los hitos usan el
 total histórico, no el saldo. La economía limita los recursos a 1e150.
 
-La configuración de tiempos, producción y umbrales se encuentra en
-`Resources/Economy.asset`, generado por Prepare Project. Precios y fórmulas
-están centralizados en EconomyConfig para evitar duplicación en la UI.
+La configuración de potencia, tiempos, multiplicadores, producción, umbrales
+y curvas de precio se encuentra en `Resources/Economy.asset`, incluido en Git.
+Prepare Project lo crea solo si falta. EconomyConfig valida y copia los datos
+al empezar; la interfaz consulta efectos actuales/siguientes al motor.
+
+Los recursos conservan `double` para mantener la arquitectura y el formato de
+guardado. Una suma compensada guarda también la parte de baja magnitud: evita
+perder ingresos pequeños por fotograma o costes pequeños ante saldos grandes.
+Ambas partes se persisten y validan; los guardados anteriores usan resto cero.
+No es aritmética exacta de precisión arbitraria. El límite explícito de 1e150,
+los límites de configuración y niveles evitan Infinity/NaN y desbordamientos
+silenciosos. Al llegar al límite, la UI muestra «LÍMITE» y el toque devuelve
+solo lo realmente acreditado. Los números grandes usan K/M/B/T o notación
+científica; los multiplicadores conservan sus centésimas.
+
+El combo tiene toques limitados al máximo útil y decae gradualmente, sin acumular
+una reserva invisible de miles de toques. Retomarlo reinicia la gracia.
+La sobrecarga captura su duración al activarse y reparte un intervalo de
+producción entre tiempo bonificado y normal si termina dentro de él.
+Comprar duración durante una sobrecarga mejora la siguiente activación.
 
 ## Arquitectura
 
@@ -45,7 +62,7 @@ manuales entre decenas de objetos. La tienda tiene scroll y botones de
 ## Criterios de aceptación
 
 - Toque con recompensa y respuesta visual inmediata.
-- Combo se construye, tiene límite y caduca.
+- Combo se construye, tiene límite y disminuye por escalones durante el descanso.
 - Sobrecarga requiere carga y activación, multiplica y termina.
 - Compras muestran precio/efecto y nunca producen saldo negativo.
 - Dos generadores producen según tiempo; plasma requiere su hito.

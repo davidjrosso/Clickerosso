@@ -1,5 +1,7 @@
 using System;
 using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 using NUnit.Framework;
 #if !UNITY_5_3_OR_NEWER
 using System.Text.Json;
@@ -128,6 +130,41 @@ namespace ReactorDeCaos.Tests
             var blocked = new SaveStore(Path.Combine(directory, "not-a-directory", "save.json"), codec);
             Assert.That(blocked.Save(new GameState()), Is.False);
             Assert.That(blocked.LastIssue, Is.Not.Null);
+        }
+
+        [Test]
+        public void LowOrderBalancesSurviveSaveAndContinueAccumulating()
+        {
+            var game = new GameEngine(new GameState { energy = 1e16, lifetimeEnergy = 1e16, coils = 1 });
+            game.Advance(.25);
+            Assert.That(store.Save(game.Snapshot()), Is.True);
+            var restored = new GameEngine(store.Load());
+            for (int i = 0; i < 7; i++) restored.Advance(.25);
+            Assert.That(restored.Energy, Is.EqualTo(1e16 + 2));
+            Assert.That(restored.Snapshot().IsValid(), Is.True);
+        }
+
+        [Test]
+        public void LegacyVersionOneWithoutRemaindersStillLoads()
+        {
+            const string payload = "{\"version\":1,\"energy\":42,\"lifetimeEnergy\":100,\"tapLevel\":1,\"comboLevel\":0,\"overloadLevel\":0,\"coils\":2,\"plasma\":0}";
+            string checksum;
+            using (var sha = SHA256.Create())
+                checksum = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(payload))).Replace("-", "");
+            File.WriteAllText(path, codec.Serialize(new SaveEnvelope { payload = payload, checksum = checksum }));
+            GameState loaded = store.Load();
+            Assert.That(store.LoadedExisting, Is.True);
+            Assert.That(loaded.energy, Is.EqualTo(42));
+            Assert.That(loaded.coils, Is.EqualTo(2));
+            Assert.That(loaded.energyRemainder, Is.Zero);
+            Assert.That(loaded.lifetimeRemainder, Is.Zero);
+        }
+
+        [Test]
+        public void InvalidLowOrderValuesCannotBeSaved()
+        {
+            Assert.That(store.Save(new GameState { energy = 10, lifetimeEnergy = 10, energyRemainder = 10 }), Is.False);
+            Assert.That(store.Save(new GameState { energy = 10, lifetimeEnergy = 10, energyRemainder = double.NaN }), Is.False);
         }
     }
 

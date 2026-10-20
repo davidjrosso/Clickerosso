@@ -4,27 +4,34 @@ MVP de un arcade incremental offline para Android, con Unity 2D y C#.
 Toca el núcleo, encadena combos, activa la sobrecarga e invierte en mejoras
 y generadores automáticos.
 
-**Estado:** economía y persistencia compiladas y probadas con .NET. La escena,
-UI, efectos, importación en Unity y compilación Android están implementados
-pero pendientes de ejecución en un Editor disponible y con licencia.
-No hay APK validado. Consulta [la evidencia por fase](Docs/VALIDATION.md).
+**Estado de fase 1:** 53 pruebas de economía y persistencia aprobadas con .NET,
+incluida una simulación de diez minutos. Los seis ensamblados compilan contra
+las API oficiales de Unity 6000.0.85f1. El Editor está instalado, pero su arranque
+se detuvo por falta de licencia; PlayMode y renderizado siguen sin verificar.
+Consulta [cómo probar el núcleo](Docs/PHASE1.md) y [la evidencia](Docs/VALIDATION.md).
 
 ## Abrir y jugar
 
-1. Instala Unity **6000.0.85f1** con **Android Build Support**, incluido SDK,
-   NDK y OpenJDK, y activa una licencia válida mediante el flujo oficial.
+1. Instala Unity **6000.0.85f1** y activa una licencia válida mediante el flujo
+   oficial. Android Build Support, SDK, NDK y OpenJDK solo son necesarios para APK.
 2. Añade esta carpeta a Unity Hub. Permite resolver los paquetes fijados.
 3. La preparación inicial importa los recursos esenciales de TMP, crea el
    atlas de fuente y los datos económicos. Si hace falta repetirla:
    **Tools → Reactor de Caos → Prepare Project**, en la barra de menús
    superior de Unity (junto a File/Edit/Window). Detén Play antes de usarlo.
-4. Abre `Assets/ReactorDeCaos/Scenes/Main.unity` y pulsa **Play**.
+4. Usa **Tools → Reactor de Caos → Open Main Scene** o abre
+   `Assets/ReactorDeCaos/Scenes/Main.unity` y pulsa **Play**.
 5. Toca el núcleo central. Tras cargar el medidor, pulsa **Activar sobrecarga**.
    Desplaza la tienda para acceder a las tres mejoras y los dos generadores.
 
 Se usa entrada táctil/ratón mediante uGUI. El guardado está en
 `Application.persistentDataPath/reactor-save.json`, con copia `.bak`.
 No se otorgan recompensas por tiempo desconectado.
+
+Selecciona `Assets/ReactorDeCaos/Resources/Economy.asset` para editar en el
+Inspector la potencia, curva de combo, sobrecarga, producción y precios.
+Los cambios se aplican al comenzar una nueva sesión de Play. No sustituyen
+los niveles comprados que ya estén guardados.
 
 Si todavía no existe `ReactorFont.asset`, el juego genera una fuente dinámica
 desde el archivo DejaVuSans.ttf incluido en Resources. Esta alternativa no
@@ -66,14 +73,16 @@ la ejecución autorizada fuera del sandbox ha permitido completar las pruebas.
 Con Unity disponible:
 
 ```bash
+python3 Tools/install-unity-editor.py  # Linux: descarga verificada, sin activar licencia
+python3 Tools/check-unity-api.py       # compilación C#, sin ejecutar el motor
 export UNITY_EDITOR=/ruta/al/Editor/Unity
 bash Tools/test-unity.sh
 bash Tools/build-android.sh
 ```
 
-El primer script ejecuta las pruebas EditMode y PlayMode y rechaza resultados
+`test-unity.sh` ejecuta las pruebas EditMode y PlayMode y rechaza resultados
 vacíos, fallidos o saltados. Los resultados van a `TestResults/`, ignorado por Git.
-El segundo genera `Builds/Android/ReactorDeCaos-development.apk`, ARM64/IL2CPP,
+`build-android.sh` genera `Builds/Android/ReactorDeCaos-development.apk`, ARM64/IL2CPP,
 Android 8/API 26 o superior. Es una compilación de desarrollo; no una entrega
 firmada ni certificada para Google Play.
 
@@ -96,13 +105,13 @@ Editor; no se ha inventado una resolución de paquetes sin ejecutarla.
 
 ## Limitaciones del entorno actual
 
-La consulta del catálogo de Unity devuelve HTTP 403 por la política de red.
-Se guardaron los dominios necesarios en el borrador del entorno; guardarlo
-no cambia la red activa ni publica una nueva versión.
-Unity 6000.0.85f1 fue identificado en las etiquetas oficiales de
-`Unity-Technologies/UnityCsReference`, pero su instalación sigue pendiente.
+El catálogo oficial ya responde correctamente y el Editor está instalado en
+`/workspace/toolchains/Unity-6000.0.85f1/Editor/Unity`, con el archivo verificado
+contra el hash publicado por Unity. El arranque batch terminó con código 198:
+`No valid Unity Editor license found`. Hace falta activar una licencia por el
+flujo oficial y volver a ejecutar `Tools/test-unity.sh`.
 
-Para finalizar la validación se necesita aplicar la configuración de red,
-disponer del Editor con licencia y probar el APK en un dispositivo Android.
-La ilustración fue inspeccionada como archivo; no hay capturas de ejecución
-del juego ni mediciones de FPS en dispositivo.
+La comprobación de API usa el compilador y las bibliotecas oficiales instaladas,
+incluidos uGUI/TMP y TestRunner de la plantilla del Editor. No sustituye la
+resolución UPM, la importación ni PlayMode. No hay capturas del juego ejecutándose,
+APK validado ni mediciones de FPS en dispositivo.

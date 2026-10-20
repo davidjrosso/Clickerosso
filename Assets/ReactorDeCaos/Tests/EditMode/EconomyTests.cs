@@ -15,14 +15,15 @@ namespace ReactorDeCaos.Tests
         }
 
         [Test]
-        public void FifthTapRaisesComboAndInactivityResetsIt()
+        public void FifthTapRaisesComboAndInactivityDecaysAfterGrace()
         {
             var game = new GameEngine();
             for (int i = 0; i < 4; i++) game.Tap();
             Assert.That(game.Tap(), Is.EqualTo(1.25));
-            game.Advance(.99);
+            game.Advance(1.5);
             Assert.That(game.Combo.Count, Is.EqualTo(5));
-            game.Advance(.02);
+            Assert.That(game.Combo.Decaying, Is.True);
+            game.Advance(.75);
             Assert.That(game.Tap(), Is.EqualTo(1));
         }
 
@@ -210,9 +211,180 @@ namespace ReactorDeCaos.Tests
         [TestCase(1234d, "1.2K")]
         [TestCase(1200000d, "1.2M")]
         [TestCase(0d, "0")]
+        [TestCase(999999d, "1M")]
+        [TestCase(999.6d, "1K")]
         public void NumbersUseCompactStableFormatting(double number, string expected)
         {
             Assert.That(NumberFormat.Compact(number), Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void ComboLosesOneStepAtATimeAndResumesWithoutFullReset()
+        {
+            var game = new GameEngine();
+            for (int i = 0; i < 20; i++) game.Tap();
+            Assert.That(game.ComboMultiplier, Is.EqualTo(2));
+            game.Advance(1.5 + .75);
+            Assert.That(game.ComboMultiplier, Is.EqualTo(1.75));
+            game.Advance(.75);
+            Assert.That(game.ComboMultiplier, Is.EqualTo(1.5));
+            game.Tap();
+            Assert.That(game.Combo.Count, Is.EqualTo(11));
+            Assert.That(game.Combo.Decaying, Is.False);
+            game.Advance(1.4);
+            Assert.That(game.Combo.Count, Is.EqualTo(11));
+        }
+
+        [Test]
+        public void ComboCannotBankHiddenThousandsOfTaps()
+        {
+            var game = new GameEngine();
+            for (int i = 0; i < 10000; i++) game.Tap();
+            Assert.That(game.Combo.Count, Is.EqualTo(40));
+            game.Advance(1.5 + .75);
+            Assert.That(game.ComboMultiplier, Is.EqualTo(2.75));
+            game.Advance(6);
+            Assert.That(game.ComboMultiplier, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void ComboDecayIsIndependentOfTimeStep()
+        {
+            var coarse = new GameEngine();
+            var fine = new GameEngine();
+            for (int i = 0; i < 40; i++) { coarse.Tap(); fine.Tap(); }
+            coarse.Advance(4.5);
+            for (int i = 0; i < 270; i++) fine.Advance(1d / 60);
+            Assert.That(coarse.ComboMultiplier, Is.EqualTo(2));
+            Assert.That(fine.Combo.Count, Is.EqualTo(coarse.Combo.Count));
+        }
+
+        [Test]
+        public void ConfigControlsRewardsCostsChargeAndDuration()
+        {
+            var settings = new EconomyConfig {
+                baseTapPower = 2, tapPowerPerLevel = 3,
+                comboTapsPerStep = 2, comboStepMultiplier = .5,
+                comboBaseCap = 4, comboCapPerLevel = 1,
+                overloadChargeRequired = 12, chargePerTap = 3,
+                overloadMultiplier = 5, overloadSeconds = 4, overloadSecondsPerLevel = 2,
+                tapPrice = new PriceCurve(7, 2), coilProduction = 2.5
+            };
+            var game = new GameEngine(new GameState { energy = 7, lifetimeEnergy = 7 }, settings);
+            Assert.That(game.Buy(Purchase.TapPower), Is.True);
+            Assert.That(game.Cost(Purchase.TapPower), Is.EqualTo(14));
+            Assert.That(game.Tap(), Is.EqualTo(5));
+            Assert.That(game.Tap(), Is.EqualTo(7.5));
+            game.Tap(); game.Tap();
+            Assert.That(game.Overload.ChargeFraction, Is.EqualTo(1));
+            Assert.That(game.ActivateOverload(), Is.True);
+            Assert.That(game.Tap(), Is.EqualTo(50));
+            Assert.That(game.Overload.ActiveDuration, Is.EqualTo(4));
+            Assert.That(game.EffectAtLevel(Purchase.Coil, 3), Is.EqualTo(7.5));
+            Assert.That(game.EffectAtLevel(Purchase.OverloadDuration, 2), Is.EqualTo(8));
+        }
+
+        [Test]
+        public void ConfigIsCopiedAndCannotBeMutatedMidGame()
+        {
+            var settings = new EconomyConfig();
+            var game = new GameEngine(settings: settings);
+            settings.baseTapPower = double.NaN;
+            settings.tapPrice.initial = -99;
+            Assert.That(game.Tap(), Is.EqualTo(1));
+            Assert.That(game.Cost(Purchase.TapPower), Is.EqualTo(15));
+        }
+
+        [Test]
+        public void InvalidPriceCurvesAreRejectedBeforePlay()
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+                new GameEngine(settings: new EconomyConfig { coilPrice = new PriceCurve(1, double.PositiveInfinity) }));
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+                new GameEngine(settings: new EconomyConfig { tapPrice = new PriceCurve(-1, 1.5) }));
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+                new GameEngine(settings: new EconomyConfig { tapPrice = new PriceCurve(1, 11) }));
+            Assert.Throws<ArgumentException>(() =>
+                new GameEngine(settings: new EconomyConfig { comboTapsPerStep = 0 }));
+        }
+
+        [Test]
+        public void DurationPurchaseDoesNotChangeRunningOverload()
+        {
+            var game = new GameEngine(new GameState { energy = 1000, lifetimeEnergy = 1000 });
+            for (int i = 0; i < 25; i++) game.Tap();
+            game.ActivateOverload();
+            game.Advance(2);
+            Assert.That(game.Buy(Purchase.OverloadDuration), Is.True);
+            Assert.That(game.OverloadDuration, Is.EqualTo(11));
+            Assert.That(game.Overload.ActiveDuration, Is.EqualTo(10));
+            Assert.That(game.Overload.Remaining, Is.EqualTo(8));
+            game.Advance(8);
+            Assert.That(game.Overload.Active, Is.False);
+            for (int i = 0; i < 25; i++) game.Tap();
+            Assert.That(game.ActivateOverload(), Is.True);
+            Assert.That(game.Overload.ActiveDuration, Is.EqualTo(11));
+        }
+
+        [Test]
+        public void SmallFrameIncomeAccumulatesOnLargeBalance()
+        {
+            var initial = new GameState { energy = 1e16, lifetimeEnergy = 1e16, coils = 1 };
+            var game = new GameEngine(initial, new EconomyConfig { coilProduction = .1 });
+            for (int i = 0; i < 36000; i++) game.Advance(1d / 60);
+            Assert.That(game.Energy, Is.EqualTo(1e16 + 60));
+            Assert.That(game.Snapshot().IsValid(), Is.True);
+        }
+
+        [Test]
+        public void SmallPurchaseIsRetainedInLowOrderBalance()
+        {
+            var game = new GameEngine(new GameState { energy = 1e100, lifetimeEnergy = 1e100 });
+            Assert.That(game.Buy(Purchase.TapPower), Is.True);
+            Assert.That(game.Snapshot().energyRemainder, Is.EqualTo(-15));
+            Assert.That(game.Snapshot().IsValid(), Is.True);
+        }
+
+        [Test]
+        public void PrecisionRemainderCannotMakeAnUnaffordablePurchase()
+        {
+            var game = new GameEngine(new GameState { energy = 15, lifetimeEnergy = 15, energyRemainder = -1e-16 });
+            Assert.That(game.Buy(Purchase.TapPower), Is.False);
+            Assert.That(game.Snapshot().energyRemainder, Is.EqualTo(-1e-16));
+        }
+
+        [Test]
+        public void ResourceLimitIsExplicitAndDoesNotReportPhantomRewards()
+        {
+            var game = new GameEngine(new GameState { energy = EconomyConfig.MaxEnergy, lifetimeEnergy = EconomyConfig.MaxEnergy });
+            Assert.That(game.EnergyLimitReached, Is.True);
+            Assert.That(game.Tap(), Is.Zero);
+            Assert.That(game.Snapshot().IsValid(), Is.True);
+        }
+
+        [Test]
+        public void TenMinuteSessionSupportsTapsRestShoppingAndAutomation()
+        {
+            var game = new GameEngine();
+            int activations = 0, purchases = 0;
+            for (int frame = 0; frame < 36000; frame++)
+            {
+                game.Advance(1d / 60);
+                // Three taps/s for 6 s, then 4 s rest, across ten simulated minutes.
+                if (frame % 600 < 360 && frame % 20 == 0) game.Tap();
+                if (game.Overload.Ready && game.ActivateOverload()) activations++;
+                if (frame % 300 == 0)
+                    foreach (Purchase item in new[] { Purchase.Coil, Purchase.TapPower, Purchase.ComboCapacity, Purchase.OverloadDuration, Purchase.Plasma })
+                        if (game.Buy(item)) purchases++;
+                Assert.That(game.Snapshot().IsValid(), Is.True, "Invalid state at frame " + frame);
+            }
+            Assert.That(activations, Is.GreaterThan(5));
+            Assert.That(purchases, Is.GreaterThan(5));
+            Assert.That(game.Level(Purchase.Coil), Is.GreaterThan(0));
+            Assert.That(game.Lifetime, Is.GreaterThan(1000));
+            double before = game.Energy;
+            game.Advance(60);
+            Assert.That(game.Energy, Is.GreaterThan(before));
         }
     }
 }

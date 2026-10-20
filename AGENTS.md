@@ -24,9 +24,14 @@
 ## Commands
 - `bash Tools/install-dotnet.sh` installs a verified local SDK outside checkout.
 - `bash Tools/test-core.sh` runs shared economy and persistence tests.
+- `python3 Tools/install-unity-editor.py` installs the pinned Linux Editor with
+  the official artifact checksum. It does not activate a license.
+- `python3 Tools/check-unity-api.py` compiles all assemblies using the installed
+  Editor's real reference DLLs. This is not an Editor import or PlayMode run.
 - `UNITY_EDITOR=/path/to/Unity bash Tools/test-unity.sh` runs EditMode/PlayMode.
 - `UNITY_EDITOR=/path/to/Unity bash Tools/build-android.sh` builds a debug APK.
 - Open `Assets/ReactorDeCaos/Scenes/Main.unity` and press Play.
+- `Tools/Reactor de Caos/Open Main Scene` opens that scene after offering to save.
 - `Tools/Reactor de Caos/Prepare Project` prepares TMP font assets and Android settings
   from Unity's top menu bar; the original `Reactor de Caos` menu also remains.
 - Playback falls back to a dynamic font from the bundled DejaVuSans.ttf if the

@@ -31,9 +31,10 @@ namespace ReactorDeCaos
         private int lastStage = -1;
         private readonly double[] lastCosts = new double[5];
         private readonly int[] lastLevels = { -1, -1, -1, -1, -1 };
+        private readonly bool[] lastAffordable = new bool[5];
+        private readonly bool[] lastUnlocked = new bool[5];
         private readonly string[] names = { "POTENCIA", "COMBO", "SOBRECARGA", "BOBINA", "MATRIZ DE PLASMA" };
-        private readonly string[] descriptions = { "+1 energía por toque", "+0,25 al combo máximo",
-            "+1 s de sobrecarga", "+1 energía / s", "+12 energía / s" };
+        private readonly string[] effectNames = { "E / toque", "combo máximo", "s de sobrecarga", "E / s", "E / s" };
 
         public void Build(ReactorApp app)
         {
@@ -151,17 +152,18 @@ namespace ReactorDeCaos
         {
             ApplySafeArea();
             float progress = game.Overload.Active
-                ? (float)(game.Overload.Remaining / game.OverloadDuration)
-                : (float)(game.Overload.Charge / 100);
+                ? (float)(game.Overload.Remaining / game.Overload.ActiveDuration)
+                : (float)game.Overload.ChargeFraction;
             chargeFill.anchorMax = new Vector2(Mathf.Clamp01(progress), 1);
             OverloadButton.interactable = game.Overload.Ready;
             for (int i = 0; i < 5; i++) ShopButtons[i].interactable = game.CanBuy((Purchase)i);
             if (!force && Time.unscaledTime < nextTextUpdate) return;
             nextTextUpdate = Time.unscaledTime + .08f;
-            energy.text = NumberFormat.Compact(game.Energy);
-            rate.text = NumberFormat.Compact(game.Production) + " / s   ·   " + NumberFormat.Compact(game.TapPower) + " / toque";
-            combo.text = "COMBO ×" + game.ComboMultiplier.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)
-                + "  /  " + game.Combo.Count;
+            energy.text = game.EnergyLimitReached ? "LÍMITE · " + NumberFormat.Compact(game.Energy) : NumberFormat.Compact(game.Energy);
+            rate.text = NumberFormat.Stat(game.Production) + " / s   ·   " + NumberFormat.Stat(game.CurrentTapGain) + " / toque";
+            combo.text = "COMBO ×" + NumberFormat.Stat(game.ComboMultiplier)
+                + (game.Combo.Decaying ? " · BAJANDO" : game.ComboMultiplier >= game.ComboCap ? " · MÁXIMO" : " · " + game.Combo.Count + " TOQUES");
+            combo.color = game.Combo.Decaying ? Muted : Cyan;
             if (game.Stage != lastStage)
             {
                 lastStage = game.Stage;
@@ -170,20 +172,30 @@ namespace ReactorDeCaos
             milestone.text = game.Stage == 2 ? "MÁXIMA EVOLUCIÓN · sigue aumentando tu producción"
                 : "PRÓXIMO HITO  " + NumberFormat.Compact(game.Lifetime) + " / " + NumberFormat.Compact(game.NextMilestone);
             overloadLabel.text = game.Overload.Active
-                ? "SOBRECARGA ×3  ·  " + game.Overload.Remaining.ToString("0.0") + " s"
-                : game.Overload.Ready ? "ACTIVAR SOBRECARGA  ×3"
-                : "CARGANDO SOBRECARGA  ·  " + game.Overload.Charge.ToString("0") + "%";
+                ? "SOBRECARGA ×" + NumberFormat.Stat(game.OverloadMultiplier) + "  ·  " + game.Overload.Remaining.ToString("0.0") + " s"
+                : game.Overload.Ready ? "ACTIVAR SOBRECARGA  ×" + NumberFormat.Stat(game.OverloadMultiplier)
+                : "CARGANDO SOBRECARGA  ·  " + (game.Overload.ChargeFraction * 100).ToString("0") + "%";
             for (int i = 0; i < 5; i++)
             {
                 Purchase item = (Purchase)i;
                 int level = game.Level(item);
                 double cost = game.Cost(item);
-                if (lastLevels[i] == level && lastCosts[i] == cost && i != 4) continue;
+                bool affordable = game.CanBuy(item);
+                bool unlocked = game.Unlocked(item);
+                if (lastLevels[i] == level && lastCosts[i] == cost
+                    && lastAffordable[i] == affordable && lastUnlocked[i] == unlocked) continue;
                 lastLevels[i] = level; lastCosts[i] = cost;
-                string price = !game.Unlocked(item) ? "HITO 1K" : level >= EconomyConfig.MaxLevel ? "MÁX."
+                lastAffordable[i] = affordable; lastUnlocked[i] = unlocked;
+                string price = !unlocked ? "BLOQUEADO" : level >= EconomyConfig.MaxLevel ? "MÁX."
                     : NumberFormat.Compact(cost) + " E";
+                double current = game.EffectAtLevel(item, level);
+                double next = game.EffectAtLevel(item, Math.Min(EconomyConfig.MaxLevel, level + 1));
+                string effect = NumberFormat.Stat(current) + " a " + NumberFormat.Stat(next) + " " + effectNames[i];
+                if (level >= EconomyConfig.MaxLevel) effect = NumberFormat.Stat(current) + " " + effectNames[i] + " · MÁXIMO";
+                if (!unlocked) effect = "Desbloquea con " + NumberFormat.Compact(game.NextMilestone) + " producidos";
                 shopText[i].text = names[i] + " <color=#74E6F2>· " + level + "</color>"
-                    + "   <color=#FFBF6C>" + price + "</color>\n<size=75%><color=#A5B5CF>" + descriptions[i] + "</color></size>";
+                    + "   <color=" + (affordable ? "#FFBF6C" : "#77869B") + ">" + price
+                    + "</color>\n<size=75%><color=#A5B5CF>" + effect + "</color></size>";
             }
             if (Time.unscaledTime > noticeUntil) notice.text = "GUARDADO LOCAL  ·  SIN CONEXIÓN";
         }

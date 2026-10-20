@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using NUnit.Framework;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
@@ -63,6 +64,66 @@ namespace ReactorDeCaos.Tests
             Assert.That(app.Game.Energy, Is.GreaterThan(before));
             Assert.That(File.Exists(path), Is.True);
             LogAssert.NoUnexpectedReceived();
+        }
+
+        [UnityTest]
+        public IEnumerator RapidTapsReuseEffectsAndRecoverAfterOverload()
+        {
+            var app = Object.FindFirstObjectByType<ReactorApp>();
+            int effects = app.Hud.EffectsRoot.childCount;
+            Assert.That(effects, Is.EqualTo(50));
+            for (int i = 0; i < 500; i++) app.Hud.TapButton.onClick.Invoke();
+            Assert.That(app.Hud.EffectsRoot.childCount, Is.EqualTo(effects));
+            Assert.That(app.Hud.CoreVisual.localScale.x, Is.GreaterThan(1));
+            Assert.That(app.Game.ComboMultiplier, Is.EqualTo(3));
+            app.Hud.OverloadButton.onClick.Invoke();
+            for (int i = 0; i < 500; i++) app.Hud.TapButton.onClick.Invoke();
+            Assert.That(app.Hud.EffectsRoot.childCount, Is.EqualTo(effects));
+            Assert.That(app.Game.Overload.Active, Is.True);
+            app.Game.Advance(11);
+            Assert.That(app.Game.Overload.Active, Is.False);
+            for (int i = 0; i < 25; i++) app.Tap();
+            Assert.That(app.Game.Overload.Ready, Is.True);
+            yield return new WaitForSecondsRealtime(1.2f);
+            for (int i = 0; i < effects; i++)
+                Assert.That(app.Hud.EffectsRoot.GetChild(i).gameObject.activeSelf, Is.False);
+            Assert.That(app.Game.Snapshot().IsValid(), Is.True);
+            LogAssert.NoUnexpectedReceived();
+        }
+
+        [UnityTest]
+        public IEnumerator HudReflectsAffordabilityNextEffectsComboAndProduction()
+        {
+            var app = Object.FindFirstObjectByType<ReactorApp>();
+            Assert.That(app.Hud.ShopButtons[0].interactable, Is.False);
+            Assert.That(app.Hud.OverloadButton.interactable, Is.False);
+            Assert.That(Label(app, "Description").text, Does.Contain("1 a 2 E / toque"));
+            for (int i = 0; i < 25; i++) app.Tap();
+            Assert.That(app.Hud.ShopButtons[0].interactable, Is.True);
+            Assert.That(app.Hud.OverloadButton.interactable, Is.True);
+            app.Hud.ShopButtons[0].onClick.Invoke();
+            Assert.That(Label(app, "Description").text, Does.Contain("2 a 3 E / toque"));
+            Assert.That(Label(app, "Description").text, Does.Contain("24 E"));
+            app.Hud.ShopButtons[(int)Purchase.Coil].onClick.Invoke();
+            Assert.That(Label(app, "Rate").text, Does.StartWith("1 / s"));
+            Assert.That(Label(app, "Energy").text, Is.EqualTo(NumberFormat.Compact(app.Game.Energy)));
+            app.Game.Advance(2.25);
+            app.Hud.Refresh(app.Game, true);
+            Assert.That(Label(app, "Combo").text, Does.Contain("×2 · BAJANDO"));
+            app.ActivateOverload();
+            Assert.That(Label(app, "Rate").text, Does.StartWith("3 / s"));
+            Assert.That(Label(app, "OverloadLabel").text, Does.StartWith("SOBRECARGA ×3"));
+            Assert.That(app.Hud.OverloadButton.interactable, Is.False);
+            yield return null;
+            LogAssert.NoUnexpectedReceived();
+        }
+
+        private static TextMeshProUGUI Label(ReactorApp app, string name)
+        {
+            foreach (var label in app.GetComponentsInChildren<TextMeshProUGUI>(true))
+                if (label.name == name) return label;
+            Assert.Fail("Missing HUD label: " + name);
+            return null;
         }
 
         [UnityTest]

@@ -6,12 +6,16 @@ namespace ReactorDeCaos
     {
         public double Charge { get; private set; }
         public double Remaining { get; private set; }
+        public double ActiveDuration { get; private set; }
+        public double RequiredCharge { get; }
+        public double ChargeFraction { get { return Charge / RequiredCharge; } }
+        internal OverloadSystem(double requiredCharge) { RequiredCharge = requiredCharge; }
         public bool Active { get { return Remaining > 0; } }
-        public bool Ready { get { return !Active && Charge >= 100; } }
+        public bool Ready { get { return !Active && Charge >= RequiredCharge; } }
 
         public void Tap(double amount)
         {
-            if (!Active) Charge = Math.Min(100, Charge + amount);
+            if (!Active) Charge = Math.Min(RequiredCharge, Charge + amount);
         }
 
         public bool Activate(double duration)
@@ -19,6 +23,7 @@ namespace ReactorDeCaos
             if (!Ready) return false;
             Charge = 0;
             Remaining = duration;
+            ActiveDuration = duration;
             return true;
         }
 

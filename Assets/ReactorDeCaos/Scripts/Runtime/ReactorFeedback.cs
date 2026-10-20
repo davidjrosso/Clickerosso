@@ -81,31 +81,40 @@ namespace ReactorDeCaos
         public void Tap(double amount, bool overloaded)
         {
             Color color = overloaded ? ReactorHud.Warm : ReactorHud.Cyan;
-            Particle number = numbers[numberIndex++ % numbers.Length];
-            ((TextMeshProUGUI)number.graphic).text = "+" + NumberFormat.Compact(amount);
+            Particle number = numbers[numberIndex];
+            numberIndex = (numberIndex + 1) % numbers.Length;
+            ((TextMeshProUGUI)number.graphic).text = "+" + NumberFormat.Stat(amount);
             Emit(number, new Vector2(Random.Range(-30f, 30f), 145), color);
             number.origin = new Vector2(Random.Range(-75f, 75f), 20);
-            Emit(waves[waveIndex++ % waves.Length], Vector2.zero, color);
-            for (int i = 0; i < 4; i++)
+            Emit(waves[waveIndex], Vector2.zero, color);
+            waveIndex = (waveIndex + 1) % waves.Length;
+            for (int i = 0; i < (overloaded ? 8 : 4); i++)
             {
                 Vector2 direction = Random.insideUnitCircle.normalized;
-                Emit(sparks[sparkIndex++ % sparks.Length], direction * Random.Range(150, 330), color);
+                Emit(sparks[sparkIndex], direction * Random.Range(150, overloaded ? 440 : 330), color);
+                sparkIndex = (sparkIndex + 1) % sparks.Length;
             }
-            pulse = 1;
+            pulse = overloaded ? 1.5f : 1;
+            hud.CoreVisual.localScale = Vector3.one * (1 + pulse * .075f);
             // Rate-limit sound on very fast multitouch input.
             if (Time.unscaledTime - lastSound > .06f)
             {
-                Play(tapSound, .16f);
+                audioSource.pitch = overloaded ? 1.2f : 1;
+                Play(tapSound, overloaded ? .22f : .16f);
                 lastSound = Time.unscaledTime;
             }
         }
 
-        public void Purchase() { Play(purchaseSound, .3f); }
+        public void Purchase() { audioSource.pitch = 1; Play(purchaseSound, .3f); }
 
         public void Celebrate()
         {
             pulse = 1.8f;
-            Emit(waves[waveIndex++ % waves.Length], Vector2.zero, ReactorHud.Warm);
+            Emit(waves[waveIndex], Vector2.zero, ReactorHud.Warm);
+            waveIndex = (waveIndex + 1) % waves.Length;
+            audioSource.pitch = 1;
+            hud.CoreVisual.localScale = Vector3.one * (1 + pulse * .075f);
+            hud.Orbit.color = ReactorHud.Warm;
             Play(overloadSound, .3f);
         }
 

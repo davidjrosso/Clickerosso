@@ -3,6 +3,7 @@ using System.IO;
 using TMPro;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 using PackageInfo = UnityEditor.PackageManager.PackageInfo;
 
@@ -53,6 +54,18 @@ namespace ReactorDeCaos.Editor
         public static void PrepareFromTools()
         {
             Prepare();
+        }
+
+        [MenuItem("Tools/Reactor de Caos/Open Main Scene")]
+        public static void OpenMainScene()
+        {
+            if (EditorApplication.isPlayingOrWillChangePlaymode)
+            {
+                Debug.LogWarning("Detén Play antes de abrir la escena principal.");
+                return;
+            }
+            if (EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
+                EditorSceneManager.OpenScene(ScenePath);
         }
 
         // Batch entry points own the exit code; callers must NOT pass -quit,

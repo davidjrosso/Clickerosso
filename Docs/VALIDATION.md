@@ -1,5 +1,53 @@
 # Evidencia de validación — 2026-10-20
 
+## Estado actual: fase 1 del núcleo jugable
+
+Esta sección sustituye las limitaciones históricas de herramientas que aparecen
+más abajo; se conserva el registro anterior para explicar los fallos reportados.
+
+- Se conservó la arquitectura Core/Persistence/Runtime, escena y recursos existentes.
+- Combo con gracia configurable y descenso gradual, toques limitados al máximo
+  útil, feedback de máximo/descanso y multiplicador legible.
+- Economía configurable mediante el asset incluido, también curvas de precios,
+  incrementos por nivel, carga, duración y multiplicador de sobrecarga.
+- Acumulación compensada para conservar ganancias y costes pequeños; sus restos
+  se guardan sin romper las partidas de versión 1. Tope de recurso visible.
+- Sobrecarga captura su duración, no se solapa y divide correctamente la
+  producción cuando termina dentro de un intervalo.
+- UI muestra efectos actuales/siguientes, disponibilidad de compra, producción
+  efectiva y tiempo restante. Los pools siguen limitados a 50 objetos.
+- Main incluida en EditorBuildSettings y accesible desde Tools/Open Main Scene.
+- **53 pruebas .NET aprobadas; 0 fallidas, 0 omitidas**. Último resultado:
+  `TestResults/Core/core.trx`, 118 ms. Incluye diez minutos simulados a 60 avances/s,
+  ingresos pequeños sobre saldos grandes, límites, compras y guardados antiguos.
+- El catálogo oficial respondió HTTP 200. Se descargó e instaló el Editor Linux
+  6000.0.85f1, revisión `ee7790f1426a`, verificando el MD5 que publica Unity
+  (`Jf6OqfgF0oJ3I9Tr6ILnJA==` en base64). Instalador reproducible:
+  `Tools/install-unity-editor.py`. No se instalaron módulos Android.
+- Se intentó arrancar el Editor real con `-batchmode -nographics -projectPath
+  /workspace/Clickerosso -executeMethod ReactorDeCaos.Editor.ProjectSetup.PrepareBatch`.
+  **Salida 198**, `No valid Unity Editor license found`. Log:
+  `TestResults/unity-phase1-prepare.log`. No se llegó a importar/ejecutar Main.
+- **Los seis ensamblados compilan** con `Tools/check-unity-api.py`, que usa
+  Roslyn, netstandard/shims, UnityEngine/UnityEditor y los DLL oficiales uGUI/TMP/
+  TestRunner incluidos en el Editor y su plantilla 2D. No utiliza stubs.
+  Artefactos en `TestResults/UnityApi`. No equivale a una compilación/importación
+  realizada por el pipeline de Unity ni a la resolución UPM.
+- Test Framework fijado a 1.6.0, versión integrada en este Editor según su
+  manifiesto oficial y el diagnóstico de Package Manager.
+- Nuevas pruebas PlayMode de ráfagas, reciclaje de efectos, recuperación de
+  sobrecarga y concordancia de UI. **Compiladas, no ejecutadas**.
+- `install_script` y `start_skill` actualizados y guardados en el borrador del
+  entorno con instalación verificada de Unity y comandos actuales. El guardado
+  no publica ni aplica una configuración; no se verificó restauración en otra tarea.
+
+Pendiente: activar una licencia oficial y ejecutar `Tools/test-unity.sh`, seguir
+[Docs/PHASE1.md](PHASE1.md) en Play durante varios minutos y comprobar renderizado,
+sonido y distintas resoluciones. La prueba económica simula diez minutos, pero
+no certifica una sesión real del juego. No hay errores en la suite .NET ni en la
+compilación contra API; UPM, importadores/TMP y comportamiento visual siguen
+pendientes de validación nativa. No hay APK ni rendimiento Android validados.
+
 ## Fase 0: herramientas — parcial
 
 - Git disponible, checkout inicialmente vacío, acceso remoto de lectura correcto.

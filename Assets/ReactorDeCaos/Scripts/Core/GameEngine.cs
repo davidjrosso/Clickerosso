@@ -6,22 +6,28 @@ namespace ReactorDeCaos
     {
         private readonly GameState state;
         private readonly EconomyConfig config;
-        public ComboSystem Combo { get; } = new ComboSystem();
-        public OverloadSystem Overload { get; } = new OverloadSystem();
+        public ComboSystem Combo { get; }
+        public OverloadSystem Overload { get; }
         public double Energy { get { return state.energy; } }
         public double Lifetime { get { return state.lifetimeEnergy; } }
         public int Stage { get { return Lifetime >= config.finalMilestone ? 2 : Lifetime >= config.plasmaUnlock ? 1 : 0; } }
         public double NextMilestone { get { return Stage == 0 ? config.plasmaUnlock : config.finalMilestone; } }
         public double BaseProduction { get { return state.coils * config.coilProduction + state.plasma * config.plasmaProduction; } }
         public double Production { get { return BaseProduction * (Overload.Active ? config.overloadMultiplier : 1); } }
-        public double TapPower { get { return 1 + state.tapLevel; } }
+        public double TapPower { get { return config.baseTapPower + state.tapLevel * config.tapPowerPerLevel; } }
         public double ComboMultiplier { get { return Combo.Multiplier(state.comboLevel); } }
-        public double OverloadDuration { get { return config.overloadSeconds + state.overloadLevel; } }
+        public double ComboCap { get { return config.ComboCap(state.comboLevel); } }
+        public double OverloadMultiplier { get { return config.overloadMultiplier; } }
+        public double OverloadDuration { get { return config.overloadSeconds + state.overloadLevel * config.overloadSecondsPerLevel; } }
+        public double CurrentTapGain { get { return TapPower * ComboMultiplier * (Overload.Active ? OverloadMultiplier : 1); } }
+        public bool EnergyLimitReached { get { return Energy >= EconomyConfig.MaxEnergy && state.energyRemainder >= 0; } }
 
         public GameEngine(GameState initial = null, EconomyConfig settings = null)
         {
-            config = settings ?? new EconomyConfig();
+            config = settings == null ? new EconomyConfig() : settings.Copy();
             config.Validate();
+            Combo = new ComboSystem(config);
+            Overload = new OverloadSystem(config.overloadChargeRequired);
             state = initial == null ? new GameState() : initial.Copy();
             if (!state.IsValid()) throw new ArgumentException("Invalid initial state.");
         }
@@ -30,7 +36,7 @@ namespace ReactorDeCaos
 
         public double Tap()
         {
-            double multiplier = Combo.Tap(config.comboWindow, state.comboLevel);
+            double multiplier = Combo.Tap(state.comboLevel);
             double amount = TapPower * multiplier * (Overload.Active ? config.overloadMultiplier : 1);
             Overload.Tap(config.chargePerTap);
             return Credit(amount);
@@ -68,13 +74,15 @@ namespace ReactorDeCaos
         public bool Unlocked(Purchase item) { return item != Purchase.Plasma || Lifetime >= config.plasmaUnlock; }
         public bool CanBuy(Purchase item)
         {
-            return Unlocked(item) && Level(item) < EconomyConfig.MaxLevel && Energy >= Cost(item);
+            double cost = Cost(item);
+            return Unlocked(item) && Level(item) < EconomyConfig.MaxLevel
+                && (Energy > cost || (Energy == cost && state.energyRemainder >= 0));
         }
 
         public bool Buy(Purchase item)
         {
             if (!CanBuy(item)) return false;
-            state.energy -= Cost(item);
+            CompensatedSum.Add(ref state.energy, ref state.energyRemainder, -Cost(item));
             switch (item)
             {
                 case Purchase.TapPower: state.tapLevel++; break;
@@ -88,10 +96,29 @@ namespace ReactorDeCaos
 
         private double Credit(double amount)
         {
-            double previous = Energy;
-            state.energy = Math.Min(EconomyConfig.MaxEnergy, state.energy + amount);
-            state.lifetimeEnergy = Math.Min(EconomyConfig.MaxEnergy, state.lifetimeEnergy + amount);
-            return Energy - previous;
+            if (double.IsNaN(amount) || double.IsInfinity(amount) || amount < 0)
+                throw new ArithmeticException("Invalid energy reward.");
+            double accepted = Math.Min(amount, Math.Max(0, (EconomyConfig.MaxEnergy - Energy) - state.energyRemainder));
+            CompensatedSum.Add(ref state.energy, ref state.energyRemainder, accepted);
+            double historical = Math.Min(accepted,
+                Math.Max(0, (EconomyConfig.MaxEnergy - Lifetime) - state.lifetimeRemainder));
+            CompensatedSum.Add(ref state.lifetimeEnergy, ref state.lifetimeRemainder, historical);
+            return accepted;
+        }
+
+        // UI reads authoritative effects; no formulas are duplicated in presentation.
+        public double EffectAtLevel(Purchase item, int level)
+        {
+            if (level < 0 || level > EconomyConfig.MaxLevel) throw new ArgumentOutOfRangeException(nameof(level));
+            switch (item)
+            {
+                case Purchase.TapPower: return config.baseTapPower + level * config.tapPowerPerLevel;
+                case Purchase.ComboCapacity: return config.ComboCap(level);
+                case Purchase.OverloadDuration: return config.overloadSeconds + level * config.overloadSecondsPerLevel;
+                case Purchase.Coil: return level * config.coilProduction;
+                case Purchase.Plasma: return level * config.plasmaProduction;
+                default: throw new ArgumentOutOfRangeException(nameof(item));
+            }
         }
     }
 }

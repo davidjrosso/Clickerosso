@@ -16,6 +16,7 @@ namespace ReactorDeCaos
         private int previousStage;
         private bool previousReady;
         private bool initialized;
+        private double previousCombo = 1;
 
         private void Awake()
         {
@@ -52,6 +53,9 @@ namespace ReactorDeCaos
             // Time spent suspended never becomes offline production.
             float seconds = Mathf.Min(Time.unscaledDeltaTime, 86400f);
             Game.Advance(seconds);
+            if (Game.ComboMultiplier < previousCombo && Game.ComboMultiplier <= 1)
+                Hud.ShowNotice("Combo descansado. Retómalo a tu ritmo.");
+            previousCombo = Game.ComboMultiplier;
             saveTimer += seconds;
             if (saveTimer >= 10) Save();
             if (Game.Stage != previousStage)
@@ -71,6 +75,9 @@ namespace ReactorDeCaos
         {
             if (!initialized || paused) return;
             double reward = Game.Tap();
+            if (Game.ComboMultiplier > previousCombo && Game.ComboMultiplier >= Game.ComboCap)
+                Hud.ShowNotice("Combo máximo ×" + NumberFormat.Stat(Game.ComboCap));
+            previousCombo = Game.ComboMultiplier;
             feedback.Tap(reward, Game.Overload.Active);
             Hud.Refresh(Game, true);
         }
@@ -88,7 +95,7 @@ namespace ReactorDeCaos
         {
             if (!initialized || paused || !Game.ActivateOverload()) return;
             feedback.Celebrate();
-            Hud.ShowNotice("SOBRECARGA · producción y toques ×3");
+            Hud.ShowNotice("SOBRECARGA · producción y toques ×" + NumberFormat.Stat(Game.OverloadMultiplier));
             Hud.Refresh(Game, true);
         }
 

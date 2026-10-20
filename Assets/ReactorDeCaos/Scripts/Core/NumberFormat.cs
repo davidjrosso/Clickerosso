@@ -12,7 +12,19 @@ namespace ReactorDeCaos
             if (value >= 1e18) return value.ToString("0.00e+0", CultureInfo.InvariantCulture);
             int tier = 0;
             while (value >= 1000 && tier < Suffix.Length - 1) { value /= 1000; tier++; }
+            double rounded = Math.Round(value, value >= 100 ? 0 : 1, MidpointRounding.AwayFromZero);
+            if (rounded >= 1000)
+            {
+                if (tier == Suffix.Length - 1) return "1e+18";
+                value = rounded / 1000;
+                tier++;
+            }
             return value.ToString(value >= 100 ? "0" : "0.#", CultureInfo.InvariantCulture) + Suffix[tier];
+        }
+
+        public static string Stat(double value)
+        {
+            return value < 1000 ? value.ToString("0.##", CultureInfo.InvariantCulture) : Compact(value);
         }
     }
 }
