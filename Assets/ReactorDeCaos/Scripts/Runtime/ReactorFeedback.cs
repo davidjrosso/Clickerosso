@@ -181,6 +181,18 @@ namespace ReactorDeCaos
             voice.clip = clip; voice.volume = volume; voice.Play();
         }
 
+        public void Reborn()
+        {
+            Clear(numbers); Clear(waves); Clear(sparks);
+            foreach (var voice in tapVoices) voice.Stop();
+            eventVoice.Stop(); humVoice.Stop();
+            wasOverloaded = false; overloadMix = comboMix = flash = 0;
+            pulse = 1.3f;
+            Wave(ReactorHud.Warm, true, true);
+            Play(eventVoice, endSound, .25f);
+            Haptic();
+        }
+
         public void SetSuspended(bool value)
         {
             suspended = value;
@@ -233,9 +245,9 @@ namespace ReactorDeCaos
             comboMix = Mathf.MoveTowards(comboMix, Mathf.Clamp01(comboStrength), dt * 1.5f);
             overloadMix = Mathf.MoveTowards(overloadMix, overloaded ? 1 : 0, dt * 1.4f);
             ApplyCoreMotion();
-            Color baseColor = Color.Lerp(ReactorHud.Cyan, ReactorHud.Violet, Mathf.Clamp01(stage * .15f + comboMix * .4f));
+            Color baseColor = Color.Lerp(ReactorAssembly.SkinColor(hud.Skin), ReactorHud.Violet, Mathf.Clamp01(stage * .15f + comboMix * .4f));
             Color stateColor = Color.Lerp(baseColor, ReactorHud.Warm, overloadMix);
-            hud.CoreImage.color = Color.Lerp(Color.white, new Color(1, .65f, .89f), overloadMix * .65f);
+            hud.CoreImage.color = Color.Lerp(Color.Lerp(Color.white, ReactorAssembly.SkinColor(hud.Skin), hud.Skin == 0 ? 0 : .35f), new Color(1, .65f, .89f), overloadMix * .65f);
             Color glowColor = Color.Lerp(baseColor, ReactorHud.Magenta, overloadMix);
             glowColor.a = (preferences.limitedEffects ? .18f : .24f) + comboMix * .08f + overloadMix * .15f;
             hud.CoreGlow.color = glowColor;

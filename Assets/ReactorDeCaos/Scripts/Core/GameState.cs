@@ -9,6 +9,7 @@ namespace ReactorDeCaos
     public sealed class GameState
     {
         public int version = 1;
+        public RebirthProgress rebirth; // Absent in legacy saves; migrated by GameEngine.
         public double energy;
         public double lifetimeEnergy;
         // Optional low-order fields; old version-1 saves deserialize these as zero.
@@ -26,6 +27,7 @@ namespace ReactorDeCaos
         public GameState Copy()
         {
             var copy = (GameState)MemberwiseClone();
+            copy.rebirth = rebirth?.Copy();
             copy.generators = generators == null ? Array.Empty<GeneratorLevel>()
                 : Array.ConvertAll(generators, x => x?.Copy());
             copy.completedMilestones = completedMilestones == null ? Array.Empty<string>()
@@ -35,7 +37,9 @@ namespace ReactorDeCaos
 
         public bool IsValid()
         {
-            return version == 1 && ValidNumber(energy) && ValidNumber(lifetimeEnergy)
+            return (version == 1 || version == 2)
+                && (version == 1 ? rebirth == null : rebirth != null && rebirth.IsValid())
+                && ValidNumber(energy) && ValidNumber(lifetimeEnergy)
                 && CompensatedSum.IsValid(energy, energyRemainder)
                 && CompensatedSum.IsValid(lifetimeEnergy, lifetimeRemainder)
                 && (lifetimeEnergy > energy || (lifetimeEnergy == energy && lifetimeRemainder >= energyRemainder))

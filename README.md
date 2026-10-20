@@ -4,14 +4,18 @@ MVP de un arcade incremental offline para Android, con Unity 2D y C#.
 Toca el núcleo, encadena combos, activa la sobrecarga e invierte en mejoras
 y generadores automáticos.
 
-**Estado de fase 3:** núcleo, fondo y nueve iconos originales generados con IA
-integrados en la escena existente; VFX limitados, transiciones de sobrecarga,
-recompensas y ajustes de accesibilidad. La economía de fase 2 se conserva.
-**69 pruebas** de economía/guardado aprobadas y seis ensamblados compilados contra
-las API oficiales de Unity 6000.0.85f1. El Editor vuelve a detenerse por falta
-de licencia: importación, PlayMode, renderizado y audio en escena siguen pendientes.
-Consulta [arte, integración y recorrido de prueba](Docs/PHASE3.md),
-[guía visual](Docs/ART.md), [economía](Docs/PHASE2.md) y [evidencia](Docs/VALIDATION.md).
+**Estado de fase 4:** siete módulos conectados e interactivos, fichas de compra,
+evolución del núcleo, renacimientos con esencia, tres especializaciones,
+maestrías permanentes y cuatro skins. Los guardados anteriores migran sin
+reiniciar la partida; el colapso solo se aplica tras guardar correctamente.
+
+**88 pruebas** de dominio/guardado aprobadas, seis ensamblados compilados y
+**54 ciclos simulados** en nueve combinaciones de rama y estilo de juego.
+Los resultados del primer ciclo coinciden exactamente con la fase 2.
+El Editor sigue bloqueado por falta de licencia: las pruebas nativas y la
+revisión visual en Main continúan pendientes.
+Consulta [funciones, fórmulas y recorrido de fase 4](Docs/PHASE4.md),
+[arte y accesibilidad](Docs/PHASE3.md) y [evidencia](Docs/VALIDATION.md).
 
 ## Abrir y jugar
 
@@ -26,7 +30,11 @@ Consulta [arte, integración y recorrido de prueba](Docs/PHASE3.md),
    `Assets/ReactorDeCaos/Scenes/Main.unity` y pulsa **Play**.
 5. Toca el núcleo central. Tras cargar el medidor, pulsa **Activar sobrecarga**.
    Desplaza la tienda para acceder a las tres mejoras y los cuatro generadores.
-6. En **AJUSTES**, arriba a la derecha, configura sonido, destellos, movimiento,
+6. Toca los módulos alrededor del núcleo para abrir sus fichas e instalar o
+   mejorar tecnología. El botón **EVOLUCIÓN**, bajo la tienda, abre renacimientos,
+   maestrías y skins. El primer colapso se habilita al generar **1 M de energía**
+   en el ciclo; revisa y confirma sus efectos antes de reiniciarlo.
+7. En **AJUSTES**, arriba a la derecha, configura sonido, destellos, movimiento,
    efectos y vibración. Las preferencias persisten aparte del progreso.
    La vibración está desactivada de inicio; la cámara y la interfaz no tiemblan.
 
@@ -37,7 +45,8 @@ No se otorgan recompensas por tiempo desconectado.
 Selecciona `Assets/ReactorDeCaos/Resources/Economy.asset` para editar en el
 Inspector la potencia, curva de combo, sobrecarga y los catálogos `upgrades`,
 `generators` y `milestones`, incluidos producción, precios y condiciones de desbloqueo.
-Los cambios se aplican al comenzar una nueva sesión de Play. No sustituyen
+La sección `values.rebirth` configura el umbral, esencia, maestrías, ramas y
+los módulos iniciales de cada renacimiento. Los cambios se aplican al comenzar una nueva sesión de Play. No sustituyen
 los niveles comprados que ya estén guardados.
 
 Si todavía no existe `ReactorFont.asset`, el juego genera una fuente dinámica
@@ -77,7 +86,8 @@ El instalador Linux x86-64 verifica el SDK .NET 8.0.426 con SHA-512 del
 catálogo oficial y usa `/workspace/toolchains`, fuera del repositorio.
 Las dependencias NUnit se restauran con `Tests/packages.lock.json`.
 Las simulaciones leen el asset económico real, ejecutan GameEngine y escriben
-JSON/CSV en `TestResults/Balance`. Se conservan los resultados de esta entrega
+JSON/CSV en `TestResults/Balance`, incluido `rebirth.json` con seis ciclos
+por especialización y estilo. Se conservan los resultados de esta entrega
 en `Docs/Balance`, junto al hash del asset utilizado.
 En este sandbox el runner necesita permiso para crear mutex del sistema;
 la ejecución autorizada fuera del sandbox ha permitido completar las pruebas.
@@ -102,7 +112,9 @@ firmada ni certificada para Google Play.
 
 - `Assets/ReactorDeCaos/Scripts/Core`: dominio C# sin Unity.
 - `Scripts/Persistence`: guardado atómico, validación y recuperación.
-- `Scripts/Runtime`: ciclo de vida, entrada, interfaz y feedback.
+- `Scripts/Runtime`: ciclo de vida, módulos conectados, interfaz, skins y feedback.
+- `Scripts/Core/GameEngine.Rebirth.cs`: renacimientos y economía permanente.
+- `Scripts/Persistence/RebirthTransaction.cs`: guardar el nuevo ciclo antes de adoptarlo.
 - `Editor/ProjectSetup.cs`: preparación del proyecto y compilación Android.
 - `Scenes/Main.unity`: escena de entrada, con referencias GUID estables.
 - `Resources`: catálogo Presentation, núcleo, atlas de iconos, fondo, fuente y sonidos incluidos.

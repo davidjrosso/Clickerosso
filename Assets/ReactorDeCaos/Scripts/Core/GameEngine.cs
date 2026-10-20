@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ReactorDeCaos
 {
-    public sealed class GameEngine
+    public sealed partial class GameEngine
     {
         private readonly GameState state;
         private readonly EconomyConfig config;
@@ -25,14 +25,14 @@ namespace ReactorDeCaos
             {
                 double total = 0;
                 foreach (var generator in config.generators) total += generator.Production(Level(generator.id));
-                return total;
+                return total * PermanentMultiplier * BranchMultiplier(Specialization.Automation);
             }
         }
-        public double Production { get { return BaseProduction * (Overload.Active ? config.overloadMultiplier : 1); } }
-        public double TapPower { get { return config.baseTapPower + state.tapLevel * config.tapPowerPerLevel; } }
+        public double Production { get { return BaseProduction * (Overload.Active ? OverloadMultiplier : 1); } }
+        public double TapPower { get { return TapPowerAt(state.tapLevel); } }
         public double ComboMultiplier { get { return Combo.Multiplier(state.comboLevel); } }
         public double ComboCap { get { return config.ComboCap(state.comboLevel); } }
-        public double OverloadMultiplier { get { return config.overloadMultiplier; } }
+        public double OverloadMultiplier { get { return config.overloadMultiplier * BranchMultiplier(Specialization.Overload); } }
         public double OverloadDuration { get { return config.overloadSeconds + state.overloadLevel * config.overloadSecondsPerLevel; } }
         public double CurrentTapGain { get { return TapPower * ComboMultiplier * (Overload.Active ? OverloadMultiplier : 1); } }
         public bool EnergyLimitReached { get { return Energy >= EconomyConfig.MaxEnergy && state.energyRemainder >= 0; } }
@@ -45,6 +45,7 @@ namespace ReactorDeCaos
             Overload = new OverloadSystem(config.overloadChargeRequired);
             state = initial == null ? new GameState() : initial.Copy();
             if (!state.IsValid()) throw new ArgumentException("Invalid initial state.");
+            if (state.version == 1) { state.version = 2; state.rebirth = new RebirthProgress(); }
             completed = new HashSet<string>(state.completedMilestones);
             var knownMilestones = new HashSet<string>(completed);
             foreach (var goal in config.milestones) knownMilestones.Add(goal.id);
@@ -78,7 +79,7 @@ namespace ReactorDeCaos
         public double Tap()
         {
             double multiplier = Combo.Tap(state.comboLevel);
-            double amount = TapPower * multiplier * (Overload.Active ? config.overloadMultiplier : 1);
+            double amount = TapPower * multiplier * (Overload.Active ? OverloadMultiplier : 1);
             Overload.Tap(config.chargePerTap);
             return Credit(amount);
         }
@@ -91,7 +92,7 @@ namespace ReactorDeCaos
                 throw new ArgumentOutOfRangeException(nameof(seconds));
             Combo.Advance(seconds);
             double boosted = Overload.Advance(seconds);
-            Credit(BaseProduction * (seconds + boosted * (config.overloadMultiplier - 1)));
+            Credit(BaseProduction * (seconds + boosted * (OverloadMultiplier - 1)));
         }
 
         public int Level(Purchase item) { return Level(EconomyConfig.ItemId(item)); }
@@ -240,10 +241,10 @@ namespace ReactorDeCaos
             if (level < 0 || level > EconomyConfig.MaxLevel) throw new ArgumentOutOfRangeException(nameof(level));
             switch (id)
             {
-                case "tap": return config.baseTapPower + level * config.tapPowerPerLevel;
+                case "tap": return TapPowerAt(level);
                 case "combo": return config.ComboCap(level);
                 case "overload": return config.overloadSeconds + level * config.overloadSecondsPerLevel;
-                default: return generators[id].Production(level);
+                default: return generators[id].Production(level) * PermanentMultiplier * BranchMultiplier(Specialization.Automation);
             }
         }
     }

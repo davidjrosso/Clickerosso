@@ -46,3 +46,14 @@ Style and resource status: `Docs/ART.md` and `Docs/PHASE3.md`.
 The art is proposed production art, integrated into the existing scene's HUD,
 but final in-engine visual approval is pending. Editor startup was blocked by
 its missing license. Android rendering, audio and haptics have not been tested.
+
+
+## Phase 4 procedural expansion
+
+No new AI image generation was used in phase 4. ReactorAssembly reuses the
+original core and atlas icons in the actual HUD. ConduitGraphic builds energy
+connections, ComboSegmentsGraphic builds a segmented combo ring, and CrownGraphic
+builds four skin silhouettes with stage-dependent geometry. Skin palettes and
+shapes are authored in C# and use standard uGUI materials. Existing sounds are
+reused for installations and collapse. See Docs/PHASE4.md for integration and
+pending native visual/device validation.

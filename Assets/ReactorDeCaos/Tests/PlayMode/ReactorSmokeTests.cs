@@ -286,6 +286,91 @@ namespace ReactorDeCaos.Tests
         }
 
         [UnityTest]
+        public IEnumerator ReactorModulesOpenDetailsAndInstallWithoutLeakingTaps()
+        {
+            var app = Object.FindFirstObjectByType<ReactorApp>();
+            Assert.That(app.Hud.Assembly.ModuleCount, Is.EqualTo(app.Game.Shop.Count));
+            for (int i = 0; i < 25; i++) app.Tap();
+            var module = app.Hud.Assembly.ButtonFor("coil");
+            Canvas.ForceUpdateCanvases();
+            Vector3 center = module.transform.TransformPoint(((RectTransform)module.transform).rect.center);
+            var pointer = new PointerEventData(EventSystem.current)
+                { position = RectTransformUtility.WorldToScreenPoint(null, center) };
+            var hits = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(pointer, hits);
+            Assert.That(hits.Count, Is.GreaterThan(0));
+            Assert.That(hits[0].gameObject, Is.EqualTo(module.gameObject));
+            double before = app.Game.Energy;
+            ExecuteEvents.Execute(hits[0].gameObject, pointer, ExecuteEvents.pointerClickHandler);
+            Assert.That(app.Hud.ModulePanel.IsOpen, Is.True);
+            Assert.That(app.Hud.ModulePanel.SelectedId, Is.EqualTo("coil"));
+            Assert.That(app.Game.Energy, Is.EqualTo(before));
+            double cost = app.Game.Cost("coil");
+            app.Hud.ModulePanel.BuyButton.onClick.Invoke();
+            Assert.That(app.Game.Energy, Is.EqualTo(before - cost));
+            Assert.That(app.Game.Level("coil"), Is.EqualTo(1));
+            app.Hud.Back();
+            Assert.That(app.Hud.ModulePanel.IsOpen, Is.False);
+            yield return null;
+            Assert.That(module.GetComponentInChildren<TextMeshProUGUI>().text, Is.EqualTo("NV. 1"));
+            int objects = app.GetComponentsInChildren<Transform>(true).Length;
+            app.Preferences.reducedFlashes = app.Preferences.reducedMotion = app.Preferences.limitedEffects = true;
+            app.Preferences.SaveAndNotify();
+            for (int i = 0; i < 1000; i++) app.Tap();
+            yield return null;
+            Assert.That(app.GetComponentsInChildren<Transform>(true).Length, Is.EqualTo(objects));
+            LogAssert.NoUnexpectedReceived();
+        }
+
+        [UnityTest]
+        public IEnumerator RebirthRequiresReviewPersistsAndRefreshesTheExistingScene()
+        {
+            var oldApp = Object.FindFirstObjectByType<ReactorApp>();
+            Object.Destroy(oldApp.gameObject);
+            yield return null;
+            var disk = new SaveStore(path, new UnityJsonCodec());
+            Assert.That(disk.Save(new GameState { energy = 1000000, lifetimeEnergy = 1000000, coils = 5 }), Is.True);
+            yield return SceneManager.LoadSceneAsync("Main", LoadSceneMode.Single);
+            yield return null;
+            var app = Object.FindFirstObjectByType<ReactorApp>();
+            var old = app.Game;
+            app.Hud.ProgressionButton.onClick.Invoke();
+            app.Hud.Progression.ArmButton.onClick.Invoke();
+            Assert.That(app.Hud.Progression.IsConfirming, Is.True);
+            Assert.That(app.Game, Is.SameAs(old));
+            app.Hud.Back();
+            Assert.That(app.Hud.Progression.IsConfirming, Is.False);
+            Assert.That(app.Game.RebirthCount, Is.Zero);
+            app.Hud.Progression.ArmButton.onClick.Invoke();
+            app.Hud.Progression.ConfirmButton.onClick.Invoke();
+            Assert.That(app.Game, Is.Not.SameAs(old));
+            Assert.That(app.Game.RebirthCount, Is.EqualTo(1));
+            Assert.That(app.Game.Essence, Is.EqualTo(3));
+            Assert.That(app.Game.Energy, Is.Zero);
+            Assert.That(app.Game.Level("coil"), Is.EqualTo(1));
+            Assert.That(app.Hud.Progression.IsOpen, Is.False);
+            Assert.That(new GameEngine(disk.Load()).RebirthCount, Is.EqualTo(1));
+            app.Hud.Progression.ConfirmButton.onClick.Invoke();
+            Assert.That(app.Game.RebirthCount, Is.EqualTo(1), "Repeated confirmation must not award essence again.");
+            app.Hud.Progression.Open(1);
+            double power = app.Game.TapPower;
+            app.Hud.Progression.MasteryButtons[0].onClick.Invoke();
+            Assert.That(app.Game.TapPower, Is.GreaterThan(power));
+            Assert.That(app.Game.Essence, Is.EqualTo(2));
+            Assert.That(new GameEngine(disk.Load()).MasteryLevel(Specialization.Tap), Is.EqualTo(1));
+            double gain = app.Game.CurrentTapGain;
+            app.SelectSkin(0);
+            Assert.That(app.Game.CurrentTapGain, Is.EqualTo(gain));
+            Assert.That(app.Hud.Skin, Is.Zero);
+            app.Hud.ClosePanels();
+            yield return null;
+            foreach (var graphic in app.GetComponentsInChildren<Graphic>(true))
+                Assert.That(graphic.GetComponent<CanvasRenderer>(), Is.Not.Null, graphic.name);
+            Assert.That(app.Hud.EffectsRoot.childCount, Is.EqualTo(50));
+            LogAssert.NoUnexpectedReceived();
+        }
+
+        [UnityTest]
         public IEnumerator PauseStopsInputAndProductionAndResumeRestoresBoth()
         {
             var app = Object.FindFirstObjectByType<ReactorApp>();

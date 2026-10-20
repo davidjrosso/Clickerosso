@@ -5,7 +5,11 @@
 - Use C#, uGUI and TextMeshPro. Do not replace Unity with another engine.
 - MVP: tap income, combo, manual overload, three upgrades, four configurable generators,
   milestones, local saves, original art and restrained feedback.
-- No ads, purchases, accounts, servers, prestige or offline rewards.
+- Player-authorized expansion: connected reactor modules, controlled-collapse rebirths,
+  essence masteries, specializations and cosmetic skins.
+- No ads, real-money purchases, accounts, servers or offline rewards.
+- Version-1 saves migrate to version 2 without resetting their current cycle.
+  Commit a rebirth save successfully before replacing the live engine.
 
 ## Working agreement
 - Work in this existing checkout. Cloud tasks are already isolated; do not

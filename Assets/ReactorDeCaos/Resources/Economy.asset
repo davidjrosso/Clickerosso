@@ -20,6 +20,17 @@ MonoBehaviour:
   m_Name: Economy
   m_EditorClassIdentifier:
   values:
+    rebirth:
+      threshold: 1000000
+      baseReward: 3
+      rewardCap: 100000
+      essencePower: 0.25
+      masteryBonus: 0.05
+      specializationMultiplier: 1.5
+      overloadSpecializationMultiplier: 1.8
+      tapProductionFraction: 0.08
+      starterCoils: 1
+      starterTapLevel: 1
     baseTapPower: 1
     tapPowerPerLevel: 1
     comboWindow: 1.5

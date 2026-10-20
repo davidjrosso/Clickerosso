@@ -175,6 +175,42 @@ namespace ReactorDeCaos.Tests
         }
 
         [Test]
+        public void RebirthIsCommittedBeforeReplacingTheLiveCycleAndSurvivesReload()
+        {
+            var old = new GameEngine(new GameState { energy = 10, lifetimeEnergy = 1000000 });
+            Assert.That(store.Save(old.Snapshot()), Is.True);
+            Assert.That(RebirthTransaction.TryCommit(old, store, Specialization.Automation, 3, out var next), Is.True);
+            Assert.That(old.Lifetime, Is.EqualTo(1000000));
+            Assert.That(next.Lifetime, Is.Zero);
+            Assert.That(next.BuyMastery(Specialization.Tap), Is.True);
+            next.SelectSkin(0);
+            Assert.That(store.Save(next.Snapshot()), Is.True);
+            var loaded = new GameEngine(store.Load());
+            Assert.That(loaded.RebirthCount, Is.EqualTo(1));
+            Assert.That(loaded.Essence, Is.EqualTo(2));
+            Assert.That(loaded.MasteryLevel(Specialization.Tap), Is.EqualTo(1));
+            Assert.That(loaded.Specialization, Is.EqualTo(Specialization.Automation));
+            Assert.That(loaded.Skin, Is.Zero);
+            Assert.That(loaded.AllTimeEnergy, Is.EqualTo(1000000));
+        }
+
+        [Test]
+        public void FailedRebirthSaveKeepsEnergyPurchasesAndOverloadAlive()
+        {
+            File.WriteAllText(Path.Combine(directory, "blocked"), "file");
+            var blocked = new SaveStore(Path.Combine(directory, "blocked", "save.json"), codec);
+            var old = new GameEngine(new GameState { energy = 10, lifetimeEnergy = 1000000, coils = 5 });
+            for (int i = 0; i < 25; i++) old.Tap();
+            old.ActivateOverload();
+            var before = codec.Serialize(old.Snapshot());
+            Assert.That(RebirthTransaction.TryCommit(old, blocked, Specialization.Tap, 3, out var current), Is.False);
+            Assert.That(current, Is.SameAs(old));
+            Assert.That(codec.Serialize(current.Snapshot()), Is.EqualTo(before));
+            Assert.That(current.Overload.Active, Is.True);
+            Assert.That(current.Essence, Is.Zero);
+        }
+
+        [Test]
         public void InvalidLowOrderValuesCannotBeSaved()
         {
             Assert.That(store.Save(new GameState { energy = 10, lifetimeEnergy = 10, energyRemainder = 10 }), Is.False);

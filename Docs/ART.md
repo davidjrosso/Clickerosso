@@ -78,3 +78,24 @@ TMP y mallas 2D de `RingGraphic` y `GlowGraphic`.
 Los ajustes se guardan aparte en PlayerPrefs (`reactor.presentation.v1`), sin
 modificar el archivo de progreso. El modal impide tocar el reactor por detrás;
 la producción automática continúa. Escape/atrás abre o cierra el panel.
+
+
+## Ampliación modular de fase 4
+
+ReactorAssembly organiza cuatro generadores laterales y tres nodos de mejora
+bajo el núcleo. ConduitGraphic une esos módulos al centro; ComboSegmentsGraphic
+representa el estado del combo en doce segmentos. Las compras pulsan el módulo
+existente y los niveles aumentan los segmentos de conexión hasta un máximo de
+seis, sin crear objetos por cada unidad comprada.
+
+CrownGraphic aporta siluetas distintas: placas cian Aurora, doce rayos ámbar
+Corona solar, seis triángulos magenta Vacío violeta y ocho puntas verde claro
+Prisma. Las cinco etapas aumentan la silueta y el tamaño del sprite original.
+Estos recursos son geometría 2D original, no nuevas imágenes de IA. Todos los
+gráficos personalizados requieren RectTransform y CanvasRenderer explícitamente.
+
+Movimiento reducido detiene el desplazamiento por conductos y el giro de
+módulos; efectos suaves oculta los paquetes de energía. Las conexiones, niveles,
+fichas y estado textual siguen accesibles. Los pools anteriores permanecen en
+50 efectos y cuatro voces. Falta la inspección de legibilidad y composición en
+el Editor real y la medición de rendimiento en Android.

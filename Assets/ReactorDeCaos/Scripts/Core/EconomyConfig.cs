@@ -21,6 +21,7 @@ namespace ReactorDeCaos
     [Serializable]
     public sealed class EconomyConfig
     {
+        public RebirthConfig rebirth = new RebirthConfig();
         public const int MaxLevel = 100;
         public const double MaxEnergy = 1e150;
         public double baseTapPower = 1;
@@ -54,6 +55,7 @@ namespace ReactorDeCaos
         public EconomyConfig Copy()
         {
             var copy = (EconomyConfig)MemberwiseClone();
+            copy.rebirth = (rebirth ?? new RebirthConfig()).Copy();
             copy.upgrades = upgrades == null ? null : Array.ConvertAll(upgrades, x => x?.Copy());
             copy.generators = generators == null ? null : Array.ConvertAll(generators, x => x?.Copy());
             copy.milestones = milestones == null ? null : Array.ConvertAll(milestones, x => x?.Copy());
@@ -68,6 +70,8 @@ namespace ReactorDeCaos
 
         public void Validate()
         {
+            if (rebirth == null) throw new ArgumentException("Missing rebirth configuration.");
+            rebirth.Validate();
             foreach (double value in new[] { baseTapPower, tapPowerPerLevel, comboWindow, comboDecayInterval,
                 comboStepMultiplier, comboBaseCap, comboCapPerLevel, overloadChargeRequired, chargePerTap,
                 overloadMultiplier, overloadSeconds, overloadSecondsPerLevel })

@@ -1,0 +1,42 @@
+{
+  "baselineCommit": "e10e4ee73413663efcd6e400005b5d8c911be24a",
+  "economySha256": "76e0544c18c31bba2959adb6b4d0cab4b599fefcb3c2ca823be44b63505a192c",
+  "originalEconomyFieldsUnchanged": true,
+  "phase2ResultsExactMatch": true,
+  "phase2PurchaseTracesExactMatch": true,
+  "coreTests": {
+    "total": 88,
+    "executed": 88,
+    "passed": 88,
+    "failed": 0
+  },
+  "unityApiAssemblies": [
+    "Reactor.Core",
+    "Reactor.EditModeTests",
+    "Reactor.Editor",
+    "Reactor.Persistence",
+    "Reactor.PlayModeTests",
+    "Reactor.Runtime"
+  ],
+  "rebirthSimulation": {
+    "scenarios": 9,
+    "cycles": 54,
+    "budgetsPassed": true
+  },
+  "unityNative": {
+    "exitCode": 198,
+    "message": "No valid Unity Editor license found. Please activate your license.",
+    "editMode": "not run",
+    "playMode": "not run",
+    "visualValidation": "pending",
+    "android": "not tested"
+  },
+  "uniqueGuids": 76,
+  "proceduralGraphicsWithRequiredRenderer": [
+    "RingGraphic.cs",
+    "GlowGraphic.cs",
+    "ConduitGraphic.cs",
+    "ComboSegmentsGraphic.cs",
+    "CrownGraphic.cs"
+  ]
+}

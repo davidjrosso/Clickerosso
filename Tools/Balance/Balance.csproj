@@ -9,5 +9,6 @@
   <ItemGroup>
     <Compile Include="../../Assets/ReactorDeCaos/Scripts/Core/*.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="RebirthSimulation.cs" />
   </ItemGroup>
 </Project>

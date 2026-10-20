@@ -11,14 +11,15 @@ internal static class Program
     private static bool allBudgetsPassed = true;
     // This is a purchasing heuristic, not an alternative economy implementation.
     // Income, prices, effects, unlocks and state transitions all use the real GameEngine.
-    private static double Yield(GameEngine game, EconomyConfig config, ShopEntry item, double taps, double combo)
+    internal static double Yield(GameEngine game, EconomyConfig config, ShopEntry item, double taps, double combo)
     {
         int level = game.Level(item.Id);
         if (level >= EconomyConfig.MaxLevel) return 0;
         double gain = game.EffectAtLevel(item.Id, level + 1) - game.EffectAtLevel(item.Id, level);
         double chargeSeconds = taps > 0 ? Math.Ceiling(config.overloadChargeRequired / config.chargePerTap) / taps : double.PositiveInfinity;
         double multiplier = 1 + (game.OverloadMultiplier - 1) * game.OverloadDuration / (game.OverloadDuration + chargeSeconds);
-        if (item.IsGenerator) return gain * multiplier;
+        if (item.IsGenerator) return gain * multiplier * (1 + (game.Specialization == Specialization.Tap
+            ? taps * combo * game.TapProductionFraction * game.BranchMultiplier(Specialization.Tap) : 0));
         if (item.Id == "tap") return gain * taps * combo * multiplier;
         if (item.Id == "combo") return combo >= game.ComboCap ? gain * taps * game.TapPower * multiplier : 0;
         double nextDuration = game.EffectAtLevel(item.Id, level + 1);
@@ -136,6 +137,7 @@ internal static class Program
         Console.WriteLine("Results: " + Path.Combine(output, "results.json"));
         Console.WriteLine(allBudgetsPassed ? "All phase-2 pacing budgets passed."
             : "Pacing budgets FAILED. Inspect the saved results and purchase CSVs before retuning.");
-        return allBudgetsPassed ? 0 : 1;
+        bool rebirthPassed = RebirthSimulation.Run(config, output);
+        return allBudgetsPassed && rebirthPassed ? 0 : 1;
     }
 }

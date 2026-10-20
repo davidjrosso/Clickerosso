@@ -1,4 +1,4 @@
-# Diseño del MVP
+# Diseño del juego
 
 ## Reglas iniciales
 
@@ -15,13 +15,13 @@
 | Bobina de plasma | +12 energía/s por nivel; coste 500, crecimiento ×1,16 |
 | Turbina cuántica | Primer nivel +60 E/s; incremento siguiente ×1,06; coste 2.500, crecimiento ×1,14 |
 | Núcleo auxiliar | Primer nivel +350 E/s; incremento siguiente ×1,08; coste 12.000, crecimiento ×1,14 |
-| Desbloqueos | 1.000 E históricos: plasma; 5.000: turbina; 25.000: auxiliar |
-| Hitos | Energía histórica hasta 10.000 millones y cinco microgeneradores; doce objetivos registrados |
+| Desbloqueos | 1.000 E del ciclo: plasma; 5.000: turbina; 25.000: auxiliar |
+| Hitos | Energía del ciclo hasta 10.000 millones y cinco microgeneradores; doce objetivos registrados |
 
 Los precios se redondean hacia arriba. Compras y generadores tienen un máximo
 de 100 niveles/unidades. El combo solo multiplica ingresos manuales; la
 sobrecarga multiplica ingresos manuales y automáticos. Los hitos usan el
-total histórico o niveles, no el saldo. La economía limita los recursos a 1e150.
+total generado en el ciclo o niveles, no el saldo. La economía limita los recursos a 1e150.
 
 La configuración de potencia, tiempos, multiplicadores, producción, umbrales
 y curvas de precio se encuentra en `Resources/Economy.asset`, incluido en Git.
@@ -96,7 +96,7 @@ por etapa. Su color/rotación de sobrecarga no altera la economía.
 
 ## Fuera del alcance
 
-Prestigio, anuncios, compras integradas, cuentas, servidores, clasificaciones,
+Anuncios, compras integradas, cuentas, servidores, clasificaciones,
 producción offline, localización multilingüe y publicación en Google Play.
 
 ## Riesgos pendientes
@@ -112,3 +112,22 @@ producción offline, localización multilingüe y publicación en Google Play.
 El balance medido, metodología, recomendaciones y límites están en
 [PHASE2.md](PHASE2.md). Las cifras corresponden al dominio simulado, no a
 mediciones de rendimiento ni pruebas humanas dentro de Unity.
+
+
+## Ampliación autorizada: reactor modular y renacimientos
+
+La fase 4 incorpora colapso controlado, esencia, tres especializaciones,
+maestrías permanentes y colección de skins. Las fórmulas, límites, balance medido
+y política de reinicio están en [PHASE4.md](PHASE4.md). La economía inicial no
+cambia; las bonificaciones nuevas requieren renacimiento o esencia ganada.
+
+El payload de guardado pasa a versión 2; GameEngine migra la versión 1 sin
+modificar saldo, niveles ni hitos del ciclo inicial. Un candidato de renacimiento
+no sustituye al motor activo hasta que SaveStore confirma su escritura.
+Las preferencias permanecen separadas. Los IDs de generadores siguen estables;
+los índices de skins y especializaciones también deben conservarse o migrarse.
+
+ReactorAssembly dibuja un módulo por entrada de tienda, conductos de flujo,
+combo segmentado y coronas procedurales. Los modelos visuales se actualizan desde
+el dominio; no conceden energía. Las skins cambian apariencia sin estadísticas.
+La tienda y las fichas comparten las mismas acciones de compra de ReactorApp.

@@ -18,6 +18,13 @@ namespace ReactorDeCaos
         public GlowGraphic CoreGlow { get; private set; }
         public GlowGraphic CoreFlash { get; private set; }
         public PresentationPreferences Preferences { get; private set; }
+        public ReactorAssembly Assembly { get; private set; }
+        public ReactorModulePanel ModulePanel { get; private set; }
+        public RebirthPanel Progression { get; private set; }
+        public Button ProgressionButton { get; private set; }
+        public int Skin { get; private set; }
+        private TextMeshProUGUI progressionLabel;
+        public Sprite Icon(string id) { return sprites.Icon(id); }
         public PresentationMenu Menu { get; private set; }
         public Button SettingsButton { get; private set; }
         private PresentationSprites sprites;
@@ -101,7 +108,7 @@ namespace ReactorDeCaos
 
             RectTransform reactorViewport = Rect("ReactorViewport", safe, .08f, .515f, .92f, .765f);
             reactorViewport.gameObject.AddComponent<RectMask2D>();
-            CoreVisual = Rect("CoreVisual", reactorViewport, .16f, .04f, .84f, .96f);
+            CoreVisual = Rect("CoreVisual", reactorViewport, .29f, .20f, .71f, .86f);
             CoreGlow = Rect("CoreGlow", CoreVisual, -.06f, -.06f, 1.06f, 1.06f).gameObject.AddComponent<GlowGraphic>();
             CoreGlow.raycastTarget = false;
             CoreImage = Image("CoreSprite", CoreVisual, Color.white, .02f, .02f, .98f, .98f);
@@ -123,8 +130,9 @@ namespace ReactorDeCaos
                 ring.gameObject.SetActive(false);
                 EvolutionRings[i] = ring;
             }
-            TapButton = Button("TapReactor", safe, new Color(0, 0, 0, 0), .16f, .49f, .84f, .77f);
+            TapButton = Button("TapReactor", reactorViewport, new Color(0, 0, 0, 0), .27f, .20f, .73f, .86f);
             TapButton.onClick.AddListener(app.Tap);
+            Assembly = new ReactorAssembly(this, reactorViewport, app.Game);
             EffectsRoot = Rect("Effects", reactorViewport, 0, 0, 1, 1);
             tapHint = Label("TapHint", safe, "TOCA PARA GENERAR", 23, Color.white, .15f, .48f, .85f, .51f);
             milestone = Label("Milestone", safe, "", 22, Muted, .05f, .447f, .95f, .479f);
@@ -134,7 +142,7 @@ namespace ReactorDeCaos
             Image track = Image("ChargeTrack", safe, new Color(.12f, .12f, .2f), .05f, .359f, .95f, .365f);
             chargeFill = Image("Charge", track.transform, Violet, 0, 0, 0, 1).rectTransform;
             Label("ShopTitle", safe, "INGENIERÍA  ·  DESLIZA PARA VER MÁS", 26, Muted, .05f, .332f, .95f, .358f, TextAlignmentOptions.Left);
-            RectTransform viewport = Rect("ShopViewport", safe, .045f, .052f, .955f, .326f);
+            RectTransform viewport = Rect("ShopViewport", safe, .045f, .10f, .955f, .326f);
             viewport.gameObject.AddComponent<RectMask2D>();
             Image viewportImage = viewport.gameObject.AddComponent<Image>();
             viewportImage.color = new Color(0, 0, 0, .01f);
@@ -170,7 +178,10 @@ namespace ReactorDeCaos
                 icon.preserveAspect = true;
                 shopText[i] = Label("Description", button.transform, "", 36, Color.white, .16f, .05f, .98f, .96f, TextAlignmentOptions.Left);
             }
-            notice = Label("Notice", safe, "", 20, Warm, .045f, .007f, .955f, .044f);
+            notice = Label("Notice", safe, "", 20, Warm, .045f, .003f, .955f, .031f);
+            ProgressionButton = Button("OpenProgression", safe, new Color(.15f, .065f, .24f), .045f, .037f, .955f, .093f);
+            progressionLabel = Label("ProgressionButtonText", ProgressionButton.transform, "", 25, Color.white, .03f, .04f, .97f, .96f);
+            ProgressionButton.onClick.AddListener(() => Progression.Open());
             Image card = Image("RewardCard", safe, Panel, .05f, .447f, .95f, .51f);
             rewardCard = card.gameObject.AddComponent<CanvasGroup>();
             rewardCard.blocksRaycasts = false;
@@ -183,6 +194,8 @@ namespace ReactorDeCaos
             settingsIcon.sprite = sprites.Icon("settings"); settingsIcon.preserveAspect = true;
             Label("SettingsLabel", SettingsButton.transform, "AJUSTES", 24, Cyan, .02f, .03f, .98f, .36f);
             Menu = new PresentationMenu(this, safe, SettingsButton, Preferences);
+            ModulePanel = new ReactorModulePanel(this, safe, app);
+            Progression = new RebirthPanel(this, safe, app);
             Refresh(app.Game, true);
         }
 
@@ -190,6 +203,32 @@ namespace ReactorDeCaos
         {
             sprites?.Dispose();
             if (ownsRuntimeFont) ReactorFont.Release(Font);
+        }
+
+        public void ClosePanels()
+        {
+            if (Menu != null && Menu.IsOpen) Menu.SetOpen(false);
+            ModulePanel?.Close(); Progression?.Close();
+        }
+        public void OpenModule(string id) { ModulePanel.Open(id); }
+        public void Back()
+        {
+            if (Progression.IsConfirming) Progression.CancelConfirmation();
+            else if (Progression.IsOpen) Progression.Close();
+            else if (ModulePanel.IsOpen) ModulePanel.Close();
+            else Menu.SetOpen(!Menu.IsOpen);
+        }
+        public void InvalidateEconomy()
+        {
+            for (int i = 0; i < lastLevels.Length; i++) lastLevels[i] = -1;
+            nextTextUpdate = 0;
+        }
+        public void ResetCycle()
+        {
+            ClosePanels(); InvalidateEconomy(); lastStage = -1;
+            Assembly.Reset();
+            rewardCard.gameObject.SetActive(false);
+            tapHint.gameObject.SetActive(true); milestone.gameObject.SetActive(true);
         }
 
         public void ShowNotice(string text)
@@ -228,6 +267,7 @@ namespace ReactorDeCaos
         public void Refresh(GameEngine game, bool force = false)
         {
             ApplySafeArea();
+            Skin = game.Skin;
             float progress = game.Overload.Active
                 ? (float)(game.Overload.Remaining / game.Overload.ActiveDuration)
                 : (float)game.Overload.ChargeFraction;
@@ -244,8 +284,12 @@ namespace ReactorDeCaos
             if (game.Stage != lastStage)
             {
                 lastStage = game.Stage;
-                stage.text = new[] { "IGNICIÓN I", "PLASMA II", "CUÁNTICO III", "DOBLE NÚCLEO IV", "CAOS V" }[game.Stage];
+                stage.text = RebirthCatalog.FormName(game.Stage);
             }
+            progressionLabel.text = game.CanRebirth ? "RENACIMIENTO DISPONIBLE · +" + game.RebirthReward + " ESENCIAS"
+                : "EVOLUCIÓN · " + NumberFormat.Compact(game.Lifetime) + " / " + NumberFormat.Compact(game.RebirthThreshold) + " E";
+            progressionLabel.text += "\nMAESTRÍAS Y SKINS · " + game.Essence + " ESENCIA";
+            ModulePanel.Refresh(); Progression.Refresh();
             MilestoneDefinition goal = game.NextGoal();
             milestone.text = goal == null ? "HITOS COMPLETADOS · sigue ampliando tu reactor"
                 : goal.title + "  " + NumberFormat.Compact(game.GoalProgress(goal)) + " / " + NumberFormat.Compact(goal.target);
@@ -301,7 +345,7 @@ namespace ReactorDeCaos
             return rect;
         }
 
-        private static Image Image(string name, Transform parent, Color color, float x0, float y0, float x1, float y1)
+        internal static Image Image(string name, Transform parent, Color color, float x0, float y0, float x1, float y1)
         {
             var image = Rect(name, parent, x0, y0, x1, y1).gameObject.AddComponent<Image>();
             image.color = color; image.raycastTarget = false;

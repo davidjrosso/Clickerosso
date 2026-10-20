@@ -278,3 +278,37 @@ Para aplicar el arreglo a una copia existente: detener Play, reemplazar
 Scripts/Runtime/RingGraphic.cs y GlowGraphic.cs por las versiones corregidas,
 esperar la recompilación, limpiar la consola y volver a Play en Main. No hace
 falta añadir componentes manualmente ni borrar Library o los guardados.
+
+
+## Fase 4 — módulos y renacimientos
+
+La ampliación solicitada incorpora siete módulos interactivos, conductos, buffos
+visibles, cinco formas, cuatro skins, esencia, tres especializaciones y maestrías.
+Se conserva la arquitectura y se migra el payload v1 a v2 sin reiniciar el ciclo.
+
+Ejecutado en esta entrega:
+
+- `Tools/test-core.sh`: **88 aprobadas, 0 fallidas, 0 omitidas**, incluidas
+  migración, recompensa basada en producción, límites, maestrías, skins sin efecto
+  económico, preservación del resto numérico, recarga desde disco y colapso con
+  fallo de escritura que mantiene intacto el motor anterior.
+- `Tools/check-unity-api.py`: seis ensamblados compilados contra API oficiales.
+- `Tools/simulate-balance.sh`: tres perfiles de 30 minutos con JSON de resultados
+  y trazas de compras idénticos a fase 2, más **54 ciclos** distribuidos en nueve
+  combinaciones de especialización/estilo. Todos cumplen los presupuestos del
+  simulador. Los costes y parámetros originales del asset no cambian; se añade
+  únicamente la sección `rebirth`.
+- Metadatos completos y GUID únicos; los cinco gráficos procedurales declaran
+  RequireComponent(RectTransform, CanvasRenderer), conservando la corrección del
+  error informado por el usuario.
+- `Tools/test-unity.sh`: nuevo intento, **salida 198** en preparación:
+  `No valid Unity Editor license found. Please activate your license.`
+
+Las pruebas PlayMode nuevas de raycasts, fichas, objetos acotados, cancelación,
+confirmación, persistencia y maestrías se compilaron pero no se ejecutaron.
+No hay verificación visual en Main ni medición en Android. Los ajustes incidentales
+creados por el intento fallido del Editor se archivaron fuera del repositorio.
+
+Evidencia estructurada y salidas del simulador: [Phase4/checks.json](Phase4/checks.json)
+y [Phase4/rebirth.json](Phase4/rebirth.json). Fórmulas, tiempos medidos, limitaciones
+y recorrido para probar en Unity: [PHASE4.md](PHASE4.md).

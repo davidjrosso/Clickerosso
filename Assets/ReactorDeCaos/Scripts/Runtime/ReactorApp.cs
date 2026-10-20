@@ -52,7 +52,7 @@ namespace ReactorDeCaos
         private void Update()
         {
             if (!initialized || paused) return;
-            if (Input.GetKeyDown(KeyCode.Escape)) Hud.Menu.SetOpen(!Hud.Menu.IsOpen);
+            if (Input.GetKeyDown(KeyCode.Escape)) Hud.Back();
             if (skipNextFrame) { skipNextFrame = false; return; }
             // Time spent suspended never becomes offline production.
             float seconds = Mathf.Min(Time.unscaledDeltaTime, 86400f);
@@ -78,6 +78,7 @@ namespace ReactorDeCaos
             }
             Hud.Refresh(Game);
             feedback.Animate(Game.Stage, Game.Overload.Active, ComboIntensity);
+            Hud.Assembly.Animate(Game);
         }
 
         public void Tap()
@@ -88,6 +89,7 @@ namespace ReactorDeCaos
                 Hud.ShowNotice("Combo máximo ×" + NumberFormat.Stat(Game.ComboCap));
             previousCombo = Game.ComboMultiplier;
             feedback.Tap(reward, Game.Overload.Active, ComboIntensity);
+            Hud.Assembly.Tap();
             Hud.Refresh(Game, true);
         }
 
@@ -97,7 +99,9 @@ namespace ReactorDeCaos
         {
             if (!initialized || paused || !Game.Buy(item)) return;
             feedback.Purchase();
+            Hud.Assembly.Install(item);
             Hud.ShowNotice("Mejora instalada.");
+            Hud.InvalidateEconomy();
             Hud.Refresh(Game, true);
             Save();
         }
@@ -110,19 +114,58 @@ namespace ReactorDeCaos
             Hud.Refresh(Game, true);
         }
 
+        public void BuyMastery(Specialization branch)
+        {
+            if (!initialized || paused || !Game.BuyMastery(branch)) return;
+            feedback.Purchase(); Hud.InvalidateEconomy(); Hud.Refresh(Game, true);
+            Hud.Progression.ShowMessage(Save() ? "Maestría permanente instalada." : "No se pudo guardar. Se reintentará; conserva la sesión abierta.");
+        }
+
+        public void SelectSkin(int skin)
+        {
+            if (!initialized || paused || !Game.SelectSkin(skin)) return;
+            Hud.Refresh(Game, true); Hud.Assembly.Animate(Game);
+            Hud.Progression.ShowMessage(Save() ? "Skin equipada. La economía no cambia." : "No se pudo guardar la selección.");
+        }
+
+        public bool Rebirth(Specialization branch, int quotedReward, int quotedCycle)
+        {
+            if (!initialized || paused) return false;
+            if (Game.RebirthCount != quotedCycle || Game.RebirthReward != quotedReward || !Game.CanRebirth)
+            {
+                Hud.Progression.ShowMessage("La recompensa ha cambiado. Revisa el colapso de nuevo.");
+                return false;
+            }
+            if (!RebirthTransaction.TryCommit(Game, saves, branch, quotedReward, out var next))
+            {
+                Hud.Progression.ShowMessage("No se pudo guardar el colapso. Tu reactor se conserva.");
+                return false;
+            }
+            Game = next;
+            previousMilestones = Game.CompletedMilestoneCount; previousCombo = 1; previousReady = false;
+            saveTimer = 0; nextMilestoneNotice = Time.unscaledTime + 3.5f;
+            Hud.ResetCycle(); Hud.Refresh(Game, true);
+            Hud.ShowReward(new MilestoneDefinition { title = "RENACIMIENTO " + Game.RebirthCount,
+                rewardDescription = "+" + quotedReward + " esencia · " + RebirthCatalog.SkinName(Game.Skin) });
+            feedback.Reborn(); Hud.Assembly.Animate(Game);
+            return true;
+        }
+
         // Visual normalization only: the engine remains the sole source of rewards.
         private float ComboIntensity => Game.ComboCap <= 1 ? 0
             : Mathf.Clamp01((float)((Game.ComboMultiplier - 1) / (Game.ComboCap - 1)));
 
-        private void Save()
+        private bool Save()
         {
-            if (!initialized) return;
+            if (!initialized) return false;
             saveTimer = 0;
             if (saves != null && Game != null && !saves.Save(Game.Snapshot()))
             {
                 Hud.ShowNotice("No se pudo guardar. Comprueba el espacio disponible.");
                 Debug.LogWarning("Reactor save failed: " + saves.LastIssue);
+                return false;
             }
+            return true;
         }
 
         private void OnApplicationPause(bool value)
