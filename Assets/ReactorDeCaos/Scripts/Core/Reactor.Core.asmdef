@@ -1,0 +1,5 @@
+{
+  "name": "Reactor.Core",
+  "rootNamespace": "ReactorDeCaos",
+  "noEngineReferences": true
+}

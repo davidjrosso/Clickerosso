@@ -1,0 +1,6 @@
+{
+  "name": "Reactor.EditModeTests",
+  "references": ["Reactor.Core", "Reactor.Persistence", "Reactor.Runtime"],
+  "includePlatforms": ["Editor"],
+  "optionalUnityReferences": ["TestAssemblies"]
+}

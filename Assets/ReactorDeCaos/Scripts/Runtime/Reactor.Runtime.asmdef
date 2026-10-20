@@ -1,0 +1,5 @@
+{
+  "name": "Reactor.Runtime",
+  "rootNamespace": "ReactorDeCaos",
+  "references": ["Reactor.Core", "Reactor.Persistence", "UnityEngine.UI", "Unity.TextMeshPro"]
+}

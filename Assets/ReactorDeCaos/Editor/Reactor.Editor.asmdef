@@ -1,0 +1,5 @@
+{
+  "name": "Reactor.Editor",
+  "references": ["Reactor.Core", "Reactor.Runtime", "Unity.TextMeshPro"],
+  "includePlatforms": ["Editor"]
+}

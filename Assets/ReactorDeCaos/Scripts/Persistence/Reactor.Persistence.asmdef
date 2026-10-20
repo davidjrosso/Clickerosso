@@ -1,0 +1,6 @@
+{
+  "name": "Reactor.Persistence",
+  "rootNamespace": "ReactorDeCaos",
+  "references": ["Reactor.Core"],
+  "noEngineReferences": true
+}

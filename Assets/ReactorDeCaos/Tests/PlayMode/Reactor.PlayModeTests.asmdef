@@ -1,0 +1,5 @@
+{
+  "name": "Reactor.PlayModeTests",
+  "references": ["Reactor.Core", "Reactor.Runtime", "UnityEngine.UI", "Unity.TextMeshPro"],
+  "optionalUnityReferences": ["TestAssemblies"]
+}
