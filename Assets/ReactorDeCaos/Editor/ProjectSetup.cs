@@ -41,7 +41,18 @@ namespace ReactorDeCaos.Editor
         [MenuItem("Reactor de Caos/Prepare Project")]
         public static void Prepare()
         {
+            if (EditorApplication.isPlayingOrWillChangePlaymode)
+            {
+                Debug.LogWarning("Detén Play antes de ejecutar Tools > Reactor de Caos > Prepare Project.");
+                return;
+            }
             BeginPreparation(null, false);
+        }
+
+        [MenuItem("Tools/Reactor de Caos/Prepare Project")]
+        public static void PrepareFromTools()
+        {
+            Prepare();
         }
 
         // Batch entry points own the exit code; callers must NOT pass -quit,
@@ -160,15 +171,8 @@ namespace ReactorDeCaos.Editor
         {
             if (AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FontPath) == null)
             {
-                Font source = AssetDatabase.LoadAssetAtPath<Font>("Assets/ReactorDeCaos/Resources/Fonts/DejaVuSans.ttf");
-                if (source == null) throw new FileNotFoundException("Bundled font is missing.");
-                TMP_FontAsset font = TMP_FontAsset.CreateFontAsset(source);
+                TMP_FontAsset font = ReactorFont.CreateRuntimeFont();
                 font.name = "ReactorFont";
-                string characters = "";
-                for (char c = ' '; c <= '~'; c++) characters += c;
-                characters += "ÁÉÍÓÚÜÑáéíóúüñ¿¡×·—";
-                if (!font.TryAddCharacters(characters, out string missing))
-                    throw new InvalidOperationException("Font glyph generation failed: " + missing);
                 AssetDatabase.CreateAsset(font, FontPath);
                 AssetDatabase.AddObjectToAsset(font.material, font);
                 foreach (Texture2D atlas in font.atlasTextures) AssetDatabase.AddObjectToAsset(atlas, font);

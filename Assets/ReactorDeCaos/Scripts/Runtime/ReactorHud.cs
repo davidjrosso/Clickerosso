@@ -17,6 +17,7 @@ namespace ReactorDeCaos
         public RectTransform CoreVisual { get; private set; }
         public RingGraphic Orbit { get; private set; }
         public TMP_FontAsset Font { get; private set; }
+        private bool ownsRuntimeFont;
         public Button TapButton { get; private set; }
         public Button OverloadButton { get; private set; }
         public Button[] ShopButtons { get; private set; }
@@ -37,8 +38,11 @@ namespace ReactorDeCaos
         public void Build(ReactorApp app)
         {
             Font = Resources.Load<TMP_FontAsset>("Fonts/ReactorFont");
-            if (Font == null) throw new InvalidOperationException(
-                "Missing ReactorFont. Run Reactor de Caos > Prepare Project before Play.");
+            if (Font == null)
+            {
+                Font = ReactorFont.CreateRuntimeFont();
+                ownsRuntimeFont = true;
+            }
             var cameraObject = new GameObject("Camera", typeof(Camera), typeof(AudioListener));
             cameraObject.transform.SetParent(transform);
             Camera camera = cameraObject.GetComponent<Camera>();
@@ -129,6 +133,11 @@ namespace ReactorDeCaos
             notice = Label("Notice", safe, "", 20, Warm, .045f, .007f, .955f, .044f);
             EffectsRoot = Rect("Effects", safe, 0, 0, 1, 1);
             Refresh(app.Game, true);
+        }
+
+        private void OnDestroy()
+        {
+            if (ownsRuntimeFont) ReactorFont.Release(Font);
         }
 
         public void ShowNotice(string text)

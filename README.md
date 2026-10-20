@@ -16,7 +16,8 @@ No hay APK validado. Consulta [la evidencia por fase](Docs/VALIDATION.md).
 2. Añade esta carpeta a Unity Hub. Permite resolver los paquetes fijados.
 3. La preparación inicial importa los recursos esenciales de TMP, crea el
    atlas de fuente y los datos económicos. Si hace falta repetirla:
-   **Reactor de Caos → Prepare Project**.
+   **Tools → Reactor de Caos → Prepare Project**, en la barra de menús
+   superior de Unity (junto a File/Edit/Window). Detén Play antes de usarlo.
 4. Abre `Assets/ReactorDeCaos/Scenes/Main.unity` y pulsa **Play**.
 5. Toca el núcleo central. Tras cargar el medidor, pulsa **Activar sobrecarga**.
    Desplaza la tienda para acceder a las tres mejoras y los dos generadores.
@@ -25,10 +26,15 @@ Se usa entrada táctil/ratón mediante uGUI. El guardado está en
 `Application.persistentDataPath/reactor-save.json`, con copia `.bak`.
 No se otorgan recompensas por tiempo desconectado.
 
+Si todavía no existe `ReactorFont.asset`, el juego genera una fuente dinámica
+desde el archivo DejaVuSans.ttf incluido en Resources. Esta alternativa no
+necesita ejecutar el menú de preparación, pero sí necesita TMP Essentials.
+El archivo de fuente persistente sigue generándose al preparar el proyecto.
+
 ### Si faltan recursos de TextMesh Pro
 
 Espera a que termine de importar los paquetes y ejecuta
-**Reactor de Caos → Prepare Project**. La preparación espera al evento de
+**Tools → Reactor de Caos → Prepare Project**. La preparación espera al evento de
 finalización de TMP Essentials antes de generar la fuente; termina cuando
 aparece `Reactor project prepared` en la consola.
 

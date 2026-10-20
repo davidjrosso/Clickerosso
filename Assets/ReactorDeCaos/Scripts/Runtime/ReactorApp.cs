@@ -15,6 +15,7 @@ namespace ReactorDeCaos
         private bool skipNextFrame;
         private int previousStage;
         private bool previousReady;
+        private bool initialized;
 
         private void Awake()
         {
@@ -26,9 +27,19 @@ namespace ReactorDeCaos
             Game = new GameEngine(state, settings != null ? settings.values : null);
             previousStage = Game.Stage;
             Hud = gameObject.AddComponent<ReactorHud>();
-            Hud.Build(this);
-            feedback = gameObject.AddComponent<ReactorFeedback>();
-            feedback.Initialize(Hud);
+            try
+            {
+                Hud.Build(this);
+                feedback = gameObject.AddComponent<ReactorFeedback>();
+                feedback.Initialize(Hud);
+                initialized = true;
+            }
+            catch (Exception error)
+            {
+                enabled = false;
+                Debug.LogException(error, this);
+                return;
+            }
             if (saves.RecoveredBackup) Hud.ShowNotice("Progreso recuperado desde la copia de seguridad.");
             else if (saves.LastIssue != null) Hud.ShowNotice("No se pudo leer el guardado. Se inició una partida nueva.");
             else Hud.ShowNotice("Toca el núcleo. Alimenta el caos.");
@@ -36,7 +47,7 @@ namespace ReactorDeCaos
 
         private void Update()
         {
-            if (paused) return;
+            if (!initialized || paused) return;
             if (skipNextFrame) { skipNextFrame = false; return; }
             // Time spent suspended never becomes offline production.
             float seconds = Mathf.Min(Time.unscaledDeltaTime, 86400f);
@@ -58,7 +69,7 @@ namespace ReactorDeCaos
 
         public void Tap()
         {
-            if (paused) return;
+            if (!initialized || paused) return;
             double reward = Game.Tap();
             feedback.Tap(reward, Game.Overload.Active);
             Hud.Refresh(Game, true);
@@ -66,7 +77,7 @@ namespace ReactorDeCaos
 
         public void Buy(Purchase item)
         {
-            if (paused || !Game.Buy(item)) return;
+            if (!initialized || paused || !Game.Buy(item)) return;
             feedback.Purchase();
             Hud.ShowNotice("Mejora instalada.");
             Hud.Refresh(Game, true);
@@ -75,7 +86,7 @@ namespace ReactorDeCaos
 
         public void ActivateOverload()
         {
-            if (paused || !Game.ActivateOverload()) return;
+            if (!initialized || paused || !Game.ActivateOverload()) return;
             feedback.Celebrate();
             Hud.ShowNotice("SOBRECARGA · producción y toques ×3");
             Hud.Refresh(Game, true);
@@ -83,6 +94,7 @@ namespace ReactorDeCaos
 
         private void Save()
         {
+            if (!initialized) return;
             saveTimer = 0;
             if (saves != null && Game != null && !saves.Save(Game.Snapshot()))
             {

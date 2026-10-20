@@ -27,7 +27,10 @@
 - `UNITY_EDITOR=/path/to/Unity bash Tools/test-unity.sh` runs EditMode/PlayMode.
 - `UNITY_EDITOR=/path/to/Unity bash Tools/build-android.sh` builds a debug APK.
 - Open `Assets/ReactorDeCaos/Scenes/Main.unity` and press Play.
-- `Reactor de Caos/Prepare Project` prepares TMP font assets and Android settings.
+- `Tools/Reactor de Caos/Prepare Project` prepares TMP font assets and Android settings
+  from Unity's top menu bar; the original `Reactor de Caos` menu also remains.
+- Playback falls back to a dynamic font from the bundled DejaVuSans.ttf if the
+  generated ReactorFont asset is absent. TMP Essentials are still required.
 
 ## Assets and performance
 - Original generated background provenance is in Art/PROVENANCE.md.

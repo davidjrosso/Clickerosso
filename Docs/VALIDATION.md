@@ -130,3 +130,26 @@ El usuario comunicó recursos esenciales TMP ausentes y errores de
 
 No se ha ejecutado el Editor localmente para validar esta corrección.
 Las pruebas anteriores de .NET no prueban el importador ni estos nuevos casos.
+
+## Corrección de ReactorFont ausente y acceso al menú
+
+El usuario consiguió entrar en Play, pero Awake falló porque ReactorFont.asset
+todavía no existía y no encontró el menú de preparación.
+
+- Se añadió `Tools > Reactor de Caos > Prepare Project` en la barra superior,
+  conservando también el menú original. La preparación indica que hay que
+  detener Play si se invoca durante la ejecución.
+- ReactorHud usa una fuente dinámica creada desde DejaVuSans.ttf cuando falta
+  el asset generado. El Editor usa la misma función para crear la versión
+  persistente; TMP Essentials siguen siendo un requisito.
+- La fuente creada en ejecución se libera al destruir el HUD; los assets
+  cargados desde Resources no se destruyen.
+- Si hay otro fallo de inicialización, se detiene Update y no se guarda un
+  estado parcialmente inicializado.
+- Se añadió un caso PlayMode que crea la fuente alternativa y genera geometría
+  de texto con números y caracteres españoles, sin borrar assets del usuario.
+
+Se revisaron las API de creación y liberación de TMP_FontAsset en el código
+oficial de uGUI/6000.0. Se comprobaron los archivos, metadatos y ZIP.
+**El nuevo caso PlayMode y el arranque corregido no se han ejecutado en Unity
+en este entorno.** No hubo cambios en economía ni persistencia.
