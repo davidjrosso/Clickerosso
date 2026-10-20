@@ -4,11 +4,14 @@ MVP de un arcade incremental offline para Android, con Unity 2D y C#.
 Toca el núcleo, encadena combos, activa la sobrecarga e invierte en mejoras
 y generadores automáticos.
 
-**Estado de fase 1:** 53 pruebas de economía y persistencia aprobadas con .NET,
-incluida una simulación de diez minutos. Los seis ensamblados compilan contra
+**Estado de fase 2:** cuatro familias de generadores, doce hitos persistentes y
+evolución visual por capas. **69 pruebas** de economía y persistencia aprobadas
+con .NET; simulaciones de 30 minutos con tres estilos de juego.
+Los seis ensamblados compilan contra
 las API oficiales de Unity 6000.0.85f1. El Editor está instalado, pero su arranque
 se detuvo por falta de licencia; PlayMode y renderizado siguen sin verificar.
-Consulta [cómo probar el núcleo](Docs/PHASE1.md) y [la evidencia](Docs/VALIDATION.md).
+Consulta [economía, resultados y pruebas de fase 2](Docs/PHASE2.md) y
+[la evidencia](Docs/VALIDATION.md).
 
 ## Abrir y jugar
 
@@ -22,14 +25,15 @@ Consulta [cómo probar el núcleo](Docs/PHASE1.md) y [la evidencia](Docs/VALIDAT
 4. Usa **Tools → Reactor de Caos → Open Main Scene** o abre
    `Assets/ReactorDeCaos/Scenes/Main.unity` y pulsa **Play**.
 5. Toca el núcleo central. Tras cargar el medidor, pulsa **Activar sobrecarga**.
-   Desplaza la tienda para acceder a las tres mejoras y los dos generadores.
+   Desplaza la tienda para acceder a las tres mejoras y los cuatro generadores.
 
 Se usa entrada táctil/ratón mediante uGUI. El guardado está en
 `Application.persistentDataPath/reactor-save.json`, con copia `.bak`.
 No se otorgan recompensas por tiempo desconectado.
 
 Selecciona `Assets/ReactorDeCaos/Resources/Economy.asset` para editar en el
-Inspector la potencia, curva de combo, sobrecarga, producción y precios.
+Inspector la potencia, curva de combo, sobrecarga y los catálogos `upgrades`,
+`generators` y `milestones`, incluidos producción, precios y condiciones de desbloqueo.
 Los cambios se aplican al comenzar una nueva sesión de Play. No sustituyen
 los niveles comprados que ya estén guardados.
 
@@ -62,11 +66,16 @@ Desde la raíz:
 ```bash
 bash Tools/install-dotnet.sh
 bash Tools/test-core.sh
+python3 -m pip install -r Tools/requirements-balance.txt
+bash Tools/simulate-balance.sh
 ```
 
 El instalador Linux x86-64 verifica el SDK .NET 8.0.426 con SHA-512 del
 catálogo oficial y usa `/workspace/toolchains`, fuera del repositorio.
 Las dependencias NUnit se restauran con `Tests/packages.lock.json`.
+Las simulaciones leen el asset económico real, ejecutan GameEngine y escriben
+JSON/CSV en `TestResults/Balance`. Se conservan los resultados de esta entrega
+en `Docs/Balance`, junto al hash del asset utilizado.
 En este sandbox el runner necesita permiso para crear mutex del sistema;
 la ejecución autorizada fuera del sandbox ha permitido completar las pruebas.
 

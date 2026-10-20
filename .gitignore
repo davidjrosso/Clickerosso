@@ -10,6 +10,9 @@
 *.csproj
 *.sln
 !Tests/CoreTests.csproj
+!Tools/Balance/Balance.csproj
+Tools/Balance/bin/
+Tools/Balance/obj/
 Tests/bin/
 Tests/obj/
 *.user

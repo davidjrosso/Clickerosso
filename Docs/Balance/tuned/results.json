@@ -1,0 +1,693 @@
+[
+  {
+    "profile": "active",
+    "seconds": 1800,
+    "taps": 3600,
+    "purchases": 229,
+    "firstPurchaseSeconds": 7,
+    "firstUpgradeSeconds": 7,
+    "firstGeneratorPurchaseSeconds": {
+      "coil": 19,
+      "plasma": 28,
+      "quantum": 60,
+      "auxiliary": 96
+    },
+    "generatorUnlockSeconds": {
+      "coil": 0.1,
+      "plasma": 22,
+      "quantum": 46.5,
+      "auxiliary": 88.3
+    },
+    "maxPurchaseGapSeconds": 111,
+    "p95PurchaseGapSeconds": 44,
+    "activations": 47,
+    "boostedSeconds": 1231.9999999999702,
+    "finalEnergy": 13910525.37964852,
+    "lifetimeEnergy": 1229905230.3796484,
+    "baseProduction": 664346.9832399746,
+    "levels": {
+      "tap": 19,
+      "combo": 12,
+      "overload": 23,
+      "coil": 30,
+      "plasma": 30,
+      "quantum": 50,
+      "auxiliary": 65
+    },
+    "milestones": {
+      "ignition": 13.5,
+      "plasma": 22,
+      "micro_array": 39,
+      "quantum": 46.5,
+      "singularity": 64.6,
+      "auxiliary": 88.3,
+      "mastery": 121.1,
+      "star": 188.8,
+      "tide": 314.2,
+      "horizon": 657.3,
+      "resonance": 1651
+    },
+    "growth": [
+      {
+        "seconds": 60,
+        "balance": 78.25000000000237,
+        "lifetime": 7427.250000000003,
+        "baseProduction": 114
+      },
+      {
+        "seconds": 120,
+        "balance": 7928.603862400034,
+        "lifetime": 93807.60386240004,
+        "baseProduction": 1969.3647775999998
+      },
+      {
+        "seconds": 180,
+        "balance": 60317.63932735033,
+        "lifetime": 882533.6393273503,
+        "baseProduction": 11497.34676112968
+      },
+      {
+        "seconds": 240,
+        "balance": 70490.60240905156,
+        "lifetime": 3343130.6024090517,
+        "baseProduction": 27424.851769226345
+      },
+      {
+        "seconds": 300,
+        "balance": 969480.7908474848,
+        "lifetime": 8000074.790847485,
+        "baseProduction": 42435.66130627466
+      },
+      {
+        "seconds": 360,
+        "balance": 1050555.8187574602,
+        "lifetime": 15678612.81875746,
+        "baseProduction": 64070.264250580534
+      },
+      {
+        "seconds": 420,
+        "balance": 425862.1369309287,
+        "lifetime": 26578577.136930928,
+        "baseProduction": 87976.11405686775
+      },
+      {
+        "seconds": 480,
+        "balance": 4038695.340249679,
+        "lifetime": 39220832.34024968,
+        "baseProduction": 103609.4647156675
+      },
+      {
+        "seconds": 540,
+        "balance": 2907079.6004329827,
+        "lifetime": 57615648.600432985,
+        "baseProduction": 131033.96588514374
+      },
+      {
+        "seconds": 600,
+        "balance": 2095140.5125363886,
+        "lifetime": 76139161.51253639,
+        "baseProduction": 153409.21016144787
+      },
+      {
+        "seconds": 660,
+        "balance": 3051466.4933846467,
+        "lifetime": 101494922.49338464,
+        "baseProduction": 178980.50949761082
+      },
+      {
+        "seconds": 720,
+        "balance": 12181708.992057402,
+        "lifetime": 126061557.9920574,
+        "baseProduction": 193556.04521742268
+      },
+      {
+        "seconds": 780,
+        "balance": 4767629.482769552,
+        "lifetime": 158710771.48276955,
+        "baseProduction": 226250.62661287255
+      },
+      {
+        "seconds": 840,
+        "balance": 11458767.891978063,
+        "lifetime": 189475644.89197806,
+        "baseProduction": 244562.64659214532
+      },
+      {
+        "seconds": 900,
+        "balance": 24369002.04666881,
+        "lifetime": 229380687.0466688,
+        "baseProduction": 263721.7608845469
+      },
+      {
+        "seconds": 960,
+        "balance": 26783225.12104766,
+        "lifetime": 266444194.12104765,
+        "baseProduction": 285018.7873965681
+      },
+      {
+        "seconds": 1020,
+        "balance": 36601307.3325048,
+        "lifetime": 313696631.3325048,
+        "baseProduction": 308018.15316802653
+      },
+      {
+        "seconds": 1080,
+        "balance": 38725054.529924646,
+        "lifetime": 359204831.52992463,
+        "baseProduction": 332832.4247679856
+      },
+      {
+        "seconds": 1140,
+        "balance": 41463972.4734373,
+        "lifetime": 412291278.4734373,
+        "baseProduction": 359628.8896567324
+      },
+      {
+        "seconds": 1200,
+        "balance": 38443341.71154948,
+        "lifetime": 469996192.71154946,
+        "baseProduction": 387762.28227625665
+      },
+      {
+        "seconds": 1260,
+        "balance": 25669912.983094037,
+        "lifetime": 524719695.98309404,
+        "baseProduction": 418938.4752201036
+      },
+      {
+        "seconds": 1320,
+        "balance": 13933773.958916081,
+        "lifetime": 591215629.9589161,
+        "baseProduction": 452579.141021163
+      },
+      {
+        "seconds": 1380,
+        "balance": 75513816.13779394,
+        "lifetime": 652795672.1377939,
+        "baseProduction": 452579.141021163
+      },
+      {
+        "seconds": 1440,
+        "balance": 51108813.88597343,
+        "lifetime": 726083544.8859735,
+        "baseProduction": 488907.54255331436
+      },
+      {
+        "seconds": 1500,
+        "balance": 26630928.687468294,
+        "lifetime": 804224567.6874683,
+        "baseProduction": 527182.7126195226
+      },
+      {
+        "seconds": 1560,
+        "balance": 96248686.75324489,
+        "lifetime": 873842325.7532449,
+        "baseProduction": 527182.7126195226
+      },
+      {
+        "seconds": 1620,
+        "balance": 61490472.449809864,
+        "lifetime": 960808144.4498099,
+        "baseProduction": 569460.8512945701
+      },
+      {
+        "seconds": 1680,
+        "balance": 6468432.210207133,
+        "lifetime": 1046939531.2102071,
+        "baseProduction": 615088.6419635507
+      },
+      {
+        "seconds": 1740,
+        "balance": 91381900.8011769,
+        "lifetime": 1131852999.801177,
+        "baseProduction": 615088.6419635507
+      },
+      {
+        "seconds": 1800,
+        "balance": 13910525.37964852,
+        "lifetime": 1229905230.3796484,
+        "baseProduction": 664346.9832399746
+      }
+    ]
+  },
+  {
+    "profile": "intermittent",
+    "seconds": 1800,
+    "taps": 1200,
+    "purchases": 194,
+    "firstPurchaseSeconds": 17,
+    "firstUpgradeSeconds": 17,
+    "firstGeneratorPurchaseSeconds": {
+      "coil": 33,
+      "plasma": 126,
+      "quantum": 199,
+      "auxiliary": 264
+    },
+    "generatorUnlockSeconds": {
+      "coil": 0.1,
+      "plasma": 108.1,
+      "quantum": 175.4,
+      "auxiliary": 252.8
+    },
+    "maxPurchaseGapSeconds": 84,
+    "p95PurchaseGapSeconds": 43,
+    "activations": 30,
+    "boostedSeconds": 724.0000000000928,
+    "finalEnergy": 63300333.669263884,
+    "lifetimeEnergy": 569155207.6692638,
+    "baseProduction": 418938.4752201036,
+    "levels": {
+      "tap": 12,
+      "combo": 0,
+      "overload": 22,
+      "coil": 28,
+      "plasma": 28,
+      "quantum": 45,
+      "auxiliary": 59
+    },
+    "milestones": {
+      "ignition": 39.8,
+      "micro_array": 64,
+      "plasma": 108.1,
+      "quantum": 175.4,
+      "singularity": 214.8,
+      "auxiliary": 252.8,
+      "mastery": 302.4,
+      "star": 377.7,
+      "tide": 554.8,
+      "horizon": 984.2
+    },
+    "growth": [
+      {
+        "seconds": 60,
+        "balance": 4.750000000000085,
+        "lifetime": 212.75000000000009,
+        "baseProduction": 4
+      },
+      {
+        "seconds": 120,
+        "balance": 219.75000000000048,
+        "lifetime": 1161.7500000000005,
+        "baseProduction": 11
+      },
+      {
+        "seconds": 180,
+        "balance": 1085.7500000000045,
+        "lifetime": 5567.750000000005,
+        "baseProduction": 71
+      },
+      {
+        "seconds": 240,
+        "balance": 2580.144720000016,
+        "lifetime": 20188.144720000015,
+        "baseProduction": 333.4769600000001
+      },
+      {
+        "seconds": 300,
+        "balance": 9608.319843200086,
+        "lifetime": 95290.3198432001,
+        "baseProduction": 1986.3647775999998
+      },
+      {
+        "seconds": 360,
+        "balance": 5369.132492834108,
+        "lifetime": 511791.1324928341,
+        "baseProduction": 8283.83276097237
+      },
+      {
+        "seconds": 420,
+        "balance": 193373.80993632303,
+        "lifetime": 1745653.809936323,
+        "baseProduction": 17396.591460095133
+      },
+      {
+        "seconds": 480,
+        "balance": 297093.7211296403,
+        "lifetime": 4183099.7211296405,
+        "baseProduction": 30167.644804223884
+      },
+      {
+        "seconds": 540,
+        "balance": 47294.08685878226,
+        "lifetime": 8099435.086858782,
+        "baseProduction": 45958.591217450376
+      },
+      {
+        "seconds": 600,
+        "balance": 1033844.6417304012,
+        "lifetime": 13682466.641730402,
+        "baseProduction": 59020.20524534759
+      },
+      {
+        "seconds": 660,
+        "balance": 1236596.9462046595,
+        "lifetime": 21074535.94620466,
+        "baseProduction": 75408.29863106382
+      },
+      {
+        "seconds": 720,
+        "balance": 3598026.6632695184,
+        "lifetime": 30377792.66326952,
+        "baseProduction": 88282.8152586965
+      },
+      {
+        "seconds": 780,
+        "balance": 590968.3208820736,
+        "lifetime": 41762603.320882075,
+        "baseProduction": 112187.61988005514
+      },
+      {
+        "seconds": 840,
+        "balance": 6998611.381182963,
+        "lifetime": 55121163.38118296,
+        "baseProduction": 121068.43853590873
+      },
+      {
+        "seconds": 900,
+        "balance": 6744159.387881469,
+        "lifetime": 70823520.38788147,
+        "baseProduction": 141801.99135829924
+      },
+      {
+        "seconds": 960,
+        "balance": 1687593.5549172326,
+        "lifetime": 88643579.55491723,
+        "baseProduction": 165949.3052385175
+      },
+      {
+        "seconds": 1020,
+        "balance": 9077943.286016915,
+        "lifetime": 108878120.28601691,
+        "baseProduction": 178980.50949761082
+      },
+      {
+        "seconds": 1080,
+        "balance": 15999574.937558973,
+        "lifetime": 131236144.93755898,
+        "baseProduction": 193556.04521742268
+      },
+      {
+        "seconds": 1140,
+        "balance": 436163.6182134573,
+        "lifetime": 156016813.61821344,
+        "baseProduction": 225701.3714720506
+      },
+      {
+        "seconds": 1200,
+        "balance": 3081720.9698177297,
+        "lifetime": 183439734.96981773,
+        "baseProduction": 244562.64659214532
+      },
+      {
+        "seconds": 1260,
+        "balance": 5855682.325307924,
+        "lifetime": 213209705.32530794,
+        "baseProduction": 263721.7608845469
+      },
+      {
+        "seconds": 1320,
+        "balance": 5749456.812001274,
+        "lifetime": 245345388.8120013,
+        "baseProduction": 285018.7873965681
+      },
+      {
+        "seconds": 1380,
+        "balance": 3283247.471792228,
+        "lifetime": 279179684.4717922,
+        "baseProduction": 307351.9815072253
+      },
+      {
+        "seconds": 1440,
+        "balance": 33826706.0376576,
+        "lifetime": 314906105.0376576,
+        "baseProduction": 308018.15316802653
+      },
+      {
+        "seconds": 1500,
+        "balance": 21722391.794343427,
+        "lifetime": 346186243.7943434,
+        "baseProduction": 332832.4247679856
+      },
+      {
+        "seconds": 1560,
+        "balance": 10892529.76453473,
+        "lifetime": 385703910.7645347,
+        "baseProduction": 359628.8896567324
+      },
+      {
+        "seconds": 1620,
+        "balance": 46856522.73020785,
+        "lifetime": 421667903.73020786,
+        "baseProduction": 359628.8896567324
+      },
+      {
+        "seconds": 1680,
+        "balance": 29778303.78194483,
+        "lifetime": 468160191.7819448,
+        "baseProduction": 387762.28227625665
+      },
+      {
+        "seconds": 1740,
+        "balance": 11350701.741971195,
+        "lifetime": 517205575.7419712,
+        "baseProduction": 418938.4752201036
+      },
+      {
+        "seconds": 1800,
+        "balance": 63300333.669263884,
+        "lifetime": 569155207.6692638,
+        "baseProduction": 418938.4752201036
+      }
+    ]
+  },
+  {
+    "profile": "passive",
+    "seconds": 1800,
+    "taps": 25,
+    "purchases": 133,
+    "firstPurchaseSeconds": 10,
+    "firstUpgradeSeconds": null,
+    "firstGeneratorPurchaseSeconds": {
+      "coil": 10,
+      "plasma": 180,
+      "quantum": 290,
+      "auxiliary": 387
+    },
+    "generatorUnlockSeconds": {
+      "coil": 0.1,
+      "plasma": 148.1,
+      "quantum": 263.9,
+      "auxiliary": 366
+    },
+    "maxPurchaseGapSeconds": 83,
+    "p95PurchaseGapSeconds": 54,
+    "activations": 1,
+    "boostedSeconds": 10,
+    "finalEnergy": 12541412.510200076,
+    "lifetimeEnergy": 124360637.51020007,
+    "baseProduction": 193556.04521742268,
+    "levels": {
+      "tap": 0,
+      "combo": 0,
+      "overload": 0,
+      "coil": 24,
+      "plasma": 23,
+      "quantum": 37,
+      "auxiliary": 49
+    },
+    "milestones": {
+      "ignition": 28.8,
+      "micro_array": 52,
+      "plasma": 148.1,
+      "quantum": 263.9,
+      "singularity": 313.2,
+      "auxiliary": 366,
+      "mastery": 440.8,
+      "star": 574.8,
+      "tide": 866.1,
+      "horizon": 1669.4
+    },
+    "growth": [
+      {
+        "seconds": 60,
+        "balance": 40.75000000000009,
+        "lifetime": 221.75000000000009,
+        "baseProduction": 5
+      },
+      {
+        "seconds": 120,
+        "balance": 93.75000000000011,
+        "lifetime": 685.7500000000001,
+        "baseProduction": 10
+      },
+      {
+        "seconds": 180,
+        "balance": 5.750000000000203,
+        "lifetime": 1383.7500000000002,
+        "baseProduction": 24
+      },
+      {
+        "seconds": 240,
+        "balance": 47.750000000000426,
+        "lifetime": 3459.7500000000005,
+        "baseProduction": 60
+      },
+      {
+        "seconds": 300,
+        "balance": 1381.7500000000007,
+        "lifetime": 8199.75,
+        "baseProduction": 132
+      },
+      {
+        "seconds": 360,
+        "balance": 1045.3185952000008,
+        "lifetime": 22557.318595200002,
+        "baseProduction": 410.22557759999995
+      },
+      {
+        "seconds": 420,
+        "balance": 432.8532511999971,
+        "lifetime": 64012.853251199995,
+        "baseProduction": 1546.4655775999997
+      },
+      {
+        "seconds": 480,
+        "balance": 29642.532705076243,
+        "lifetime": 222038.53270507624,
+        "baseProduction": 4133.045247583233
+      },
+      {
+        "seconds": 540,
+        "balance": 45905.37682027176,
+        "lifetime": 619143.3768202717,
+        "baseProduction": 9248.701065129942
+      },
+      {
+        "seconds": 600,
+        "balance": 72037.81256267223,
+        "lifetime": 1355259.8125626722,
+        "baseProduction": 15747.120393794487
+      },
+      {
+        "seconds": 660,
+        "balance": 105483.41670770306,
+        "lifetime": 2499446.416707703,
+        "baseProduction": 23137.426235234856
+      },
+      {
+        "seconds": 720,
+        "balance": 347059.8417462312,
+        "lifetime": 4091356.841746231,
+        "baseProduction": 30167.644804223884
+      },
+      {
+        "seconds": 780,
+        "balance": 329366.27347369574,
+        "lifetime": 6162061.273473696,
+        "baseProduction": 38958.64127619034
+      },
+      {
+        "seconds": 840,
+        "balance": 849784.9540601264,
+        "lifetime": 8726427.954060126,
+        "baseProduction": 46174.803462445074
+      },
+      {
+        "seconds": 900,
+        "balance": 1263061.512716271,
+        "lifetime": 11801260.512716271,
+        "baseProduction": 54328.65179460457
+      },
+      {
+        "seconds": 960,
+        "balance": 1202970.1728217392,
+        "lifetime": 15409848.17282174,
+        "baseProduction": 64070.264250580534
+      },
+      {
+        "seconds": 1020,
+        "balance": 397712.3333214581,
+        "lifetime": 19539743.33332146,
+        "baseProduction": 75408.29863106382
+      },
+      {
+        "seconds": 1080,
+        "balance": 2167110.4440078367,
+        "lifetime": 24221201.444007836,
+        "baseProduction": 81445.26758577726
+      },
+      {
+        "seconds": 1140,
+        "balance": 3817735.7420321805,
+        "lifetime": 29414981.74203218,
+        "baseProduction": 88282.8152586965
+      },
+      {
+        "seconds": 1200,
+        "balance": 742326.4928511791,
+        "lifetime": 35209492.49285118,
+        "baseProduction": 103609.4647156675
+      },
+      {
+        "seconds": 1260,
+        "balance": 1573962.2863442372,
+        "lifetime": 41562577.28634424,
+        "baseProduction": 112187.61988005514
+      },
+      {
+        "seconds": 1320,
+        "balance": 2350267.033608764,
+        "lifetime": 48462558.033608764,
+        "baseProduction": 121068.43853590873
+      },
+      {
+        "seconds": 1380,
+        "balance": 2430377.486346162,
+        "lifetime": 55925200.48634616,
+        "baseProduction": 131033.96588514374
+      },
+      {
+        "seconds": 1440,
+        "balance": 1878402.515373216,
+        "lifetime": 63947502.515373215,
+        "baseProduction": 141801.99135829924
+      },
+      {
+        "seconds": 1500,
+        "balance": 509753.9678538225,
+        "lifetime": 72512787.96785383,
+        "baseProduction": 153409.21016144787
+      },
+      {
+        "seconds": 1560,
+        "balance": 9714306.577540696,
+        "lifetime": 81717340.5775407,
+        "baseProduction": 153409.21016144787
+      },
+      {
+        "seconds": 1620,
+        "balance": 8021399.540535503,
+        "lifetime": 91560040.54053551,
+        "baseProduction": 165949.3052385175
+      },
+      {
+        "seconds": 1680,
+        "balance": 5525102.9826193545,
+        "lifetime": 101907934.98261936,
+        "baseProduction": 178980.50949761082
+      },
+      {
+        "seconds": 1740,
+        "balance": 928049.7971547141,
+        "lifetime": 112747274.79715471,
+        "baseProduction": 193556.04521742268
+      },
+      {
+        "seconds": 1800,
+        "balance": 12541412.510200076,
+        "lifetime": 124360637.51020007,
+        "baseProduction": 193556.04521742268
+      }
+    ]
+  }
+]

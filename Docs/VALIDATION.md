@@ -1,6 +1,34 @@
 # Evidencia de validación — 2026-10-20
 
-## Estado actual: fase 1 del núcleo jugable
+## Estado actual: fase 2, progresión y economía
+
+- Catálogo de cuatro familias y tres mejoras; tienda creada desde sus datos.
+  Se conservan energía, combo, sobrecarga y llamadas Purchase existentes.
+- Doce hitos por energía histórica o nivel, marcas persistentes y cola acotada
+  de celebraciones. Migración compatible de partidas de versión 1.
+- Cuatro anillos procedurales reutilizados para cinco etapas visuales;
+  los hitos y anillos no conceden multiplicadores ocultos.
+- `bash Tools/test-core.sh`: **69 aprobadas, 0 fallidas, 0 omitidas**, 315 ms.
+  Incluye compras bloqueadas, crecimiento real, límites, catálogo extensible,
+  reordenación por IDs, hitos únicos, guardado/carga y compatibilidad histórica.
+- `bash Tools/simulate-balance.sh TestResults/Balance-final`: tres perfiles de
+  30 minutos, con el GameEngine real y el Economy.asset real. Se probaron tres
+  curvas y se repitió la final con comprobaciones de tiempos. Todos los estados
+  inspeccionados cada segundo fueron válidos.
+- Primera compra: 7/17/10 s para activo/intermitente/pasivo. Espera máxima final
+  entre compras: 84/74/69 s, frente a 189/168/162 s de la primera curva.
+- Resultados, CSV de compras, configuración y hashes archivados en `Docs/Balance`.
+  [PHASE2.md](PHASE2.md) detalla metodología, fórmulas, crecimiento y recomendaciones.
+- Compilación contra API oficiales: seis ensamblados, sin errores. Incluye una
+  nueva prueba EditMode del asset y una PlayMode de tienda/capas procedurales.
+- Se volvió a ejecutar `UNITY_EDITOR=... bash Tools/test-unity.sh`. Preparación
+  abortada con **198**: `No valid Unity Editor license found`. Log actual en
+  `TestResults/Unity/prepare.log`. EditMode/PlayMode nativos **no ejecutados**.
+  Se apartaron los ajustes por defecto que ese intento generó incidentalmente.
+- Pendientes: importación UPM/TMP, distribución visual de siete filas,
+  celebraciones, audio y sesiones humanas con licencia. No se ha validado APK.
+
+## Fase 1: registro anterior del núcleo jugable
 
 Esta sección sustituye las limitaciones históricas de herramientas que aparecen
 más abajo; se conserva el registro anterior para explicar los fallos reportados.

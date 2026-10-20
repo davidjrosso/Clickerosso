@@ -16,6 +16,7 @@ namespace ReactorDeCaos
         public RectTransform EffectsRoot { get; private set; }
         public RectTransform CoreVisual { get; private set; }
         public RingGraphic Orbit { get; private set; }
+        public RingGraphic[] EvolutionRings { get; private set; }
         public TMP_FontAsset Font { get; private set; }
         private bool ownsRuntimeFont;
         public Button TapButton { get; private set; }
@@ -29,12 +30,9 @@ namespace ReactorDeCaos
         private Rect lastSafeArea;
         private Vector2Int lastScreenSize;
         private int lastStage = -1;
-        private readonly double[] lastCosts = new double[5];
-        private readonly int[] lastLevels = { -1, -1, -1, -1, -1 };
-        private readonly bool[] lastAffordable = new bool[5];
-        private readonly bool[] lastUnlocked = new bool[5];
-        private readonly string[] names = { "POTENCIA", "COMBO", "SOBRECARGA", "BOBINA", "MATRIZ DE PLASMA" };
-        private readonly string[] effectNames = { "E / toque", "combo máximo", "s de sobrecarga", "E / s", "E / s" };
+        private double[] lastCosts;
+        private int[] lastLevels;
+        private bool[] lastAffordable, lastUnlocked;
 
         public void Build(ReactorApp app)
         {
@@ -92,6 +90,16 @@ namespace ReactorDeCaos
             Orbit = Ring("Orbit", CoreVisual, Cyan);
             Orbit.thickness = 3;
             Orbit.fraction = .82f;
+            EvolutionRings = new RingGraphic[4];
+            for (int i = 0; i < EvolutionRings.Length; i++)
+            {
+                RingGraphic ring = Ring("EvolutionRing" + i, CoreVisual, i < 2 ? Violet : Warm);
+                ring.rectTransform.localScale = Vector3.one * (.88f - i * .12f);
+                ring.thickness = 2 + i;
+                ring.fraction = .36f + i * .12f;
+                ring.gameObject.SetActive(false);
+                EvolutionRings[i] = ring;
+            }
             TapButton = Button("TapReactor", safe, new Color(0, 0, 0, 0), .16f, .49f, .84f, .77f);
             TapButton.onClick.AddListener(app.Tap);
             Label("TapHint", safe, "TOCA PARA GENERAR", 23, Color.white, .15f, .48f, .85f, .51f);
@@ -108,7 +116,8 @@ namespace ReactorDeCaos
             viewportImage.color = new Color(0, 0, 0, .01f);
             RectTransform content = Rect("ShopContent", viewport, 0, 1, 1, 1);
             content.pivot = new Vector2(.5f, 1);
-            content.sizeDelta = new Vector2(0, 810);
+            int itemCount = app.Game.Shop.Count;
+            content.sizeDelta = new Vector2(0, itemCount * 204);
             var scroll = viewport.gameObject.AddComponent<ScrollRect>();
             scroll.viewport = viewport;
             scroll.content = content;
@@ -116,19 +125,22 @@ namespace ReactorDeCaos
             scroll.vertical = true;
             scroll.movementType = ScrollRect.MovementType.Clamped;
             scroll.scrollSensitivity = 35;
-            ShopButtons = new Button[5];
-            shopText = new TextMeshProUGUI[5];
-            for (int i = 0; i < 5; i++)
+            ShopButtons = new Button[itemCount];
+            shopText = new TextMeshProUGUI[itemCount];
+            lastCosts = new double[itemCount]; lastLevels = new int[itemCount];
+            lastAffordable = new bool[itemCount]; lastUnlocked = new bool[itemCount];
+            for (int i = 0; i < itemCount; i++)
             {
-                int index = i;
-                Button button = Button("Buy" + (Purchase)i, content, Panel, 0, 1, 1, 1);
+                lastLevels[i] = -1;
+                ShopEntry entry = app.Game.Shop[i];
+                Button button = Button("Buy" + entry.Id, content, Panel, 0, 1, 1, 1);
                 var buttonRect = (RectTransform)button.transform;
                 buttonRect.pivot = new Vector2(.5f, 1);
-                buttonRect.sizeDelta = new Vector2(0, 150);
-                buttonRect.anchoredPosition = new Vector2(0, -i * 162);
-                button.onClick.AddListener(() => app.Buy((Purchase)index));
+                buttonRect.sizeDelta = new Vector2(0, 192);
+                buttonRect.anchoredPosition = new Vector2(0, -i * 204);
+                button.onClick.AddListener(() => app.Buy(entry.Id));
                 ShopButtons[i] = button;
-                Image("Accent", button.transform, i < 3 ? Cyan : Violet, 0, 0, .006f, 1);
+                Image("Accent", button.transform, entry.IsGenerator ? Violet : Cyan, 0, 0, .006f, 1);
                 shopText[i] = Label("Description", button.transform, "", 40, Color.white, .028f, .05f, .98f, .96f, TextAlignmentOptions.Left);
             }
             notice = Label("Notice", safe, "", 20, Warm, .045f, .007f, .955f, .044f);
@@ -156,7 +168,7 @@ namespace ReactorDeCaos
                 : (float)game.Overload.ChargeFraction;
             chargeFill.anchorMax = new Vector2(Mathf.Clamp01(progress), 1);
             OverloadButton.interactable = game.Overload.Ready;
-            for (int i = 0; i < 5; i++) ShopButtons[i].interactable = game.CanBuy((Purchase)i);
+            for (int i = 0; i < ShopButtons.Length; i++) ShopButtons[i].interactable = game.CanBuy(game.Shop[i].Id);
             if (!force && Time.unscaledTime < nextTextUpdate) return;
             nextTextUpdate = Time.unscaledTime + .08f;
             energy.text = game.EnergyLimitReached ? "LÍMITE · " + NumberFormat.Compact(game.Energy) : NumberFormat.Compact(game.Energy);
@@ -167,17 +179,19 @@ namespace ReactorDeCaos
             if (game.Stage != lastStage)
             {
                 lastStage = game.Stage;
-                stage.text = new[] { "NÚCLEO I", "PLASMA II", "SINGULARIDAD III" }[game.Stage];
+                stage.text = new[] { "IGNICIÓN I", "PLASMA II", "CUÁNTICO III", "DOBLE NÚCLEO IV", "CAOS V" }[game.Stage];
             }
-            milestone.text = game.Stage == 2 ? "MÁXIMA EVOLUCIÓN · sigue aumentando tu producción"
-                : "PRÓXIMO HITO  " + NumberFormat.Compact(game.Lifetime) + " / " + NumberFormat.Compact(game.NextMilestone);
+            MilestoneDefinition goal = game.NextGoal();
+            milestone.text = goal == null ? "HITOS COMPLETADOS · sigue ampliando tu reactor"
+                : goal.title + "  " + NumberFormat.Compact(game.GoalProgress(goal)) + " / " + NumberFormat.Compact(goal.target);
             overloadLabel.text = game.Overload.Active
                 ? "SOBRECARGA ×" + NumberFormat.Stat(game.OverloadMultiplier) + "  ·  " + game.Overload.Remaining.ToString("0.0") + " s"
                 : game.Overload.Ready ? "ACTIVAR SOBRECARGA  ×" + NumberFormat.Stat(game.OverloadMultiplier)
                 : "CARGANDO SOBRECARGA  ·  " + (game.Overload.ChargeFraction * 100).ToString("0") + "%";
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < ShopButtons.Length; i++)
             {
-                Purchase item = (Purchase)i;
+                ShopEntry entry = game.Shop[i];
+                string item = entry.Id;
                 int level = game.Level(item);
                 double cost = game.Cost(item);
                 bool affordable = game.CanBuy(item);
@@ -186,16 +200,17 @@ namespace ReactorDeCaos
                     && lastAffordable[i] == affordable && lastUnlocked[i] == unlocked) continue;
                 lastLevels[i] = level; lastCosts[i] = cost;
                 lastAffordable[i] = affordable; lastUnlocked[i] = unlocked;
-                string price = !unlocked ? "BLOQUEADO" : level >= EconomyConfig.MaxLevel ? "MÁX."
+                string price = level >= EconomyConfig.MaxLevel ? "MÁX."
                     : NumberFormat.Compact(cost) + " E";
+                if (!unlocked) price += " · BLOQUEADO";
                 double current = game.EffectAtLevel(item, level);
                 double next = game.EffectAtLevel(item, Math.Min(EconomyConfig.MaxLevel, level + 1));
-                string effect = NumberFormat.Stat(current) + " a " + NumberFormat.Stat(next) + " " + effectNames[i];
-                if (level >= EconomyConfig.MaxLevel) effect = NumberFormat.Stat(current) + " " + effectNames[i] + " · MÁXIMO";
-                if (!unlocked) effect = "Desbloquea con " + NumberFormat.Compact(game.NextMilestone) + " producidos";
-                shopText[i].text = names[i] + " <color=#74E6F2>· " + level + "</color>"
+                string effect = NumberFormat.Stat(current) + " a " + NumberFormat.Stat(next) + " " + entry.Unit;
+                if (level >= EconomyConfig.MaxLevel) effect = NumberFormat.Stat(current) + " " + entry.Unit + " · MÁXIMO";
+                string description = unlocked ? entry.Description : "Requiere " + game.UnlockDescription(item);
+                shopText[i].text = entry.Name + " <color=#74E6F2>· " + level + "</color>"
                     + "   <color=" + (affordable ? "#FFBF6C" : "#77869B") + ">" + price
-                    + "</color>\n<size=75%><color=#A5B5CF>" + effect + "</color></size>";
+                    + "</color>\n<size=65%><color=#A5B5CF>" + description + "\n" + effect + "</color></size>";
             }
             if (Time.unscaledTime > noticeUntil) notice.text = "GUARDADO LOCAL  ·  SIN CONEXIÓN";
         }

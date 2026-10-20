@@ -13,7 +13,8 @@ namespace ReactorDeCaos
         private float saveTimer;
         private bool paused;
         private bool skipNextFrame;
-        private int previousStage;
+        private int previousMilestones;
+        private float nextMilestoneNotice;
         private bool previousReady;
         private bool initialized;
         private double previousCombo = 1;
@@ -26,7 +27,7 @@ namespace ReactorDeCaos
             saves = new SaveStore(Path.Combine(Application.persistentDataPath, "reactor-save.json"), new UnityJsonCodec());
             GameState state = saves.Load();
             Game = new GameEngine(state, settings != null ? settings.values : null);
-            previousStage = Game.Stage;
+            previousMilestones = Game.CompletedMilestoneCount;
             Hud = gameObject.AddComponent<ReactorHud>();
             try
             {
@@ -58,15 +59,19 @@ namespace ReactorDeCaos
             previousCombo = Game.ComboMultiplier;
             saveTimer += seconds;
             if (saveTimer >= 10) Save();
-            if (Game.Stage != previousStage)
+            if (Game.CompletedMilestoneCount != previousMilestones)
             {
-                previousStage = Game.Stage;
-                Hud.ShowNotice(Game.Stage == 1 ? "HITO: matriz de plasma desbloqueada" : "HITO: reactor de singularidad");
-                feedback.Celebrate();
-                Save();
+                previousMilestones = Game.CompletedMilestoneCount;
+                Save(); // Persist claims before any animation; animation is never the source of rewards.
             }
             if (Game.Overload.Ready && !previousReady) Hud.ShowNotice("Sobrecarga lista. Actívala cuando quieras.");
             previousReady = Game.Overload.Ready;
+            if (Time.unscaledTime >= nextMilestoneNotice && Game.TryTakeMilestone(out var reward))
+            {
+                Hud.ShowNotice("HITO · " + reward.title + " · " + reward.rewardDescription);
+                feedback.Celebrate();
+                nextMilestoneNotice = Time.unscaledTime + 3.5f;
+            }
             Hud.Refresh(Game);
             feedback.Animate(Game.Stage, Game.Overload.Active);
         }
@@ -82,7 +87,9 @@ namespace ReactorDeCaos
             Hud.Refresh(Game, true);
         }
 
-        public void Buy(Purchase item)
+        public void Buy(Purchase item) { Buy(EconomyConfig.ItemId(item)); }
+
+        public void Buy(string item)
         {
             if (!initialized || paused || !Game.Buy(item)) return;
             feedback.Purchase();

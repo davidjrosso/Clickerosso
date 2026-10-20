@@ -129,8 +129,18 @@ namespace ReactorDeCaos
             pulse = Mathf.MoveTowards(pulse, 0, dt * 4);
             hud.CoreVisual.localScale = Vector3.one * (1 + pulse * .075f);
             hud.CoreVisual.localEulerAngles += new Vector3(0, 0, dt * (overloaded ? 35 : 6 + stage * 5));
-            hud.Orbit.color = overloaded || stage == 2 ? ReactorHud.Warm
+            hud.Orbit.color = overloaded || stage >= 3 ? ReactorHud.Warm
                 : stage == 0 ? ReactorHud.Cyan : ReactorHud.Violet;
+            for (int i = 0; i < hud.EvolutionRings.Length; i++)
+            {
+                RingGraphic ring = hud.EvolutionRings[i];
+                bool visible = stage > i;
+                if (ring.gameObject.activeSelf != visible) ring.gameObject.SetActive(visible);
+                if (!visible) continue;
+                ring.color = overloaded ? ReactorHud.Warm : i < 2 ? ReactorHud.Violet : ReactorHud.Cyan;
+                ring.rectTransform.localEulerAngles += new Vector3(0, 0,
+                    dt * (i % 2 == 0 ? -1 : 1) * (overloaded ? 35 + 10 * i : 8 + 4 * i));
+            }
             Tick(numbers, dt); Tick(waves, dt); Tick(sparks, dt);
         }
 

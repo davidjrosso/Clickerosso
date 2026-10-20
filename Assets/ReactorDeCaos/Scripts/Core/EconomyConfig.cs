@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace ReactorDeCaos
 {
@@ -35,24 +36,27 @@ namespace ReactorDeCaos
         public double overloadMultiplier = 3;
         public double overloadSeconds = 10;
         public double overloadSecondsPerLevel = 1;
-        public double coilProduction = 1;
-        public double plasmaProduction = 12;
-        public double plasmaUnlock = 1000;
-        public double finalMilestone = 10000;
-        public PriceCurve tapPrice = new PriceCurve(15, 1.55);
-        public PriceCurve comboPrice = new PriceCurve(75, 1.7);
-        public PriceCurve overloadPrice = new PriceCurve(100, 1.7);
-        public PriceCurve coilPrice = new PriceCurve(25, 1.18);
-        public PriceCurve plasmaPrice = new PriceCurve(500, 1.22);
+        public UpgradeDefinition[] upgrades = ProgressionDefaults.Upgrades();
+        public GeneratorDefinition[] generators = ProgressionDefaults.Generators();
+        public MilestoneDefinition[] milestones = ProgressionDefaults.Milestones();
+
+        // Source-compatible aliases for phase-1 callers. Serialized data now lives in the catalog.
+        public double coilProduction { get { return Generator("coil").baseProduction; } set { Generator("coil").baseProduction = value; } }
+        public double plasmaProduction { get { return Generator("plasma").baseProduction; } set { Generator("plasma").baseProduction = value; } }
+        public double plasmaUnlock { get { return Milestone("plasma").target; } set { Milestone("plasma").target = value; } }
+        public double finalMilestone { get { return Milestone("singularity").target; } set { Milestone("singularity").target = value; } }
+        public PriceCurve tapPrice { get { return Upgrade(Purchase.TapPower).price; } set { Upgrade(Purchase.TapPower).price = value; } }
+        public PriceCurve comboPrice { get { return Upgrade(Purchase.ComboCapacity).price; } set { Upgrade(Purchase.ComboCapacity).price = value; } }
+        public PriceCurve overloadPrice { get { return Upgrade(Purchase.OverloadDuration).price; } set { Upgrade(Purchase.OverloadDuration).price = value; } }
+        public PriceCurve coilPrice { get { return Generator("coil").price; } set { Generator("coil").price = value; } }
+        public PriceCurve plasmaPrice { get { return Generator("plasma").price; } set { Generator("plasma").price = value; } }
 
         public EconomyConfig Copy()
         {
             var copy = (EconomyConfig)MemberwiseClone();
-            copy.tapPrice = tapPrice?.Copy();
-            copy.comboPrice = comboPrice?.Copy();
-            copy.overloadPrice = overloadPrice?.Copy();
-            copy.coilPrice = coilPrice?.Copy();
-            copy.plasmaPrice = plasmaPrice?.Copy();
+            copy.upgrades = upgrades == null ? null : Array.ConvertAll(upgrades, x => x?.Copy());
+            copy.generators = generators == null ? null : Array.ConvertAll(generators, x => x?.Copy());
+            copy.milestones = milestones == null ? null : Array.ConvertAll(milestones, x => x?.Copy());
             return copy;
         }
 
@@ -66,21 +70,109 @@ namespace ReactorDeCaos
         {
             foreach (double value in new[] { baseTapPower, tapPowerPerLevel, comboWindow, comboDecayInterval,
                 comboStepMultiplier, comboBaseCap, comboCapPerLevel, overloadChargeRequired, chargePerTap,
-                overloadMultiplier, overloadSeconds, overloadSecondsPerLevel, coilProduction,
-                plasmaProduction, plasmaUnlock, finalMilestone })
+                overloadMultiplier, overloadSeconds, overloadSecondsPerLevel })
                 Positive(value);
             if (overloadMultiplier < 1 || chargePerTap > overloadChargeRequired
-                || finalMilestone <= plasmaUnlock || comboBaseCap < 1 || comboTapsPerStep < 1
+                || comboBaseCap < 1 || comboTapsPerStep < 1
                 || comboTapsPerStep > 10000
                 || Math.Ceiling((ComboCap(MaxLevel) - 1) / comboStepMultiplier) * comboTapsPerStep > 1000000)
                 throw new ArgumentException("Invalid overload or milestone configuration.");
-            foreach (PriceCurve curve in new[] { tapPrice, comboPrice, overloadPrice, coilPrice, plasmaPrice })
+            if (upgrades == null || upgrades.Length != 3 || generators == null || generators.Length < 2
+                || generators.Length > 32 || milestones == null || milestones.Length > 64)
+                throw new ArgumentException("Invalid catalog size.");
+            var ids = new HashSet<string>();
+            foreach (UpgradeDefinition upgrade in upgrades)
             {
-                if (curve == null) throw new ArgumentException("Missing price curve.");
-                curve.Validate();
+                if (upgrade == null || (int)upgrade.type < 0 || (int)upgrade.type > 2
+                    || !ids.Add(ItemId(upgrade.type))) throw new ArgumentException("Invalid or duplicate upgrade.");
+                Text(upgrade.name, 80); Text(upgrade.description, 160);
+                if (upgrade.price == null) throw new ArgumentException("Missing upgrade price.");
+                upgrade.price.Validate();
             }
+            foreach (GeneratorDefinition generator in generators)
+            {
+                if (generator == null || !ValidId(generator.id) || !ids.Add(generator.id))
+                    throw new ArgumentException("Invalid or duplicate generator ID.");
+                Text(generator.name, 80); Text(generator.description, 160);
+                Positive(generator.baseProduction);
+                if (generator.price == null) throw new ArgumentException("Missing generator price.");
+                generator.price.Validate();
+                if (double.IsNaN(generator.productionGrowth) || generator.productionGrowth < 1 || generator.productionGrowth > 2)
+                    throw new ArgumentException("Production growth must be between 1 and 2.");
+            }
+            // Retain these IDs so phase-1 saves and public Purchase wrappers remain valid.
+            Generator("coil"); Generator("plasma");
+            ids.Clear();
+            foreach (MilestoneDefinition milestone in milestones)
+            {
+                if (milestone == null || !ValidId(milestone.id) || !ids.Add(milestone.id)
+                    || milestone.reactorStage < 0 || milestone.reactorStage > 4
+                    || (milestone.goal != MilestoneGoal.LifetimeEnergy && milestone.goal != MilestoneGoal.GeneratorLevel))
+                    throw new ArgumentException("Invalid milestone.");
+                Text(milestone.title, 80); Text(milestone.rewardDescription, 160);
+                Positive(milestone.target);
+                if (milestone.goal == MilestoneGoal.GeneratorLevel)
+                {
+                    Generator(milestone.generatorId);
+                    if (milestone.target > MaxLevel || milestone.target != Math.Floor(milestone.target))
+                        throw new ArgumentException("Generator milestone requires an attainable integer level.");
+                }
+            }
+            foreach (GeneratorDefinition generator in generators)
+            {
+                string gate = generator.unlockMilestone;
+                var visited = new HashSet<string>();
+                while (!string.IsNullOrEmpty(gate))
+                {
+                    if (!visited.Add(gate)) throw new ArgumentException("Cyclic generator unlock.");
+                    MilestoneDefinition milestone = Milestone(gate);
+                    gate = milestone.goal == MilestoneGoal.GeneratorLevel
+                        ? Generator(milestone.generatorId).unlockMilestone : null;
+                }
+            }
+            if (!string.IsNullOrEmpty(Generator("coil").unlockMilestone))
+                throw new ArgumentException("The starter microgenerator must remain unlocked.");
         }
 
+        internal static bool ValidId(string id)
+        {
+            if (string.IsNullOrEmpty(id) || id.Length > 48) return false;
+            foreach (char c in id)
+                if (!(c >= 'a' && c <= 'z') && !(c >= '0' && c <= '9') && c != '_' && c != '-') return false;
+            return true;
+        }
+        private static void Text(string text, int limit)
+        {
+            if (string.IsNullOrWhiteSpace(text) || text.Length > limit)
+                throw new ArgumentException("Missing or oversized catalog text.");
+        }
+        internal GeneratorDefinition Generator(string id)
+        {
+            foreach (var entry in generators) if (entry != null && entry.id == id) return entry;
+            throw new ArgumentException("Unknown generator: " + id);
+        }
+        internal UpgradeDefinition Upgrade(Purchase type)
+        {
+            foreach (var entry in upgrades) if (entry != null && entry.type == type) return entry;
+            throw new ArgumentException("Unknown upgrade.");
+        }
+        internal MilestoneDefinition Milestone(string id)
+        {
+            foreach (var entry in milestones) if (entry != null && entry.id == id) return entry;
+            throw new ArgumentException("Unknown milestone: " + id);
+        }
+        public static string ItemId(Purchase item)
+        {
+            switch (item)
+            {
+                case Purchase.TapPower: return "tap";
+                case Purchase.ComboCapacity: return "combo";
+                case Purchase.OverloadDuration: return "overload";
+                case Purchase.Coil: return "coil";
+                case Purchase.Plasma: return "plasma";
+                default: throw new ArgumentOutOfRangeException(nameof(item));
+            }
+        }
         public double ComboCap(int level) { return comboBaseCap + level * comboCapPerLevel; }
         public double BaseCost(Purchase item) { return Price(item).initial; }
         public double CostGrowth(Purchase item) { return Price(item).growth; }

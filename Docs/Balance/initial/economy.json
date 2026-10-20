@@ -1,0 +1,159 @@
+{
+  "baseTapPower": 1,
+  "tapPowerPerLevel": 1,
+  "comboWindow": 1.5,
+  "comboDecayInterval": 0.75,
+  "comboTapsPerStep": 5,
+  "comboStepMultiplier": 0.25,
+  "comboBaseCap": 3,
+  "comboCapPerLevel": 0.25,
+  "overloadChargeRequired": 100,
+  "chargePerTap": 4,
+  "overloadMultiplier": 3,
+  "overloadSeconds": 10,
+  "overloadSecondsPerLevel": 1,
+  "upgrades": [
+    {
+      "type": 0,
+      "name": "POTENCIA",
+      "description": "Más energía en cada toque",
+      "price": {
+        "initial": 15,
+        "growth": 1.55
+      }
+    },
+    {
+      "type": 1,
+      "name": "COMBO",
+      "description": "Amplía el máximo al encadenar toques",
+      "price": {
+        "initial": 75,
+        "growth": 1.7
+      }
+    },
+    {
+      "type": 2,
+      "name": "SOBRECARGA",
+      "description": "Prolonga el impulso de toques y generadores",
+      "price": {
+        "initial": 100,
+        "growth": 1.7
+      }
+    }
+  ],
+  "generators": [
+    {
+      "id": "coil",
+      "name": "MICROGENERADOR",
+      "description": "Producción estable desde el inicio",
+      "unlockMilestone": "",
+      "price": {
+        "initial": 25,
+        "growth": 1.18
+      },
+      "baseProduction": 1,
+      "productionGrowth": 1
+    },
+    {
+      "id": "plasma",
+      "name": "BOBINA DE PLASMA",
+      "description": "Concentra el flujo del reactor",
+      "unlockMilestone": "plasma",
+      "price": {
+        "initial": 500,
+        "growth": 1.22
+      },
+      "baseProduction": 12,
+      "productionGrowth": 1
+    },
+    {
+      "id": "quantum",
+      "name": "TURBINA CUÁNTICA",
+      "description": "Acelera la producción sostenida",
+      "unlockMilestone": "quantum",
+      "price": {
+        "initial": 2500,
+        "growth": 1.24
+      },
+      "baseProduction": 60,
+      "productionGrowth": 1.03
+    },
+    {
+      "id": "auxiliary",
+      "name": "NÚCLEO AUXILIAR",
+      "description": "Una segunda fuente de energía",
+      "unlockMilestone": "auxiliary",
+      "price": {
+        "initial": 12000,
+        "growth": 1.26
+      },
+      "baseProduction": 350,
+      "productionGrowth": 1.04
+    }
+  ],
+  "milestones": [
+    {
+      "id": "ignition",
+      "title": "Primera ignición",
+      "rewardDescription": "Pulso de ignición",
+      "generatorId": "",
+      "goal": 0,
+      "target": 100,
+      "reactorStage": 0
+    },
+    {
+      "id": "micro_array",
+      "title": "Red de microgeneradores",
+      "rewardDescription": "Primer anillo orbital",
+      "generatorId": "coil",
+      "goal": 1,
+      "target": 5,
+      "reactorStage": 1
+    },
+    {
+      "id": "plasma",
+      "title": "Confinamiento de plasma",
+      "rewardDescription": "Bobina de plasma disponible",
+      "generatorId": "",
+      "goal": 0,
+      "target": 1000,
+      "reactorStage": 1
+    },
+    {
+      "id": "quantum",
+      "title": "Flujo cuántico",
+      "rewardDescription": "Turbina cuántica y segundo anillo",
+      "generatorId": "",
+      "goal": 0,
+      "target": 5000,
+      "reactorStage": 2
+    },
+    {
+      "id": "singularity",
+      "title": "Resonancia estable",
+      "rewardDescription": "Pulso de resonancia",
+      "generatorId": "",
+      "goal": 0,
+      "target": 10000,
+      "reactorStage": 2
+    },
+    {
+      "id": "auxiliary",
+      "title": "Doble núcleo",
+      "rewardDescription": "Núcleo auxiliar y tercera capa",
+      "generatorId": "",
+      "goal": 0,
+      "target": 25000,
+      "reactorStage": 3
+    },
+    {
+      "id": "mastery",
+      "title": "Reactor de caos",
+      "rewardDescription": "Corona del reactor",
+      "generatorId": "",
+      "goal": 0,
+      "target": 100000,
+      "reactorStage": 4
+    }
+  ]
+}

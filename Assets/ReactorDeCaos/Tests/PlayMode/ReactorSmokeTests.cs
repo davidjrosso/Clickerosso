@@ -127,6 +127,33 @@ namespace ReactorDeCaos.Tests
         }
 
         [UnityTest]
+        public IEnumerator ProgressionCreatesDynamicRowsAndProceduralLayers()
+        {
+            var app = Object.FindFirstObjectByType<ReactorApp>();
+            Assert.That(app.Game.Shop.Count, Is.EqualTo(7));
+            Assert.That(app.Hud.ShopButtons.Length, Is.EqualTo(app.Game.Shop.Count));
+            Assert.That(app.Hud.ShopButtons[5].interactable, Is.False);
+            Assert.That(app.Hud.ShopButtons[5].GetComponentInChildren<TextMeshProUGUI>().text,
+                Does.Contain("2.5K E · BLOQUEADO"));
+            for (int i = 0; i < 2000; i++) app.Game.Tap();
+            app.Hud.Refresh(app.Game, true);
+            Assert.That(app.Hud.ShopButtons[5].interactable, Is.True);
+            app.Hud.ShopButtons[5].onClick.Invoke();
+            Assert.That(app.Game.Level("quantum"), Is.EqualTo(1));
+            var row = app.Hud.ShopButtons[5].GetComponentInChildren<TextMeshProUGUI>();
+            Assert.That(row.text, Does.Contain("TURBINA CUÁNTICA"));
+            Assert.That(row.text, Does.Contain("60 a 123.6 E / s"));
+            double energy = app.Game.Energy;
+            app.GetComponent<ReactorFeedback>().Animate(app.Game.Stage, true);
+            Assert.That(app.Hud.EvolutionRings[0].gameObject.activeSelf, Is.True);
+            Assert.That(app.Hud.EvolutionRings[1].gameObject.activeSelf, Is.True);
+            Assert.That(app.Hud.EvolutionRings[2].gameObject.activeSelf, Is.False);
+            Assert.That(app.Game.Energy, Is.EqualTo(energy), "Visual evolution must not change the economy.");
+            yield return null;
+            LogAssert.NoUnexpectedReceived();
+        }
+
+        [UnityTest]
         public IEnumerator ShopReceivesRaycastWithoutTappingReactor()
         {
             var app = Object.FindFirstObjectByType<ReactorApp>();

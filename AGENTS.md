@@ -3,7 +3,7 @@
 ## Scope
 - Original offline Unity 2D incremental arcade game for Android, portrait.
 - Use C#, uGUI and TextMeshPro. Do not replace Unity with another engine.
-- MVP: tap income, combo, manual overload, three upgrades, two generators,
+- MVP: tap income, combo, manual overload, three upgrades, four configurable generators,
   milestones, local saves, original art and restrained feedback.
 - No ads, purchases, accounts, servers, prestige or offline rewards.
 
@@ -15,6 +15,9 @@
 - Keep economy in `Assets/ReactorDeCaos/Scripts/Core`, independent of Unity.
 - Update tests when changing economy or persistence behavior.
 - Configuration is data; UI and animation must not calculate rewards.
+- Keep generator/milestone IDs stable across saves. `coil` and `plasma` retain
+  phase-1 ownership; additional generators use ID-based records. Claims are
+  persisted before celebrations. Visual stage changes grant no hidden income.
 - Use the pinned Editor in ProjectSettings/ProjectVersion.txt. The initial
   version is provisional until the first real Editor import is validated.
 - Do not claim Unity, Android or visual validation based on .NET tests.
@@ -24,6 +27,9 @@
 ## Commands
 - `bash Tools/install-dotnet.sh` installs a verified local SDK outside checkout.
 - `bash Tools/test-core.sh` runs shared economy and persistence tests.
+- `bash Tools/simulate-balance.sh` runs three 30-minute profiles against the real
+  Economy.asset. Requires Python/PyYAML (`Tools/requirements-balance.txt`); results
+  go to TestResults/Balance. See Docs/PHASE2.md for assumptions and pacing budgets.
 - `python3 Tools/install-unity-editor.py` installs the pinned Linux Editor with
   the official artifact checksum. It does not activate a license.
 - `python3 Tools/check-unity-api.py` compiles all assemblies using the installed

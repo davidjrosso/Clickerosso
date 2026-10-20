@@ -18,6 +18,20 @@ namespace ReactorDeCaos.Tests
         }
 
         [Test]
+        public void EconomyAssetContainsThePhaseTwoCatalog()
+        {
+            var settings = Resources.Load<EconomySettings>("Economy");
+            Assert.That(settings, Is.Not.Null);
+            Assert.DoesNotThrow(() => settings.values.Validate());
+            var game = new GameEngine(settings: settings.values);
+            Assert.That(settings.values.generators.Length, Is.GreaterThanOrEqualTo(4));
+            Assert.That(game.Shop.Count, Is.EqualTo(settings.values.upgrades.Length + settings.values.generators.Length));
+            Assert.That(game.Cost("quantum"), Is.EqualTo(2500));
+            Assert.That(game.Cost("auxiliary"), Is.EqualTo(12000));
+            Assert.That(game.Unlocked("auxiliary"), Is.False);
+        }
+
+        [Test]
         public void ReactorFontHasMaterialAtlasAndSpanishGlyphs()
         {
             TMP_FontAsset font = Resources.Load<TMP_FontAsset>("Fonts/ReactorFont");

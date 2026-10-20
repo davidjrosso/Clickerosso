@@ -1,5 +1,8 @@
 # Fase 1 — cómo probar el núcleo
 
+Registro del recorrido de fase 1. El catálogo y balance actuales se describen en
+[PHASE2.md](PHASE2.md); la apertura de la escena y preparación de TMP siguen igual.
+
 ## Abrir la escena
 
 Usa Unity 6000.0.85f1 con licencia activa. Abre la raíz del proyecto desde Hub.

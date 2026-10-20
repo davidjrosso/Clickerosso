@@ -133,6 +133,20 @@ namespace ReactorDeCaos.Tests
         }
 
         [Test]
+        public void ExpandedGeneratorsAndClaimedMilestonesSurviveDiskRoundTrip()
+        {
+            var game = new GameEngine(new GameState { energy = 25000, lifetimeEnergy = 25000 });
+            game.Buy("quantum"); game.Buy("auxiliary");
+            Assert.That(store.Save(game.Snapshot()), Is.True);
+            var restored = new GameEngine(store.Load());
+            Assert.That(restored.Level("quantum"), Is.EqualTo(1));
+            Assert.That(restored.Level("auxiliary"), Is.EqualTo(1));
+            Assert.That(restored.HasMilestone("auxiliary"), Is.True);
+            Assert.That(restored.BaseProduction, Is.EqualTo(410));
+            Assert.That(restored.TryTakeMilestone(out _), Is.False);
+        }
+
+        [Test]
         public void LowOrderBalancesSurviveSaveAndContinueAccumulating()
         {
             var game = new GameEngine(new GameState { energy = 1e16, lifetimeEnergy = 1e16, coils = 1 });
