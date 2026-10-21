@@ -23,7 +23,14 @@ namespace ReactorDeCaos
         private int numberIndex, waveIndex, sparkIndex, voiceIndex;
         private float pulse, flash, comboMix, overloadMix;
         private readonly AudioSource[] tapVoices = new AudioSource[2];
-        private AudioSource eventVoice, humVoice;
+        private AudioSource eventVoice, humVoice, comboVoice, unlockVoice, musicVoice;
+        private readonly System.Collections.Generic.Dictionary<AudioSource, float> effectLevels = new System.Collections.Generic.Dictionary<AudioSource, float>();
+        private AudioClip comboSound, unlockSound, ascensionSound;
+        private float lastComboSound = -10;
+        private bool musicPaused;
+        public AudioSource MusicVoice => musicVoice;
+        public int ComboRiseCount { get; private set; }
+        public int GeneratorUnlockCount { get; private set; }
         private AudioClip tapSound, purchaseSound, overloadSound, endSound, rewardSound;
         private float lastSound = -10, lastBurst = -10, lastHaptic = -10;
         private bool wasOverloaded, suspended;
@@ -57,6 +64,12 @@ namespace ReactorDeCaos
             }
             for (int i = 0; i < tapVoices.Length; i++) tapVoices[i] = Voice();
             eventVoice = Voice(); humVoice = Voice(); humVoice.loop = true;
+            comboVoice = Voice(); unlockVoice = Voice(); musicVoice = Voice();
+            musicVoice.loop = true; musicVoice.priority = 200;
+            musicVoice.clip = Resources.Load<AudioClip>("Audio/AmbientMusic");
+            comboSound = Resources.Load<AudioClip>("Audio/ComboRise");
+            unlockSound = Resources.Load<AudioClip>("Audio/GeneratorUnlock");
+            ascensionSound = Resources.Load<AudioClip>("Audio/Ascension");
             humVoice.clip = Resources.Load<AudioClip>("Audio/OverloadHum");
             tapSound = Resources.Load<AudioClip>("Audio/Tap");
             purchaseSound = Resources.Load<AudioClip>("Audio/Purchase");
@@ -145,6 +158,20 @@ namespace ReactorDeCaos
             }
         }
 
+        public void ComboRise(double multiplier)
+        {
+            if (suspended || Time.unscaledTime - lastComboSound < .22f) return;
+            lastComboSound = Time.unscaledTime; ComboRiseCount++;
+            comboVoice.pitch = Mathf.Clamp(1 + (float)System.Math.Log(multiplier, 2) * .12f, 1, 1.5f);
+            Play(comboVoice, comboSound, .16f);
+        }
+
+        public void GeneratorUnlocked()
+        {
+            GeneratorUnlockCount++;
+            Play(unlockVoice, unlockSound, .23f);
+        }
+
         public void Purchase() { Play(eventVoice, purchaseSound, .25f); }
 
         public void Celebrate()
@@ -176,20 +203,21 @@ namespace ReactorDeCaos
 
         private void Play(AudioSource voice, AudioClip clip, float volume)
         {
-            if (clip == null || !preferences.sound || suspended) return;
-            // Four fixed sources total. No PlayOneShot accumulation on fast input.
-            voice.clip = clip; voice.volume = volume; voice.Play();
+            if (clip == null || !preferences.sound || preferences.effectsVolume <= 0 || suspended) return;
+            // Seven fixed sources; no PlayOneShot accumulation on fast input.
+            effectLevels[voice] = volume;
+            voice.clip = clip; voice.volume = volume * preferences.effectsVolume; voice.Play();
         }
 
         public void Reborn()
         {
             Clear(numbers); Clear(waves); Clear(sparks);
             foreach (var voice in tapVoices) voice.Stop();
-            eventVoice.Stop(); humVoice.Stop();
+            eventVoice.Stop(); humVoice.Stop(); comboVoice.Stop(); unlockVoice.Stop();
             wasOverloaded = false; overloadMix = comboMix = flash = 0;
             pulse = 1.3f;
             Wave(ReactorHud.Warm, true, true);
-            Play(eventVoice, endSound, .25f);
+            Play(eventVoice, ascensionSound, .25f);
             Haptic();
         }
 
@@ -204,7 +232,22 @@ namespace ReactorDeCaos
             if (!preferences.sound || suspended)
             {
                 foreach (var voice in tapVoices) voice.Stop();
-                eventVoice.Stop(); humVoice.Stop();
+                eventVoice.Stop(); humVoice.Stop(); comboVoice.Stop(); unlockVoice.Stop();
+            }
+            foreach (var pair in effectLevels) pair.Key.volume = pair.Value * preferences.effectsVolume;
+            humVoice.volume = overloadMix * .09f * preferences.effectsVolume;
+            if (suspended)
+            {
+                if (musicVoice.isPlaying) { musicVoice.Pause(); musicPaused = true; }
+            }
+            else if (!preferences.music || preferences.musicVolume <= 0)
+            {
+                musicVoice.Stop(); musicPaused = false; musicVoice.volume = 0;
+            }
+            else if (musicVoice.clip != null)
+            {
+                if (musicPaused) { musicVoice.UnPause(); musicPaused = false; }
+                else if (!musicVoice.isPlaying) { musicVoice.volume = 0; musicVoice.Play(); }
             }
             if (preferences.reducedFlashes) { flash = 0; hud.CoreFlash.color = Color.clear; }
             if (preferences.limitedEffects || preferences.reducedMotion || preferences.reducedFlashes)
@@ -232,6 +275,8 @@ namespace ReactorDeCaos
         {
             if (suspended) return;
             float dt = Mathf.Min(Time.unscaledDeltaTime, .1f);
+            float musicTarget = preferences.music ? .14f * preferences.musicVolume : 0;
+            musicVoice.volume = Mathf.MoveTowards(musicVoice.volume, musicTarget, dt * .08f);
             if (wasOverloaded && !overloaded)
             {
                 OverloadEndCount++;
@@ -266,9 +311,9 @@ namespace ReactorDeCaos
                     ring.rectTransform.localEulerAngles += new Vector3(0, 0,
                         dt * (i % 2 == 0 ? -1 : 1) * (8 + 4 * i + overloadMix * 25));
             }
-            if (preferences.sound && overloaded && humVoice.clip != null)
+            if (preferences.sound && preferences.effectsVolume > 0 && overloaded && humVoice.clip != null)
             {
-                humVoice.volume = overloadMix * .09f;
+                humVoice.volume = overloadMix * .09f * preferences.effectsVolume;
                 if (!humVoice.isPlaying) humVoice.Play();
             }
             else

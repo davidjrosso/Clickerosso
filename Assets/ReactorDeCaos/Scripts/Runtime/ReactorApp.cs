@@ -12,7 +12,10 @@ namespace ReactorDeCaos
         private SaveStore saves;
         private ReactorFeedback feedback;
         private float saveTimer;
-        private bool paused;
+        private bool paused, applicationPaused;
+        private bool hasFocus = true;
+        private bool[] knownUnlocks;
+        private readonly System.Collections.Generic.Dictionary<string, int> purchaseFrames = new System.Collections.Generic.Dictionary<string, int>();
         private bool skipNextFrame;
         private int previousMilestones;
         private float nextMilestoneNotice;
@@ -29,6 +32,8 @@ namespace ReactorDeCaos
             GameState state = saves.Load();
             Game = new GameEngine(state, settings != null ? settings.values : null);
             previousMilestones = Game.CompletedMilestoneCount;
+            knownUnlocks = new bool[Game.Shop.Count];
+            RememberUnlocks();
             Preferences = PresentationPreferences.Load();
             Hud = gameObject.AddComponent<ReactorHud>();
             try
@@ -76,6 +81,12 @@ namespace ReactorDeCaos
                 feedback.Celebrate();
                 nextMilestoneNotice = Time.unscaledTime + 3.5f;
             }
+            for (int i = 0; i < Game.Shop.Count; i++)
+            {
+                bool unlocked = Game.Unlocked(Game.Shop[i].Id);
+                if (Game.Shop[i].IsGenerator && unlocked && !knownUnlocks[i]) feedback.GeneratorUnlocked();
+                knownUnlocks[i] = unlocked;
+            }
             Hud.Refresh(Game);
             feedback.Animate(Game.Stage, Game.Overload.Active, ComboIntensity);
             Hud.Assembly.Animate(Game);
@@ -87,6 +98,7 @@ namespace ReactorDeCaos
             double reward = Game.Tap();
             if (Game.ComboMultiplier > previousCombo && Game.ComboMultiplier >= Game.ComboCap)
                 Hud.ShowNotice("Combo máximo ×" + NumberFormat.Stat(Game.ComboCap));
+            if (Game.ComboMultiplier > previousCombo) feedback.ComboRise(Game.ComboMultiplier);
             previousCombo = Game.ComboMultiplier;
             feedback.Tap(reward, Game.Overload.Active, ComboIntensity);
             Hud.Assembly.Tap();
@@ -97,7 +109,8 @@ namespace ReactorDeCaos
 
         public void Buy(string item)
         {
-            if (!initialized || paused || !Game.Buy(item)) return;
+            if (!initialized || paused || (purchaseFrames.TryGetValue(item, out int frame) && frame == Time.frameCount) || !Game.Buy(item)) return;
+            purchaseFrames[item] = Time.frameCount;
             feedback.Purchase();
             Hud.Assembly.Install(item);
             Hud.ShowNotice("Mejora instalada.");
@@ -129,7 +142,9 @@ namespace ReactorDeCaos
 
         public void BuyMastery(Specialization branch)
         {
-            if (!initialized || paused || !Game.BuyMastery(branch)) return;
+            string key = "mastery:" + (int)branch;
+            if (!initialized || paused || (purchaseFrames.TryGetValue(key, out int frame) && frame == Time.frameCount) || !Game.BuyMastery(branch)) return;
+            purchaseFrames[key] = Time.frameCount;
             feedback.Purchase(); Hud.InvalidateEconomy(); Hud.Refresh(Game, true);
             Hud.Progression.ShowMessage(Save() ? "Maestría permanente instalada." : "No se pudo guardar. Se reintentará; conserva la sesión abierta.");
         }
@@ -155,6 +170,7 @@ namespace ReactorDeCaos
                 return false;
             }
             Game = next;
+            RememberUnlocks(); purchaseFrames.Clear();
             previousMilestones = Game.CompletedMilestoneCount; previousCombo = 1; previousReady = false;
             saveTimer = 0; nextMilestoneNotice = Time.unscaledTime + 3.5f;
             Hud.ResetCycle(); Hud.Refresh(Game, true);
@@ -181,20 +197,29 @@ namespace ReactorDeCaos
             return true;
         }
 
-        private void OnApplicationPause(bool value)
+        private void RememberUnlocks()
         {
-            paused = value;
-            if (feedback != null) feedback.SetSuspended(value);
-            if (value) Save();
+            for (int i = 0; i < knownUnlocks.Length; i++) knownUnlocks[i] = Game.Unlocked(Game.Shop[i].Id);
+        }
+        private void OnApplicationPause(bool value) { applicationPaused = value; ApplyActivity(); }
+        private void OnApplicationFocus(bool value) { hasFocus = value; ApplyActivity(); }
+        private void ApplyActivity()
+        {
+            bool inactive = applicationPaused || !hasFocus;
+            if (paused == inactive) return;
+            paused = inactive;
+            if (feedback != null) feedback.SetSuspended(inactive);
+            if (inactive) { Save(); Preferences?.Save(); }
             else skipNextFrame = true;
         }
 
-        private void OnApplicationQuit() { Save(); }
+        private void OnApplicationQuit() { Save(); Preferences?.Save(); }
 
         private void OnDestroy()
         {
             // Also persists progress when stopping Play Mode.
             Save();
+            Preferences?.Save();
         }
     }
 }

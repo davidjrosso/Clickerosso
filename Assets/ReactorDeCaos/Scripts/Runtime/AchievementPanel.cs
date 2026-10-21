@@ -16,7 +16,7 @@ namespace ReactorDeCaos
         public AchievementPanel(ReactorHud hud, Transform parent, ReactorApp owner)
         {
             app = owner;
-            var surface = ReactorHud.Image("AchievementsPage", parent, new Color(.02f, .035f, .06f, .98f), .035f, .105f, .965f, .815f);
+            var surface = ReactorHud.Image("AchievementsPage", parent, new Color(.02f, .035f, .06f, .98f), .035f, .145f, .965f, .815f);
             surface.raycastTarget = true; root = surface.gameObject;
             hud.Label("AchievementsTitle", surface.transform, "LOGROS", 38, Color.white, .04f, .925f, .96f, .985f, TextAlignmentOptions.Left);
             summary = hud.Label("AchievementsSummary", surface.transform, "", 26, ReactorHud.Cyan, .04f, .84f, .96f, .925f, TextAlignmentOptions.Left);

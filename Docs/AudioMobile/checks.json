@@ -1,0 +1,28 @@
+{
+  "baseline": "fc84c84333af000f948989dcf9067988c771e516",
+  "coreTests": {
+    "total": 99,
+    "passed": 99,
+    "failed": 0,
+    "executed": 99
+  },
+  "unityApiAssemblies": 6,
+  "newPlayModeTests": 6,
+  "newPlayModeTestsExecuted": false,
+  "clipsAnalyzed": 10,
+  "audioRegenerationIdentical": true,
+  "fixedVoices": 7,
+  "mobileLayoutProfiles": 5,
+  "minimumAuditedLogicalTouchSize": 48.33,
+  "layoutAuditType": "static anchor arithmetic, not rendering",
+  "unityNative": {
+    "attempted": true,
+    "exitCode": 198,
+    "message": "No valid Unity Editor license found. Please activate your license.",
+    "playthrough": "blocked",
+    "auditoryValidation": "not performed",
+    "deviceValidation": "not performed"
+  },
+  "uniqueAssetGuids": 84,
+  "economyAssetUnchanged": true
+}

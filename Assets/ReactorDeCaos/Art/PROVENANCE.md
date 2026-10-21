@@ -77,3 +77,19 @@ Core and icon alpha textures from phase 3 are reused, not newly generated.
 The new background is integrated with those interactive objects through
 ReactorHud/ReactorAssembly and shared light/conduit geometry. In-engine art
 approval remains pending because the Editor cannot activate a license here.
+
+## Audio and mobile revision — 2026-10-21
+
+No callable AI audio-generation tool was available. The added ComboRise,
+GeneratorUnlock, Ascension and AmbientMusic WAV files were synthesized locally
+with the project's own `Tools/generate-audio.py`. They contain original sine
+oscillators, envelopes and short melodic patterns, with no third-party samples
+or recordings. Existing six synthesized clips are retained unchanged.
+
+AmbientMusic is a quiet 16-second beatless pad. Music and OverloadHum import as
+PCM so their sample boundaries are preserved. All clips are integrated under
+Resources/Audio and used by ReactorFeedback, with separate effect/music controls.
+Seven fixed voices bound playback. They remain provisional until listening and
+mixing in the actual game and on mobile speakers. PCM analysis is documented in
+Docs/AudioMobile/audio.json; it is not auditory validation. No claim of AI audio
+production or third-party licensing is made for these original generated files.

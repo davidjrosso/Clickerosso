@@ -17,6 +17,11 @@ El Editor sigue bloqueado por falta de licencia: pruebas nativas y revisión
 visual en Main pendientes. Consulta [navegación, recompensas y cómo probar](Docs/UI-REFRESH.md),
 [fórmulas de ascensión](Docs/PHASE4.md) y [evidencia](Docs/VALIDATION.md).
 
+**Sonido y móvil:** música ambiental y efectos con volúmenes independientes,
+sonidos de combo/desbloqueo/ascensión, controles táctiles ampliados y scroll en
+Ajustes y Ascensión. Cinco perfiles pasan la auditoría geométrica; la escucha y
+el recorrido nativo siguen pendientes. [Detalles y pruebas](Docs/AUDIO-MOBILE.md).
+
 ## Abrir y jugar
 
 1. Instala Unity **6000.0.85f1** y activa una licencia válida mediante el flujo
@@ -35,8 +40,8 @@ visual en Main pendientes. Consulta [navegación, recompensas y cómo probar](Do
    **Ascensión** abre requisitos, especialización, maestrías y skins. La primera
    ascensión se habilita con **1 M de energía** acumulada en el ciclo; comprar no
    reduce el progreso. Revisa y confirma los efectos antes de reiniciar.
-7. En **AJUSTES**, arriba a la derecha, configura sonido, destellos, movimiento,
-   efectos y vibración. Las preferencias persisten aparte del progreso.
+7. En **AJUSTES**, arriba a la derecha, configura música y efectos por separado, destellos,
+   movimiento y vibración. Desliza para ver los controles de volumen. Las preferencias persisten aparte del progreso.
    La vibración está desactivada de inicio; la cámara y la interfaz no tiemblan.
 
 Se usa entrada táctil/ratón mediante uGUI. El guardado está en

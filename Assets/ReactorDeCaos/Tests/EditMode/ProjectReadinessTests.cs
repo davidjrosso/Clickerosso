@@ -64,7 +64,7 @@ namespace ReactorDeCaos.Tests
             var coreImporter = (TextureImporter)AssetImporter.GetAtPath(AssetDatabase.GetAssetPath(assets.core));
             Assert.That(coreImporter.textureType, Is.EqualTo(TextureImporterType.Sprite));
             Assert.That(coreImporter.spriteImportMode, Is.EqualTo(SpriteImportMode.Single));
-            foreach (string name in new[] { "Tap", "Purchase", "Overload", "OverloadEnd", "OverloadHum", "Milestone" })
+            foreach (string name in new[] { "Tap", "Purchase", "Overload", "OverloadEnd", "OverloadHum", "Milestone", "ComboRise", "GeneratorUnlock", "Ascension", "AmbientMusic" })
                 Assert.That(Resources.Load<AudioClip>("Audio/" + name), Is.Not.Null, name);
         }
 

@@ -204,7 +204,7 @@ namespace ReactorDeCaos.Tests
             }
             foreach (var graphic in app.Hud.EffectsRoot.GetComponentsInChildren<Graphic>(true))
                 Assert.That(graphic.raycastTarget, Is.False);
-            Assert.That(app.GetComponents<AudioSource>().Length, Is.EqualTo(4));
+            Assert.That(app.GetComponents<AudioSource>().Length, Is.EqualTo(7));
             double energy = app.Game.Energy;
             int originalStage = app.Game.Stage;
             for (int visualStage = 0; visualStage < 5; visualStage++)
@@ -243,7 +243,8 @@ namespace ReactorDeCaos.Tests
             app.Preferences.SaveAndNotify();
             app.Hud.Menu.Options[0].onClick.Invoke();
             app.Hud.Menu.Options[2].onClick.Invoke();
-            foreach (var source in app.GetComponents<AudioSource>()) Assert.That(source.isPlaying, Is.False);
+            foreach (var source in app.GetComponents<AudioSource>())
+                if (source != app.GetComponent<ReactorFeedback>().MusicVoice) Assert.That(source.isPlaying, Is.False);
             var loaded = PresentationPreferences.Load();
             Assert.That(loaded.sound, Is.False);
             Assert.That(loaded.reducedMotion, Is.True);
@@ -267,7 +268,7 @@ namespace ReactorDeCaos.Tests
             for (int i = 0; i < 1000; i++) { app.Tap(); control.Tap(); }
             Assert.That(app.Game.Energy, Is.EqualTo(control.Energy));
             Assert.That(app.Hud.EffectsRoot.childCount, Is.EqualTo(50));
-            Assert.That(app.GetComponents<AudioSource>().Length, Is.EqualTo(4));
+            Assert.That(app.GetComponents<AudioSource>().Length, Is.EqualTo(7));
             app.ActivateOverload(); control.ActivateOverload();
             feedback.Animate(app.Game.Stage, true, 1);
             Assert.That(Label(app, "OverloadLabel").text, Does.Contain("SOBRECARGA ×"));
@@ -359,6 +360,8 @@ namespace ReactorDeCaos.Tests
             Assert.That(app.Game.TapPower, Is.GreaterThan(power));
             Assert.That(app.Game.Essence, Is.EqualTo(2));
             Assert.That(new GameEngine(disk.Load()).MasteryLevel(Specialization.Tap), Is.EqualTo(1));
+            app.Hud.Progression.MasteryButtons[0].onClick.Invoke();
+            Assert.That(app.Game.MasteryLevel(Specialization.Tap), Is.EqualTo(1), "Duplicate same-frame mastery purchase ignored.");
             double gain = app.Game.CurrentTapGain;
             app.SelectSkin(0);
             Assert.That(app.Game.CurrentTapGain, Is.EqualTo(gain));
@@ -418,6 +421,144 @@ namespace ReactorDeCaos.Tests
             Assert.That(app.GetComponentsInChildren<Transform>(true).Length, Is.EqualTo(objects));
             foreach (var graphic in app.GetComponentsInChildren<Graphic>(true))
                 Assert.That(graphic.GetComponent<CanvasRenderer>(), Is.Not.Null, graphic.name);
+            LogAssert.NoUnexpectedReceived();
+        }
+
+        [UnityTest]
+        public IEnumerator MusicAndEffectsAreIndependentAndLegacyMuteMigrates()
+        {
+            PlayerPrefs.SetString(PresentationPreferences.StorageKey, "{\"version\":1,\"sound\":false}");
+            var legacy = PresentationPreferences.Load();
+            Assert.That(legacy.sound, Is.False); Assert.That(legacy.music, Is.False);
+            Assert.That(legacy.effectsVolume, Is.EqualTo(.75f));
+            legacy.music = true; legacy.musicVolume = .2f; legacy.effectsVolume = .6f; legacy.SaveAndNotify();
+            var loaded = PresentationPreferences.Load();
+            Assert.That(loaded.music, Is.True); Assert.That(loaded.sound, Is.False);
+            Assert.That(loaded.musicVolume, Is.EqualTo(.2f)); Assert.That(loaded.effectsVolume, Is.EqualTo(.6f));
+            var app = Object.FindFirstObjectByType<ReactorApp>();
+            var audio = app.GetComponent<ReactorFeedback>();
+            app.Preferences.sound = false; app.Preferences.music = true;
+            app.Preferences.SaveAndNotify();
+            yield return new WaitForSecondsRealtime(.05f);
+            Assert.That(audio.MusicVoice.isPlaying, Is.True);
+            app.Tap();
+            foreach (var voice in app.GetComponents<AudioSource>())
+                if (voice != audio.MusicVoice) Assert.That(voice.isPlaying, Is.False);
+            app.Preferences.music = false; app.Preferences.sound = true; app.Preferences.SaveAndNotify();
+            audio.Purchase();
+            Assert.That(audio.MusicVoice.isPlaying, Is.False);
+            bool effectPlaying = false;
+            foreach (var voice in app.GetComponents<AudioSource>()) if (voice != audio.MusicVoice && voice.isPlaying) effectPlaying = true;
+            Assert.That(effectPlaying, Is.True);
+            app.Hud.Menu.EffectsVolume.value = .25f; app.Hud.Menu.MusicVolume.value = .45f;
+            app.Hud.Menu.SetOpen(false);
+            Assert.That(PresentationPreferences.Load().effectsVolume, Is.EqualTo(.25f));
+            Assert.That(PresentationPreferences.Load().musicVolume, Is.EqualTo(.45f));
+            LogAssert.NoUnexpectedReceived();
+        }
+
+        [UnityTest]
+        public IEnumerator ComboAndGeneratorCuesObserveGameplayAndKeepVoiceCountBounded()
+        {
+            var app = Object.FindFirstObjectByType<ReactorApp>();
+            var audio = app.GetComponent<ReactorFeedback>();
+            for (int i = 0; i < 1000; i++) app.Tap();
+            Assert.That(audio.ComboRiseCount, Is.GreaterThan(0));
+            yield return null;
+            Assert.That(audio.GeneratorUnlockCount, Is.EqualTo(1), "Plasma unlock gets its own cue.");
+            int unlocks = audio.GeneratorUnlockCount;
+            for (int i = 0; i < 10; i++) yield return null;
+            Assert.That(audio.GeneratorUnlockCount, Is.EqualTo(unlocks));
+            Assert.That(app.GetComponents<AudioSource>().Length, Is.EqualTo(7));
+            LogAssert.NoUnexpectedReceived();
+        }
+
+        [UnityTest]
+        public IEnumerator DuplicatePurchaseCallbackInOneFrameCannotBuyTwice()
+        {
+            var app = Object.FindFirstObjectByType<ReactorApp>();
+            for (int i = 0; i < 100; i++) app.Tap();
+            double before = app.Game.Energy, price = app.Game.Cost("tap");
+            app.Hud.SelectTab(1);
+            app.Hud.ShopButtons[0].onClick.Invoke(); app.Hud.ShopButtons[0].onClick.Invoke();
+            Assert.That(app.Game.Level("tap"), Is.EqualTo(1));
+            Assert.That(app.Game.Energy, Is.EqualTo(before - price));
+            for (int i = 0; i < 10; i++) yield return null;
+            Assert.That(app.Game.Level("tap"), Is.EqualTo(1), "Animation never buys a module.");
+            app.Hud.ShopButtons[0].onClick.Invoke();
+            Assert.That(app.Game.Level("tap"), Is.EqualTo(2), "The next intentional tap remains available.");
+            LogAssert.NoUnexpectedReceived();
+        }
+
+        [UnityTest]
+        public IEnumerator FocusAndPauseMustBothRecoverBeforeGameplayAndMusicResume()
+        {
+            var app = Object.FindFirstObjectByType<ReactorApp>();
+            for (int i = 0; i < 25; i++) app.Tap(); app.Buy("coil");
+            var music = app.GetComponent<ReactorFeedback>().MusicVoice;
+            yield return new WaitForSecondsRealtime(.1f);
+            app.SendMessage("OnApplicationFocus", false);
+            app.SendMessage("OnApplicationPause", true);
+            double before = app.Game.Energy;
+            int sample = music.timeSamples;
+            app.SendMessage("OnApplicationFocus", true);
+            app.Tap(); app.ClaimAchievement("first_machine");
+            yield return new WaitForSecondsRealtime(.1f);
+            Assert.That(app.Game.Energy, Is.EqualTo(before));
+            Assert.That(app.Game.AchievementClaimed("first_machine"), Is.False);
+            Assert.That(music.isPlaying, Is.False);
+            Assert.That(music.timeSamples, Is.EqualTo(sample));
+            app.SendMessage("OnApplicationPause", false);
+            yield return new WaitForSecondsRealtime(.1f);
+            Assert.That(app.Game.Energy, Is.GreaterThan(before));
+            Assert.That(app.Game.Energy - before, Is.LessThan(.3));
+            Assert.That(music.isPlaying, Is.True);
+            LogAssert.NoUnexpectedReceived();
+        }
+
+        [UnityTest]
+        public IEnumerator AscensionCanBeScrolledToItsActionWithoutCoveringNavigation()
+        {
+            var app = Object.FindFirstObjectByType<ReactorApp>();
+            app.Hud.SelectTab(3);
+            var scroll = app.Hud.Progression.ArmButton.GetComponentInParent<ScrollRect>();
+            Assert.That(scroll, Is.Not.Null);
+            Canvas.ForceUpdateCanvases(); scroll.verticalNormalizedPosition = 0;
+            yield return null; Canvas.ForceUpdateCanvases();
+            var button = app.Hud.Progression.ArmButton;
+            Vector3 center = button.transform.TransformPoint(((RectTransform)button.transform).rect.center);
+            Assert.That(RectTransformUtility.RectangleContainsScreenPoint(scroll.viewport, center), Is.True);
+            var pointer = new PointerEventData(EventSystem.current) { position = center };
+            var hits = new List<RaycastResult>(); EventSystem.current.RaycastAll(pointer, hits);
+            Assert.That(hits[0].gameObject, Is.EqualTo(button.gameObject));
+            for (int tab = 0; tab < 4; tab++)
+            {
+                app.Hud.SelectTab(tab); Canvas.ForceUpdateCanvases();
+                Assert.That(app.Hud.NavigationButtons[tab].gameObject.activeInHierarchy, Is.True);
+            }
+            LogAssert.NoUnexpectedReceived();
+        }
+
+        [UnityTest]
+        public IEnumerator VisibleEconomicLabelsRemainReadableAcrossPanelsAndStates()
+        {
+            var app = Object.FindFirstObjectByType<ReactorApp>();
+            foreach (bool charged in new[] { false, true })
+            {
+                if (charged) { for (int i = 0; i < 25; i++) app.Tap(); app.ActivateOverload(); }
+                for (int tab = 0; tab < 4; tab++)
+                {
+                    app.Hud.SelectTab(tab); app.Hud.Refresh(app.Game, true);
+                    yield return null; Canvas.ForceUpdateCanvases();
+                    foreach (string name in new[] { "Energy", "Rate", "Stage", "Combo", "OverloadLabel", "PermanentSummary", "CyclePreview" })
+                    {
+                        var label = Label(app, name);
+                        if (!label.gameObject.activeInHierarchy) continue;
+                        label.ForceMeshUpdate();
+                        Assert.That(label.isTextOverflowing, Is.False, name + " in tab " + tab);
+                    }
+                }
+            }
             LogAssert.NoUnexpectedReceived();
         }
 

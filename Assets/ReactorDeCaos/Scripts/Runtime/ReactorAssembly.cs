@@ -73,7 +73,7 @@ namespace ReactorDeCaos
             var frame = ReactorHud.Ring("ModuleHousing", button.transform, ReactorHud.Cyan);
             frame.rectTransform.anchorMin = new Vector2(.02f, .20f); frame.rectTransform.anchorMax = new Vector2(.98f, 1);
             frame.thickness = 2; frame.fraction = .78f;
-            var label = hud.Label("ModuleLevel", button.transform, "", generator ? 24 : 22, Color.white, .01f, .01f, .99f, .25f);
+            var label = hud.Label("ModuleLevel", button.transform, "", 30, Color.white, .01f, -.10f, .99f, .28f);
             modules.Add(new Module { id = id, generator = generator, button = button, icon = icon, frame = frame, label = label, link = link });
         }
         public void Install(string id)

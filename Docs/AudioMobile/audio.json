@@ -1,0 +1,70 @@
+{
+  "method": "PCM file analysis; not listening or native playback",
+  "clips": {
+    "Tap": {
+      "duration": 0.08498866213151927,
+      "peak": 0.384246826171875,
+      "rms": 0.12633767657805325,
+      "sha256": "d9098967475547d07f2e966bcd3c5282340af5b0efd03e8e3f61c91c393327c3"
+    },
+    "Purchase": {
+      "duration": 0.28,
+      "peak": 0.405517578125,
+      "rms": 0.07894071472163618,
+      "sha256": "6670ed7b3ad044f78fe1059fd2d1fcf080f3784f5e3add4046a45dc73a15a2f1"
+    },
+    "Overload": {
+      "duration": 0.65,
+      "peak": 0.368499755859375,
+      "rms": 0.06996845779538727,
+      "sha256": "7943a46679d2a2ea9ddf24223f929cf9fa789a9d1dfe67042dcd14740340c6d6"
+    },
+    "OverloadEnd": {
+      "duration": 0.55,
+      "peak": 0.439422607421875,
+      "rms": 0.13971695006447268,
+      "sha256": "1702f2496d2e8d542d500e2fa3055b9ad274fe5679414b8fdfcec41bbe7bdfae"
+    },
+    "Milestone": {
+      "duration": 0.65,
+      "peak": 0.424163818359375,
+      "rms": 0.08094007560574024,
+      "sha256": "c2395f679e2d0d4de0dff2b5975f16913137ee968d30ff1bf3654eb5f0979f4d"
+    },
+    "OverloadHum": {
+      "duration": 2.0,
+      "peak": 0.184173583984375,
+      "rms": 0.0836686613612334,
+      "sha256": "5c210e33a31def24e6262c9aefa41ff8a207a5924294cf18c2ff5c442012eb2d",
+      "loopStep": 0.003692626953125,
+      "maxAdjacentStep": 0.004547119140625
+    },
+    "ComboRise": {
+      "duration": 0.22,
+      "peak": 0.26751708984375,
+      "rms": 0.08600375606048176,
+      "sha256": "217ac7aeb69ca2b9799f6dd42660e42b15905ec53ff70ee6deb751abd1773057"
+    },
+    "GeneratorUnlock": {
+      "duration": 0.58,
+      "peak": 0.297760009765625,
+      "rms": 0.0932083214865748,
+      "sha256": "c9adb92e89d0e1ff20a5120911b005c449740fcf1309fdf9ae5d85e6fac03c13"
+    },
+    "Ascension": {
+      "duration": 1.15,
+      "peak": 0.3043212890625,
+      "rms": 0.09478824951304704,
+      "sha256": "f02f0194fe7226f3f89cc9d067350046d4cf2b45bac099010d42f5633a1b8559"
+    },
+    "AmbientMusic": {
+      "duration": 16.0,
+      "peak": 0.20635986328125,
+      "rms": 0.05409720630759687,
+      "sha256": "c238203eb8d98583fb3d96412c3e19ed6ef8021d49f73e442779bac674eb8ed1",
+      "loopStep": 0.0072021484375,
+      "maxAdjacentStep": 0.0072021484375
+    }
+  },
+  "conservativeMixPeakBoundAtFullVolume": 0.4181207275390625
+}

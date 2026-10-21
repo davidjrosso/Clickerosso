@@ -333,3 +333,23 @@ Cuatro pestañas separan reactor, compras, logros reclamables y ascensión.
 No se afirma validación visual en Unity ni rendimiento Android. Detalles,
 limitaciones y pasos de reproducción: [UI-REFRESH.md](UI-REFRESH.md).
 Resultados estructurados: [UIRefresh/checks.json](UIRefresh/checks.json).
+
+## Sonido y móvil — 2026-10-21
+
+Integrados cuatro WAV originales sintetizados (combo, generador, ascensión y
+música ambiental), siete voces acotadas y controles separados de música/efectos.
+El silencio previo se migra. Ajustes y Ascensión tienen scroll; se ampliaron
+controles y texto, se combinan pausa/foco y se evita la doble compra del mismo
+artículo o maestría dentro de un fotograma.
+
+Ejecutado: 99 pruebas .NET aprobadas; compilación de seis ensamblados; auditoría
+geométrica de 31 controles en cinco perfiles (mínimo 48,33 píxeles lógicos);
+análisis de diez WAV sin saturación y regeneración idéntica. La cota de mezcla
+calculada es 0,4182 a volumen máximo. No se cambiaron fórmulas económicas.
+
+El intento nativo del Editor vuelve a terminar con salida 198 por falta de
+licencia. No se pudo ejecutar el recorrido de paneles, escuchar la mezcla ni
+validar tipografía/gestos en móviles. Seis pruebas PlayMode nuevas se compilaron,
+pero no se ejecutaron. No se confunde la auditoría de anclas con renderizado ni
+el análisis PCM con escucha. Evidencia y recorrido pendiente:
+[AUDIO-MOBILE.md](AUDIO-MOBILE.md), [AudioMobile](AudioMobile/).

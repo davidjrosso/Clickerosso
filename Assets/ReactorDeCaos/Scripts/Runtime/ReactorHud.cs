@@ -54,6 +54,7 @@ namespace ReactorDeCaos
         private Rect lastSafeArea;
         private Vector2Int lastScreenSize;
         private int lastStage = -1;
+        private static readonly string[] shortStages = { "SEMILLA", "PLASMA", "CUÁNTICO", "ESTRELLA", "SINGULARIDAD" };
         private double[] lastCosts;
         private int[] lastLevels;
         private bool[] lastAffordable, lastUnlocked;
@@ -82,7 +83,7 @@ namespace ReactorDeCaos
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = new Vector2(1080, 1920);
             scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
-            scaler.matchWidthOrHeight = .5f;
+            scaler.matchWidthOrHeight = 0; // Stable text/touch scale across portrait aspect ratios.
             RectTransform canvas = (RectTransform)canvasObject.transform;
             if (EventSystem.current == null)
             {
@@ -106,17 +107,17 @@ namespace ReactorDeCaos
             ApplySafeArea();
             Image("Header", safe, new Color(.025f, .045f, .075f, .85f), .035f, .825f, .965f, .98f);
             Image("HeaderRule", safe, new Color(.18f, .92f, 1, .4f), .065f, .824f, .935f, .826f);
-            Label("Brand", safe, "REACTOR / DE CAOS", 26, Muted, .065f, .945f, .80f, .97f, TextAlignmentOptions.Left);
+            Label("Brand", safe, "REACTOR / DE CAOS", 26, Muted, .065f, .945f, .60f, .97f, TextAlignmentOptions.Left);
             energy = Label("Energy", safe, "0", 78, Color.white, .06f, .871f, .78f, .941f, TextAlignmentOptions.Left);
-            Label("Unit", safe, "ENERGÍA", 22, Cyan, .68f, .878f, .94f, .899f);
-            rate = Label("Rate", safe, "0 / s", 27, Cyan, .065f, .836f, .61f, .867f, TextAlignmentOptions.Left);
-            stage = Label("Stage", safe, "", 21, Warm, .55f, .836f, .94f, .867f, TextAlignmentOptions.Right);
-            reactorPage = Rect("ReactorPage", safe, 0, .105f, 1, .815f);
-            shopPage = Rect("EngineeringPage", safe, .035f, .105f, .965f, .815f);
+            Label("Unit", safe, "ENERGÍA", 22, Cyan, .62f, .945f, .77f, .97f);
+            rate = Label("Rate", safe, "0 / s", 32, Cyan, .065f, .836f, .66f, .867f, TextAlignmentOptions.Left);
+            stage = Label("Stage", safe, "", 32, Warm, .69f, .836f, .94f, .867f, TextAlignmentOptions.Right);
+            reactorPage = Rect("ReactorPage", safe, 0, .145f, 1, .815f);
+            shopPage = Rect("EngineeringPage", safe, .035f, .145f, .965f, .815f);
             Image("EngineeringSurface", shopPage, new Color(.02f, .035f, .06f, .96f), 0, 0, 1, 1);
             combo = Label("Combo", reactorPage, "COMBO ×1", 29, Cyan, .16f, .95f, .84f, .995f);
 
-            RectTransform reactorViewport = Rect("ReactorViewport", reactorPage, .025f, .235f, .975f, .94f);
+            RectTransform reactorViewport = Rect("ReactorViewport", reactorPage, .025f, .305f, .975f, .94f);
             reactorViewport.gameObject.AddComponent<RectMask2D>();
             var mount = Rect("CoreMount", reactorViewport, .23f, .30f, .77f, .84f).gameObject.AddComponent<SocketGraphic>();
             mount.raycastTarget = false;
@@ -146,12 +147,12 @@ namespace ReactorDeCaos
             TapButton.onClick.AddListener(app.Tap);
             Assembly = new ReactorAssembly(this, reactorViewport, app.Game);
             EffectsRoot = Rect("Effects", reactorViewport, 0, 0, 1, 1);
-            tapHint = Label("TapHint", reactorPage, "TOCA EL NÚCLEO PARA GENERAR\nToca un módulo para instalarlo o mejorarlo.", 24, Color.white, .05f, .19f, .95f, .235f);
-            milestone = Label("Milestone", reactorPage, "", 24, Muted, .05f, .135f, .95f, .185f);
-            OverloadButton = Button("ActivateOverload", reactorPage, new Color(.13f, .07f, .23f, .98f), .055f, .025f, .945f, .115f);
+            tapHint = Label("TapHint", reactorPage, "TOCA EL NÚCLEO PARA GENERAR\nToca un módulo para instalarlo o mejorarlo.", 24, Color.white, .05f, .24f, .95f, .30f);
+            milestone = Label("Milestone", reactorPage, "", 24, Muted, .05f, .175f, .95f, .235f);
+            OverloadButton = Button("ActivateOverload", reactorPage, new Color(.13f, .07f, .23f, .98f), .055f, .02f, .945f, .16f);
             OverloadButton.onClick.AddListener(app.ActivateOverload);
             overloadLabel = Label("OverloadLabel", OverloadButton.transform, "", 29, Color.white, .02f, .1f, .98f, .94f);
-            Image track = Image("ChargeTrack", reactorPage, new Color(.12f, .12f, .2f), .055f, .015f, .945f, .022f);
+            Image track = Image("ChargeTrack", reactorPage, new Color(.12f, .12f, .2f), .055f, .006f, .945f, .014f);
             chargeFill = Image("Charge", track.transform, Violet, 0, 0, 0, 1).rectTransform;
             Label("ShopTitle", shopPage, "MEJORAS", 38, Color.white, .04f, .925f, .96f, .985f, TextAlignmentOptions.Left);
             Label("ShopHelp", shopPage, "Mejora tus toques o genera energía automáticamente.\nDesliza para explorar los módulos.", 26, Muted, .04f, .84f, .96f, .925f, TextAlignmentOptions.Left);
@@ -194,13 +195,13 @@ namespace ReactorDeCaos
                 icon.preserveAspect = true;
                 shopText[i] = Label("Description", button.transform, "", 30, Color.white, .16f, .07f, .71f, .93f, TextAlignmentOptions.Left);
             }
-            notice = Label("Notice", safe, "", 20, Warm, .045f, .003f, .955f, .031f);
+            notice = Label("Notice", safe, "", 20, Warm, .045f, .108f, .955f, .14f);
             NavigationButtons = new Button[4]; tabIndicators = new Image[4];
             string[] tabNames = { "REACTOR", "MEJORAS", "LOGROS", "ASCENSIÓN" };
             for (int i = 0; i < 4; i++)
             {
                 int tab = i;
-                var button = Button("Navigation" + i, safe, new Color(.025f, .045f, .075f, .98f), .035f + i * .235f, .038f, .26f + i * .235f, .097f);
+                var button = Button("Navigation" + i, safe, new Color(.025f, .045f, .075f, .98f), .035f + i * .235f, .015f, .26f + i * .235f, .105f);
                 NavigationButtons[i] = button;
                 var text = Label("NavigationLabel", button.transform, tabNames[i], 26, Color.white, .01f, .06f, .99f, .94f);
                 tabIndicators[i] = Image("SelectedTab", button.transform, Cyan, .08f, .96f, .92f, 1);
@@ -208,14 +209,14 @@ namespace ReactorDeCaos
                 if (i == 2) achievementsLabel = text;
                 if (i == 3) { ProgressionButton = button; progressionLabel = text; }
             }
-            Image card = Image("RewardCard", reactorPage, Panel, .05f, .13f, .95f, .235f);
+            Image card = Image("RewardCard", reactorPage, Panel, .05f, .175f, .95f, .30f);
             rewardCard = card.gameObject.AddComponent<CanvasGroup>();
             rewardCard.blocksRaycasts = false;
             Image rewardIcon = Image("RewardIcon", card.transform, Color.white, .015f, .04f, .14f, .96f);
             rewardIcon.sprite = sprites.Icon("reward"); rewardIcon.preserveAspect = true;
             rewardText = Label("RewardText", card.transform, "", 26, Warm, .16f, .03f, .98f, .97f, TextAlignmentOptions.Left);
             rewardCard.gameObject.SetActive(false);
-            SettingsButton = Button("Settings", safe, Panel, .81f, .9f, .955f, .98f);
+            SettingsButton = Button("Settings", safe, Panel, .79f, .89f, .955f, .98f);
             Image settingsIcon = Image("SettingsIcon", SettingsButton.transform, Color.white, .27f, .4f, .73f, .94f);
             settingsIcon.sprite = sprites.Icon("settings"); settingsIcon.preserveAspect = true;
             Label("SettingsLabel", SettingsButton.transform, "AJUSTES", 24, Cyan, .02f, .03f, .98f, .36f);
@@ -328,7 +329,7 @@ namespace ReactorDeCaos
             if (game.Stage != lastStage)
             {
                 lastStage = game.Stage;
-                stage.text = RebirthCatalog.FormName(game.Stage);
+                stage.text = shortStages[Mathf.Clamp(game.Stage, 0, shortStages.Length - 1)];
             }
             progressionLabel.text = game.CanRebirth ? "ASCENSIÓN\nDISPONIBLE" : "ASCENSIÓN";
             achievementsLabel.text = "LOGROS" + (game.AvailableAchievements > 0 ? "\n" + game.AvailableAchievements + " POR RECLAMAR" : "");
@@ -418,12 +419,13 @@ namespace ReactorDeCaos
             var label = Rect(name, parent, x0, y0, x1, y1).gameObject.AddComponent<TextMeshProUGUI>();
             label.font = Font;
             label.text = text;
+            if (size <= 42) size *= 1.35f;
             label.fontSize = size;
             label.color = color;
             label.alignment = alignment;
             label.raycastTarget = false;
             label.enableAutoSizing = true;
-            label.fontSizeMin = size * .68f;
+            label.fontSizeMin = size * .80f;
             label.fontSizeMax = size;
             label.overflowMode = TextOverflowModes.Ellipsis;
             return label;
