@@ -112,7 +112,7 @@ namespace ReactorDeCaos.Tests
             Assert.That(app.Hud.OverloadButton.interactable, Is.True);
             app.Hud.ShopButtons[0].onClick.Invoke();
             Assert.That(Label(app, "Description").text, Does.Contain("2 a 3 E / toque"));
-            Assert.That(Label(app, "Description").text, Does.Contain("24 E"));
+            Assert.That(Label(app, "PurchasePrice").text, Does.Contain("24 E"));
             app.Hud.ShopButtons[(int)Purchase.Coil].onClick.Invoke();
             Assert.That(Label(app, "Rate").text, Does.StartWith("1 / s"));
             Assert.That(Label(app, "Energy").text, Is.EqualTo(NumberFormat.Compact(app.Game.Energy)));
@@ -142,14 +142,14 @@ namespace ReactorDeCaos.Tests
             Assert.That(app.Game.Shop.Count, Is.EqualTo(7));
             Assert.That(app.Hud.ShopButtons.Length, Is.EqualTo(app.Game.Shop.Count));
             Assert.That(app.Hud.ShopButtons[5].interactable, Is.False);
-            Assert.That(app.Hud.ShopButtons[5].GetComponentInChildren<TextMeshProUGUI>().text,
+            Assert.That(app.Hud.ShopButtons[5].GetComponentInChildren<TextMeshProUGUI>(true).text,
                 Does.Contain("2.5K E · BLOQUEADO"));
             for (int i = 0; i < 2000; i++) app.Game.Tap();
             app.Hud.Refresh(app.Game, true);
             Assert.That(app.Hud.ShopButtons[5].interactable, Is.True);
             app.Hud.ShopButtons[5].onClick.Invoke();
             Assert.That(app.Game.Level("quantum"), Is.EqualTo(1));
-            var row = app.Hud.ShopButtons[5].GetComponentInChildren<TextMeshProUGUI>();
+            var row = app.Hud.ShopButtons[5].transform.Find("Description").GetComponent<TextMeshProUGUI>();
             Assert.That(row.text, Does.Contain("TURBINA CUÁNTICA"));
             Assert.That(row.text, Does.Contain("60 a 123.6 E / s"));
             double energy = app.Game.Energy;
@@ -166,6 +166,7 @@ namespace ReactorDeCaos.Tests
         public IEnumerator ShopReceivesRaycastWithoutTappingReactor()
         {
             var app = Object.FindFirstObjectByType<ReactorApp>();
+            app.Hud.SelectTab(1);
             var button = app.Hud.ShopButtons[0];
             Canvas.ForceUpdateCanvases();
             Vector3 center = button.transform.TransformPoint(((RectTransform)button.transform).rect.center);
@@ -367,6 +368,56 @@ namespace ReactorDeCaos.Tests
             foreach (var graphic in app.GetComponentsInChildren<Graphic>(true))
                 Assert.That(graphic.GetComponent<CanvasRenderer>(), Is.Not.Null, graphic.name);
             Assert.That(app.Hud.EffectsRoot.childCount, Is.EqualTo(50));
+            LogAssert.NoUnexpectedReceived();
+        }
+
+        [UnityTest]
+        public IEnumerator NavigationClaimsAndAscensionRequirementsWorkInMain()
+        {
+            var app = Object.FindFirstObjectByType<ReactorApp>();
+            Assert.That(app.Hud.SelectedTab, Is.Zero);
+            Assert.That(app.Hud.Assembly.ButtonFor("coil").image.color.a, Is.Zero,
+                "Modules must not introduce opaque rectangular backgrounds.");
+            Assert.That(app.Hud.Assembly.ButtonFor("coil").GetComponentInChildren<SocketGraphic>(), Is.Not.Null);
+            for (int i = 0; i < 100; i++) app.Tap();
+            int objects = app.GetComponentsInChildren<Transform>(true).Length;
+            app.Hud.NavigationButtons[2].onClick.Invoke();
+            Assert.That(app.Hud.Achievements.IsOpen, Is.True);
+            Assert.That(app.Hud.TapButton.gameObject.activeInHierarchy, Is.False);
+            var claim = app.Hud.Achievements.ClaimButtons[0];
+            Assert.That(claim.interactable, Is.True);
+            Canvas.ForceUpdateCanvases();
+            Vector3 center = claim.transform.TransformPoint(((RectTransform)claim.transform).rect.center);
+            var pointer = new PointerEventData(EventSystem.current)
+                { position = RectTransformUtility.WorldToScreenPoint(null, center) };
+            var hits = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(pointer, hits);
+            Assert.That(hits[0].gameObject, Is.EqualTo(claim.gameObject));
+            double before = app.Game.Energy;
+            ExecuteEvents.Execute(hits[0].gameObject, pointer, ExecuteEvents.pointerClickHandler);
+            Assert.That(app.Game.Energy, Is.EqualTo(before + 25));
+            Assert.That(claim.interactable, Is.False);
+            claim.onClick.Invoke();
+            Assert.That(app.Game.Energy, Is.EqualTo(before + 25));
+            var disk = new SaveStore(path, new UnityJsonCodec());
+            Assert.That(new GameEngine(disk.Load()).AchievementClaimed("first_spark"), Is.True);
+            app.Hud.NavigationButtons[3].onClick.Invoke();
+            Assert.That(app.Hud.Achievements.IsOpen, Is.False);
+            Assert.That(app.Hud.Progression.IsOpen, Is.True);
+            Assert.That(app.Hud.Progression.ArmButton.interactable, Is.False);
+            Assert.That(Label(app, "CyclePreview").text, Does.Contain("REQUISITO"));
+            app.Hud.SettingsButton.onClick.Invoke();
+            Assert.That(app.Hud.Menu.IsOpen, Is.True);
+            app.Hud.Back();
+            Assert.That(app.Hud.Menu.IsOpen, Is.False);
+            Assert.That(app.Hud.SelectedTab, Is.EqualTo(3));
+            for (int i = 0; i < 20; i++) app.Hud.SelectTab(i % 4);
+            app.Hud.SelectTab(0);
+            yield return null;
+            Assert.That(app.Hud.TapButton.gameObject.activeInHierarchy, Is.True);
+            Assert.That(app.GetComponentsInChildren<Transform>(true).Length, Is.EqualTo(objects));
+            foreach (var graphic in app.GetComponentsInChildren<Graphic>(true))
+                Assert.That(graphic.GetComponent<CanvasRenderer>(), Is.Not.Null, graphic.name);
             LogAssert.NoUnexpectedReceived();
         }
 

@@ -13,6 +13,8 @@ namespace ReactorDeCaos
         private readonly TextMeshProUGUI[] branchLabels = new TextMeshProUGUI[3], masteryLabels = new TextMeshProUGUI[3], skinLabels = new TextMeshProUGUI[4];
         private readonly Button[] branches = new Button[3], skins = new Button[4];
         private readonly GameObject confirmation;
+        private readonly RectTransform requirementFill;
+        private readonly Button[] tabs = new Button[3];
         private Specialization selected = Specialization.Tap;
         private int quotedReward, quotedCycle;
         public Button ArmButton { get; }
@@ -23,23 +25,26 @@ namespace ReactorDeCaos
         public RebirthPanel(ReactorHud hud, Transform parent, ReactorApp owner)
         {
             app = owner;
-            var blocker = ReactorHud.Button("ProgressionOverlay", parent, new Color(0, .01f, .025f, .96f), 0, 0, 1, 1);
+            var blocker = ReactorHud.Button("ProgressionOverlay", parent, new Color(.02f, .035f, .06f, 1), .035f, .105f, .965f, .815f);
             root = blocker.gameObject; blocker.transition = Selectable.Transition.None;
-            blocker.onClick.AddListener(Close);
-            var panel = ReactorHud.Button("ProgressionPanel", blocker.transform, new Color(.025f, .045f, .09f), .035f, .04f, .965f, .96f);
+
+            var panel = ReactorHud.Button("ProgressionPanel", blocker.transform, new Color(.025f, .045f, .075f), 0, 0, 1, 1);
             panel.transition = Selectable.Transition.None;
-            hud.Label("ProgressionTitle", panel.transform, "EVOLUCIÓN DEL REACTOR", 36, Color.white, .04f, .925f, .96f, .98f);
+            hud.Label("ProgressionTitle", panel.transform, "ASCENSIÓN", 36, Color.white, .04f, .925f, .96f, .98f);
             summary = hud.Label("PermanentSummary", panel.transform, "", 26, ReactorHud.Warm, .04f, .84f, .96f, .925f);
-            string[] names = { "RENACER", "MAESTRÍAS", "SKINS" };
+            string[] names = { "ASCENDER", "MAESTRÍAS", "SKINS" };
             for (int i = 0; i < 3; i++)
             {
                 int page = i;
                 var tab = ReactorHud.Button("ProgressionTab" + i, panel.transform, new Color(.10f, .08f, .22f), .035f + i * .32f, .77f, .325f + i * .32f, .835f);
+                tabs[i] = tab;
                 hud.Label("TabLabel", tab.transform, names[i], 27, Color.white, .02f, 0, .98f, 1);
                 tab.onClick.AddListener(() => ShowPage(page));
                 pages[i] = ReactorHud.Rect("ProgressionPage" + i, panel.transform, .035f, .18f, .965f, .75f).gameObject;
             }
-            cycle = hud.Label("CyclePreview", pages[0].transform, "", 30, Color.white, .02f, .68f, .98f, 1);
+            cycle = hud.Label("CyclePreview", pages[0].transform, "", 29, Color.white, .02f, .71f, .98f, 1);
+            var track = ReactorHud.Image("AscensionRequirementTrack", pages[0].transform, new Color(.08f, .13f, .19f), .04f, .68f, .96f, .695f);
+            requirementFill = ReactorHud.Image("AscensionRequirementProgress", track.transform, ReactorHud.Warm, 0, 0, 0, 1).rectTransform;
             currentBranch = hud.Label("BranchExplanation", pages[0].transform, "", 25, ReactorHud.Cyan, .02f, .51f, .98f, .68f);
             for (int i = 0; i < branches.Length; i++)
             {
@@ -73,13 +78,13 @@ namespace ReactorDeCaos
             message = hud.Label("ProgressionMessage", panel.transform, "", 25, ReactorHud.Warm, .04f, .11f, .96f, .175f);
             var close = ReactorHud.Button("CloseProgression", panel.transform, new Color(.06f, .09f, .16f), .2f, .025f, .8f, .10f);
             hud.Label("CloseProgressionText", close.transform, "VOLVER AL REACTOR", 28, Color.white, .02f, 0, .98f, 1);
-            close.onClick.AddListener(Close);
+            close.onClick.AddListener(() => hud.SelectTab(0));
             // Confirmation is a separate blocker; changing tabs cannot accidentally confirm a reset.
             var confirmPanel = ReactorHud.Button("ConfirmRebirthPanel", panel.transform, new Color(.035f, .025f, .065f, 1), .02f, .18f, .98f, .84f);
             confirmation = confirmPanel.gameObject; confirmPanel.transition = Selectable.Transition.None;
             confirmationText = hud.Label("ConfirmRebirthDescription", confirmPanel.transform, "", 31, Color.white, .06f, .32f, .94f, .96f);
             ConfirmButton = ReactorHud.Button("ConfirmRebirth", confirmPanel.transform, new Color(.28f, .06f, .18f), .06f, .17f, .94f, .29f);
-            hud.Label("ConfirmRebirthText", ConfirmButton.transform, "CONFIRMAR COLAPSO", 29, ReactorHud.Warm, .02f, 0, .98f, 1);
+            hud.Label("ConfirmRebirthText", ConfirmButton.transform, "CONFIRMAR ASCENSIÓN", 29, ReactorHud.Warm, .02f, 0, .98f, 1);
             ConfirmButton.onClick.AddListener(() =>
             {
                 bool committed = app.Rebirth(selected, quotedReward, quotedCycle);
@@ -95,7 +100,7 @@ namespace ReactorDeCaos
         {
             app.Hud.ClosePanels();
             selected = app.Game.Specialization == Specialization.None ? Specialization.Tap : app.Game.Specialization;
-            message.text = ""; root.SetActive(true); ShowPage(page); Refresh();
+            message.text = "La ascensión reinicia el ciclo a cambio de poder permanente."; root.SetActive(true); ShowPage(page); Refresh();
         }
         public void Close() { confirmation.SetActive(false); root.SetActive(false); }
         public void CancelConfirmation() { confirmation.SetActive(false); }
@@ -103,7 +108,11 @@ namespace ReactorDeCaos
         private void ShowPage(int page)
         {
             confirmation.SetActive(false);
-            for (int i = 0; i < pages.Length; i++) pages[i].SetActive(i == page);
+            for (int i = 0; i < pages.Length; i++)
+            {
+                pages[i].SetActive(i == page);
+                tabs[i].image.color = i == page ? new Color(.12f, .23f, .28f) : new Color(.055f, .075f, .13f);
+            }
             Refresh();
         }
         private void Arm()
@@ -111,11 +120,11 @@ namespace ReactorDeCaos
             if (!app.Game.CanRebirth) return;
             GameEngine game = app.Game;
             quotedReward = game.RebirthReward; quotedCycle = game.RebirthCount;
-            confirmationText.text = "COLAPSO CONTROLADO\n\nRecibirás " + quotedReward + " ESENCIAS\nEspecialización: " + RebirthCatalog.BranchName(selected)
+            confirmationText.text = "ASCENDER AL SIGUIENTE CICLO\n\nRecibirás " + quotedReward + " ESENCIAS\nEspecialización: " + RebirthCatalog.BranchName(selected)
                 + "\nPotencia permanente: ×" + NumberFormat.Stat(game.PermanentMultiplier) + " a ×" + NumberFormat.Stat(game.ProjectedPermanentMultiplier)
                 + (game.RebirthSkinUnlock >= 0 ? "\nDesbloqueas y equipas: " + RebirthCatalog.SkinName(game.RebirthSkinUnlock) : "")
                 + "\n\nSe reinician energía, compras, hitos del ciclo, combo y sobrecarga."
-                + "\n\nConservas esencia, maestrías, skins y ajustes."
+                + "\n\nConservas logros, recompensas pendientes, esencia, maestrías, skins y ajustes."
                 + "\n\nComienzas con " + game.StarterCoils + " microgenerador y potencia NV. " + game.StarterTapLevel + ".";
             confirmation.SetActive(true);
         }
@@ -123,14 +132,18 @@ namespace ReactorDeCaos
         {
             if (!IsOpen) return;
             GameEngine game = app.Game;
-            summary.text = "ESENCIA " + game.Essence + "  ·  RENACIMIENTOS " + game.RebirthCount
-                + "\nPotencia permanente ×" + NumberFormat.Stat(game.PermanentMultiplier) + " · Histórico " + NumberFormat.Compact(game.AllTimeEnergy) + " E";
-            cycle.text = "CICLO · " + NumberFormat.Compact(game.Lifetime) + " / " + NumberFormat.Compact(game.RebirthThreshold) + " E\n"
-                + (game.CanRebirth ? "Renacer ahora: +" + game.RebirthReward + " ESENCIAS" : "Genera energía para habilitar el colapso.")
-                + "\n" + (double.IsPositiveInfinity(game.NextEssenceTarget) ? "Límite de recompensa alcanzado"
-                    : "Próxima recompensa: " + NumberFormat.Compact(game.NextEssenceTarget) + " E acumulados")
-                + "\nLas compras no reducen esta recompensa.";
-            currentBranch.text = "Actual: " + RebirthCatalog.BranchName(game.Specialization)
+            summary.text = "ASCENSIONES " + game.RebirthCount + "  ·  ESENCIA " + game.Essence
+                + "\nPotencia permanente ×" + NumberFormat.Stat(game.PermanentMultiplier) + " · Histórico " + NumberFormat.Compact(game.AllTimeEnergy) + " E"
+                + "\nEspecialización actual: " + RebirthCatalog.BranchName(game.Specialization);
+            requirementFill.anchorMax = new Vector2(Mathf.Clamp01((float)(game.Lifetime / game.RebirthThreshold)), 1);
+            cycle.text = "REQUISITO · " + NumberFormat.Compact(game.Lifetime) + " / " + NumberFormat.Compact(game.RebirthThreshold) + " E del ciclo\n"
+                + (game.CanRebirth ? "LISTO · Recibes " + game.RebirthReward + " ESENCIAS" : game.Lifetime >= game.RebirthThreshold ? "Límite de ascensiones o esencia alcanzado"
+                    : "Faltan " + NumberFormat.Compact(game.RebirthThreshold - game.Lifetime) + " E · Comprar no reduce el progreso")
+                + "\n" + (game.RebirthSkinUnlock >= 0 ? "Próxima skin: " + RebirthCatalog.SkinName(game.RebirthSkinUnlock)
+                    : "Potencia permanente tras ascender: ×" + NumberFormat.Stat(game.ProjectedPermanentMultiplier))
+                + (game.CanRebirth && !double.IsPositiveInfinity(game.NextEssenceTarget)
+                    ? "\nSiguiente esencia a " + NumberFormat.Compact(game.NextEssenceTarget) + " E" : "");
+            currentBranch.text = "ELIGE TU ESPECIALIZACIÓN"
                 + "\nPróximo ciclo: ×" + NumberFormat.Stat(game.SpecializationBonus(selected)) + " en la rama elegida."
                 + (selected == Specialization.Tap ? "\nToques añade " + NumberFormat.Stat(game.TapProductionFraction * 100) + "% de producción a la base de cada toque." : "");
             for (int i = 0; i < 3; i++)
@@ -146,12 +159,12 @@ namespace ReactorDeCaos
                 MasteryButtons[i].interactable = game.CanBuyMastery(branch);
             }
             ArmButton.interactable = game.CanRebirth;
-            armLabel.text = game.CanRebirth ? "REVISAR COLAPSO · +" + game.RebirthReward + " ESENCIAS" : "COLAPSO TODAVÍA BLOQUEADO";
+            armLabel.text = game.CanRebirth ? "ASCENDER · +" + game.RebirthReward + " ESENCIAS" : "ASCENSIÓN BLOQUEADA · COMPLETA EL REQUISITO";
             for (int i = 0; i < skins.Length; i++)
             {
                 bool unlocked = RebirthCatalog.SkinUnlocked(i, game.RebirthCount);
                 skins[i].interactable = unlocked && game.Skin != i;
-                skinLabels[i].text = RebirthCatalog.SkinName(i) + "\n" + (game.Skin == i ? "EQUIPADA" : unlocked ? "EQUIPAR" : "Requiere " + RebirthCatalog.SkinRequirement(i) + " renacimientos");
+                skinLabels[i].text = RebirthCatalog.SkinName(i) + "\n" + (game.Skin == i ? "EQUIPADA" : unlocked ? "EQUIPAR" : "Requiere " + RebirthCatalog.SkinRequirement(i) + " ascensiones");
             }
         }
     }

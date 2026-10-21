@@ -114,6 +114,19 @@ namespace ReactorDeCaos
             Hud.Refresh(Game, true);
         }
 
+        public void ClaimAchievement(string id)
+        {
+            if (!initialized || paused) return;
+            if (!Game.TryClaimAchievement(id, saves.Save))
+            {
+                Hud.Achievements.ShowMessage("No se pudo reclamar. Revisa el progreso o el espacio de guardado.");
+                return;
+            }
+            feedback.Celebrate(); Hud.InvalidateEconomy(); Hud.Refresh(Game, true);
+            Hud.Achievements.ShowMessage("Recompensa de energía recibida y guardada.");
+            saveTimer = 0;
+        }
+
         public void BuyMastery(Specialization branch)
         {
             if (!initialized || paused || !Game.BuyMastery(branch)) return;
@@ -145,7 +158,7 @@ namespace ReactorDeCaos
             previousMilestones = Game.CompletedMilestoneCount; previousCombo = 1; previousReady = false;
             saveTimer = 0; nextMilestoneNotice = Time.unscaledTime + 3.5f;
             Hud.ResetCycle(); Hud.Refresh(Game, true);
-            Hud.ShowReward(new MilestoneDefinition { title = "RENACIMIENTO " + Game.RebirthCount,
+            Hud.ShowReward(new MilestoneDefinition { title = "ASCENSIÓN " + Game.RebirthCount,
                 rewardDescription = "+" + quotedReward + " esencia · " + RebirthCatalog.SkinName(Game.Skin) });
             feedback.Reborn(); Hud.Assembly.Animate(Game);
             return true;

@@ -312,3 +312,24 @@ creados por el intento fallido del Editor se archivaron fuera del repositorio.
 Evidencia estructurada y salidas del simulador: [Phase4/checks.json](Phase4/checks.json)
 y [Phase4/rebirth.json](Phase4/rebirth.json). Fórmulas, tiempos medidos, limitaciones
 y recorrido para probar en Unity: [PHASE4.md](PHASE4.md).
+
+## Revisión de arte, navegación, logros y ascensión — 2026-10-21
+
+Se integró una nueva ilustración original de la cámara, soportes procedurales y
+botones transparentes para resolver los fondos rectangulares de los módulos.
+Cuatro pestañas separan reactor, compras, logros reclamables y ascensión.
+
+- 99 pruebas .NET pasan; 11 nuevas cubren logros y persistencia, incluidas
+  escritura fallida, doble reclamación, migración y conservación entre ciclos.
+- Seis ensamblados compilan contra las API oficiales de Unity.
+- Simulaciones: tres perfiles de 30 minutos y 54 ciclos de ascensión pasan;
+  sin reclamar logros, los resultados de fase 4 permanecen idénticos.
+- Una prueba controlada de diez minutos con compras por orden, reclamaciones
+  y ascensión mantiene estados válidos y no duplica recompensas.
+- Intento nativo: salida 198 por ausencia de licencia del Editor. Las pruebas
+  PlayMode de navegación/claims/raycasts/renderers se compilaron pero no corrieron.
+  Los ajustes por defecto creados por el intento quedaron archivados fuera del repo.
+
+No se afirma validación visual en Unity ni rendimiento Android. Detalles,
+limitaciones y pasos de reproducción: [UI-REFRESH.md](UI-REFRESH.md).
+Resultados estructurados: [UIRefresh/checks.json](UIRefresh/checks.json).

@@ -185,3 +185,67 @@ MonoBehaviour:
       goal: 0
       target: 10000000000
       reactorStage: 4
+    achievements:
+    - id: first_spark
+      title: Primera chispa
+      description: Produce 100 E en total
+      goal: 0
+      target: 100
+      energyReward: 25
+      generatorId: ''
+    - id: first_machine
+      title: Manos libres
+      description: Instala un microgenerador
+      goal: 1
+      target: 1
+      energyReward: 25
+      generatorId: 'coil'
+    - id: micro_network
+      title: Red de energía
+      description: Microgenerador de nivel 5
+      goal: 1
+      target: 5
+      energyReward: 100
+      generatorId: 'coil'
+    - id: plasma_online
+      title: Plasma estable
+      description: Instala una bobina de plasma
+      goal: 1
+      target: 1
+      energyReward: 250
+      generatorId: 'plasma'
+    - id: quantum_online
+      title: Salto cuántico
+      description: Instala una turbina cuántica
+      goal: 1
+      target: 1
+      energyReward: 1000
+      generatorId: 'quantum'
+    - id: ten_thousand
+      title: Energía sin límites
+      description: Produce 10K E en total
+      goal: 0
+      target: 10000
+      energyReward: 1000
+      generatorId: ''
+    - id: million
+      title: Potencia estelar
+      description: Produce 1M E en total
+      goal: 0
+      target: 1000000
+      energyReward: 10000
+      generatorId: ''
+    - id: first_ascent
+      title: Un nuevo comienzo
+      description: Asciende por primera vez
+      goal: 2
+      target: 1
+      energyReward: 100
+      generatorId: ''
+    - id: three_ascents
+      title: Más allá del núcleo
+      description: Completa 3 ascensiones
+      goal: 2
+      target: 3
+      energyReward: 500
+      generatorId: ''

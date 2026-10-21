@@ -23,11 +23,16 @@ namespace ReactorDeCaos
         // Optional additions to version 1. Legacy coil/plasma fields retain their meaning.
         public GeneratorLevel[] generators = Array.Empty<GeneratorLevel>();
         public string[] completedMilestones = Array.Empty<string>();
+        // Permanent achievement ledger, optional in older version-1/2 saves.
+        public string[] unlockedAchievements = Array.Empty<string>();
+        public string[] claimedAchievements = Array.Empty<string>();
 
         public GameState Copy()
         {
             var copy = (GameState)MemberwiseClone();
             copy.rebirth = rebirth?.Copy();
+            copy.unlockedAchievements = (string[])(unlockedAchievements ?? Array.Empty<string>()).Clone();
+            copy.claimedAchievements = (string[])(claimedAchievements ?? Array.Empty<string>()).Clone();
             copy.generators = generators == null ? Array.Empty<GeneratorLevel>()
                 : Array.ConvertAll(generators, x => x?.Copy());
             copy.completedMilestones = completedMilestones == null ? Array.Empty<string>()
@@ -45,7 +50,7 @@ namespace ReactorDeCaos
                 && (lifetimeEnergy > energy || (lifetimeEnergy == energy && lifetimeRemainder >= energyRemainder))
                 && ValidLevel(tapLevel) && ValidLevel(comboLevel)
                 && ValidLevel(overloadLevel) && ValidLevel(coils) && ValidLevel(plasma)
-                && ValidProgression();
+                && ValidProgression() && ValidAchievements();
         }
 
         private bool ValidProgression()
@@ -66,6 +71,18 @@ namespace ReactorDeCaos
                 foreach (string id in completedMilestones)
                     if (!EconomyConfig.ValidId(id) || !ids.Add(id)) return false;
             }
+            return true;
+        }
+
+        private bool ValidAchievements()
+        {
+            var unlocked = new HashSet<string>();
+            var claimed = new HashSet<string>();
+            if ((unlockedAchievements?.Length ?? 0) > 128 || (claimedAchievements?.Length ?? 0) > 128) return false;
+            foreach (string id in unlockedAchievements ?? Array.Empty<string>())
+                if (!EconomyConfig.ValidId(id) || !unlocked.Add(id)) return false;
+            foreach (string id in claimedAchievements ?? Array.Empty<string>())
+                if (!unlocked.Contains(id) || !claimed.Add(id)) return false;
             return true;
         }
 

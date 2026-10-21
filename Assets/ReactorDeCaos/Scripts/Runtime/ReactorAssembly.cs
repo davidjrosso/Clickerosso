@@ -50,27 +50,30 @@ namespace ReactorDeCaos
             {
                 // Two side columns; catalog additions reuse this component instead of new scripts.
                 int row = i / 2, rows = (generators.Count + 1) / 2;
-                float y = rows == 1 ? .6f : Mathf.Lerp(.77f, .33f, row / (float)(rows - 1));
-                Add(generators[i].Id, true, viewport, new Vector2(i % 2 == 0 ? .13f : .87f, y), .105f, .16f);
+                float y = rows == 1 ? .6f : Mathf.Lerp(.77f, .39f, row / (float)(rows - 1));
+                Add(generators[i].Id, true, viewport, new Vector2(i % 2 == 0 ? .14f : .86f, y), .115f, .125f);
             }
-            Add("tap", false, viewport, new Vector2(.31f, .10f), .065f, .095f);
-            Add("combo", false, viewport, new Vector2(.50f, .10f), .065f, .095f);
-            Add("overload", false, viewport, new Vector2(.69f, .10f), .065f, .095f);
+            Add("tap", false, viewport, new Vector2(.27f, .12f), .09f, .10f);
+            Add("combo", false, viewport, new Vector2(.50f, .12f), .09f, .10f);
+            Add("overload", false, viewport, new Vector2(.73f, .12f), .09f, .10f);
         }
         private void Add(string id, bool generator, Transform parent, Vector2 position, float halfWidth, float halfHeight)
         {
             var link = ReactorHud.Rect("Conduit_" + id, parent, 0, 0, 1, 1).gameObject.AddComponent<ConduitGraphic>();
-            link.raycastTarget = false; link.source = position;
+            link.raycastTarget = false; link.source = position; link.destination = new Vector2(.5f, .57f);
             // Place conduits behind the central core and its transparent tap target.
             link.transform.SetAsFirstSibling();
-            Button button = ReactorHud.Button("Module_" + id, parent, new Color(.025f, .045f, .09f, .9f),
+            Button button = ReactorHud.Button("Module_" + id, parent, Color.clear,
                 position.x - halfWidth, position.y - halfHeight, position.x + halfWidth, position.y + halfHeight);
             button.onClick.AddListener(() => hud.OpenModule(id));
+            var socket = ReactorHud.Rect("ModuleSocket", button.transform, .02f, .20f, .98f, 1).gameObject.AddComponent<SocketGraphic>();
+            socket.raycastTarget = false;
             Image icon = ReactorHud.Image("ModuleIcon", button.transform, Color.white, .13f, .26f, .87f, .94f);
             icon.sprite = hud.Icon(id); icon.preserveAspect = true;
             var frame = ReactorHud.Ring("ModuleHousing", button.transform, ReactorHud.Cyan);
+            frame.rectTransform.anchorMin = new Vector2(.02f, .20f); frame.rectTransform.anchorMax = new Vector2(.98f, 1);
             frame.thickness = 2; frame.fraction = .78f;
-            var label = hud.Label("ModuleLevel", button.transform, "", generator ? 21 : 18, Color.white, .01f, .01f, .99f, .25f);
+            var label = hud.Label("ModuleLevel", button.transform, "", generator ? 24 : 22, Color.white, .01f, .01f, .99f, .25f);
             modules.Add(new Module { id = id, generator = generator, button = button, icon = icon, frame = frame, label = label, link = link });
         }
         public void Install(string id)
@@ -103,8 +106,8 @@ namespace ReactorDeCaos
                     module.label.text = !unlocked ? "BLOQUEADO" : level == 0 ? "INSTALAR" : "NV. " + level;
                 }
                 module.installation = Mathf.MoveTowards(module.installation, 0, dt * 1.6f);
-                bool running = module.generator ? level > 0 : module.id == "tap" ? tapPulse > 0
-                    : module.id == "combo" ? game.Combo.Count > 0 : game.Overload.Active || game.Overload.Ready;
+                bool running = module.generator ? level > 0 : module.id == "tap" ? level > 0 && tapPulse > 0
+                    : module.id == "combo" ? level > 0 && game.Combo.Count > 0 : level > 0 && (game.Overload.Active || game.Overload.Ready);
                 Color color = game.Overload.Active ? ReactorHud.Warm : module.generator ? skin : ReactorHud.Violet;
                 module.icon.color = level > 0 || running ? Color.white : new Color(.45f, .5f, .6f, .55f);
                 Color frame = color; frame.a = level > 0 || running ? .85f : .25f;

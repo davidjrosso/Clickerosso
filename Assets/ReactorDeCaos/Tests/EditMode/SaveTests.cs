@@ -211,6 +211,21 @@ namespace ReactorDeCaos.Tests
         }
 
         [Test]
+        public void AchievementClaimSurvivesDiskReloadAndFailedWriteIsRetryable()
+        {
+            var game = new GameEngine(new GameState { energy = 100, lifetimeEnergy = 100 });
+            File.WriteAllText(Path.Combine(directory, "blocked-claim"), "file");
+            var blocked = new SaveStore(Path.Combine(directory, "blocked-claim", "save.json"), codec);
+            Assert.That(game.TryClaimAchievement("first_spark", blocked.Save), Is.False);
+            Assert.That(game.Energy, Is.EqualTo(100));
+            Assert.That(game.TryClaimAchievement("first_spark", store.Save), Is.True);
+            var loaded = new GameEngine(store.Load());
+            Assert.That(loaded.Energy, Is.EqualTo(125));
+            Assert.That(loaded.AchievementClaimed("first_spark"), Is.True);
+            Assert.That(loaded.TryClaimAchievement("first_spark", store.Save), Is.False);
+        }
+
+        [Test]
         public void InvalidLowOrderValuesCannotBeSaved()
         {
             Assert.That(store.Save(new GameState { energy = 10, lifetimeEnergy = 10, energyRemainder = 10 }), Is.False);

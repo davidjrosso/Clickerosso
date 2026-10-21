@@ -4,18 +4,18 @@ MVP de un arcade incremental offline para Android, con Unity 2D y C#.
 Toca el núcleo, encadena combos, activa la sobrecarga e invierte en mejoras
 y generadores automáticos.
 
-**Estado de fase 4:** siete módulos conectados e interactivos, fichas de compra,
-evolución del núcleo, renacimientos con esencia, tres especializaciones,
-maestrías permanentes y cuatro skins. Los guardados anteriores migran sin
-reiniciar la partida; el colapso solo se aplica tras guardar correctamente.
+**Estado actual:** reactor y módulos sobre soportes integrados en una nueva
+cámara ilustrada; navegación Reactor, Mejoras, Logros y Ascensión. Nueve logros
+con energía reclamable una sola vez y conservación entre ciclos. La ascensión
+muestra requisitos, recompensa, especialización y confirmación. Se conservan
+maestrías, skins, guardados y la economía anterior.
 
-**88 pruebas** de dominio/guardado aprobadas, seis ensamblados compilados y
+**99 pruebas** de dominio/guardado aprobadas, seis ensamblados compilados y
 **54 ciclos simulados** en nueve combinaciones de rama y estilo de juego.
-Los resultados del primer ciclo coinciden exactamente con la fase 2.
-El Editor sigue bloqueado por falta de licencia: las pruebas nativas y la
-revisión visual en Main continúan pendientes.
-Consulta [funciones, fórmulas y recorrido de fase 4](Docs/PHASE4.md),
-[arte y accesibilidad](Docs/PHASE3.md) y [evidencia](Docs/VALIDATION.md).
+Sin reclamar los nuevos logros, los resultados coinciden con la fase 4.
+El Editor sigue bloqueado por falta de licencia: pruebas nativas y revisión
+visual en Main pendientes. Consulta [navegación, recompensas y cómo probar](Docs/UI-REFRESH.md),
+[fórmulas de ascensión](Docs/PHASE4.md) y [evidencia](Docs/VALIDATION.md).
 
 ## Abrir y jugar
 
@@ -29,11 +29,12 @@ Consulta [funciones, fórmulas y recorrido de fase 4](Docs/PHASE4.md),
 4. Usa **Tools → Reactor de Caos → Open Main Scene** o abre
    `Assets/ReactorDeCaos/Scenes/Main.unity` y pulsa **Play**.
 5. Toca el núcleo central. Tras cargar el medidor, pulsa **Activar sobrecarga**.
-   Desplaza la tienda para acceder a las tres mejoras y los cuatro generadores.
+   Abre **Mejoras** y desliza para acceder a las tres mejoras y cuatro generadores.
 6. Toca los módulos alrededor del núcleo para abrir sus fichas e instalar o
-   mejorar tecnología. El botón **EVOLUCIÓN**, bajo la tienda, abre renacimientos,
-   maestrías y skins. El primer colapso se habilita al generar **1 M de energía**
-   en el ciclo; revisa y confirma sus efectos antes de reiniciarlo.
+   mejorar tecnología. **Logros** muestra objetivos y recompensas reclamables.
+   **Ascensión** abre requisitos, especialización, maestrías y skins. La primera
+   ascensión se habilita con **1 M de energía** acumulada en el ciclo; comprar no
+   reduce el progreso. Revisa y confirma los efectos antes de reiniciar.
 7. En **AJUSTES**, arriba a la derecha, configura sonido, destellos, movimiento,
    efectos y vibración. Las preferencias persisten aparte del progreso.
    La vibración está desactivada de inicio; la cámara y la interfaz no tiemblan.
@@ -44,7 +45,8 @@ No se otorgan recompensas por tiempo desconectado.
 
 Selecciona `Assets/ReactorDeCaos/Resources/Economy.asset` para editar en el
 Inspector la potencia, curva de combo, sobrecarga y los catálogos `upgrades`,
-`generators` y `milestones`, incluidos producción, precios y condiciones de desbloqueo.
+`generators`, `milestones` y `achievements`, incluidos producción, precios,
+condiciones de desbloqueo, objetivos y recompensas reclamables.
 La sección `values.rebirth` configura el umbral, esencia, maestrías, ramas y
 los módulos iniciales de cada renacimiento. Los cambios se aplican al comenzar una nueva sesión de Play. No sustituyen
 los niveles comprados que ya estén guardados.

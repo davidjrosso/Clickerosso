@@ -36,20 +36,20 @@ namespace ReactorDeCaos
             numbers = new Particle[12]; waves = new Particle[6]; sparks = new Particle[32];
             for (int i = 0; i < numbers.Length; i++)
             {
-                var label = hud.Label("Gain" + i, hud.EffectsRoot, "", 42, ReactorHud.Cyan, .5f, .5f, .5f, .5f);
+                var label = hud.Label("Gain" + i, hud.EffectsRoot, "", 42, ReactorHud.Cyan, .5f, .57f, .5f, .57f);
                 label.rectTransform.sizeDelta = new Vector2(400, 80);
                 numbers[i] = Make(label, 1, 1, false);
             }
             for (int i = 0; i < waves.Length; i++)
             {
                 RingGraphic ring = ReactorHud.Ring("Wave" + i, hud.EffectsRoot, ReactorHud.Cyan);
-                ring.rectTransform.anchorMin = ring.rectTransform.anchorMax = new Vector2(.5f, .5f);
+                ring.rectTransform.anchorMin = ring.rectTransform.anchorMax = new Vector2(.5f, .57f);
                 ring.thickness = 3;
                 waves[i] = Make(ring, .55f, 190, true);
             }
             for (int i = 0; i < sparks.Length; i++)
             {
-                RectTransform rect = ReactorHud.Rect("Spark" + i, hud.EffectsRoot, .5f, .5f, .5f, .5f);
+                RectTransform rect = ReactorHud.Rect("Spark" + i, hud.EffectsRoot, .5f, .57f, .5f, .57f);
                 var graphic = rect.gameObject.AddComponent<Image>();
                 graphic.raycastTarget = false;
                 rect.sizeDelta = new Vector2(5, 10);

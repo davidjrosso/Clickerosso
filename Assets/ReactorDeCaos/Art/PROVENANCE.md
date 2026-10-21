@@ -57,3 +57,23 @@ builds four skin silhouettes with stage-dependent geometry. Skin palettes and
 shapes are authored in C# and use standard uGUI materials. Existing sounds are
 reused for installations and collapse. See Docs/PHASE4.md for integration and
 pending native visual/device validation.
+
+## Interface refresh — 2026-10-21
+
+A new original backdrop was actually generated with OpenAI `image_gen.imagegen`
+for this update and copied directly into `Resources/Art/ReactorBackdrop.png`.
+Source: `/workspace/generated_images/exec-f037879a-cd7d-4c06-94d1-ed12f3bc0e9b.png`.
+1024 × 1536 RGB; existing GUID and texture importer retained. The previous
+phase-3 backdrop remains available in Git history (commit 112cff5).
+
+Prompt direction: straight-on portrait industrial reactor wall, dark brushed
+navy titanium, restrained cyan/violet side lights and copper accents, quiet
+central mounting surface, mechanical edge brackets; no reactor, icons, UI,
+letters or numbers. Generated pixels were not repainted or processed.
+
+`SocketGraphic` supplies inset metallic mounts and bolts in the actual scene;
+transparent module hit areas eliminate the old opaque rectangular button fills.
+Core and icon alpha textures from phase 3 are reused, not newly generated.
+The new background is integrated with those interactive objects through
+ReactorHud/ReactorAssembly and shared light/conduit geometry. In-engine art
+approval remains pending because the Editor cannot activate a license here.

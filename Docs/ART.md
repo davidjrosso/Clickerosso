@@ -99,3 +99,14 @@ módulos; efectos suaves oculta los paquetes de energía. Las conexiones, nivele
 fichas y estado textual siguen accesibles. Los pools anteriores permanecen en
 50 efectos y cuatro voces. Falta la inspección de legibilidad y composición en
 el Editor real y la medición de rendimiento en Android.
+
+## Revisión de interfaz y montaje
+
+El nuevo fondo es una pared de titanio vista de frente, con menos brillo y ruido
+que la cámara anterior. El núcleo y siete módulos se montan sobre soportes
+circulares `SocketGraphic`, con sombra, aro metálico y tornillos; los botones
+interactivos tienen relleno transparente. Los conductos pasan detrás de los
+soportes. La tienda usa tarjetas para información; la máquina no usa tarjetas
+rectangulares detrás de sus piezas. Reactor, Mejoras, Logros y Ascensión tienen
+áreas separadas, con cabecera y navegación persistentes. Véase
+[UI-REFRESH.md](UI-REFRESH.md) para los recorridos y la validación pendiente.

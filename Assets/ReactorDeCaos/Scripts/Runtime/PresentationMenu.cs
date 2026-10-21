@@ -51,6 +51,7 @@ namespace ReactorDeCaos
 
         public void SetOpen(bool value)
         {
+            if (value) root.transform.SetAsLastSibling();
             root.SetActive(value);
             Refresh();
             if (EventSystem.current != null)

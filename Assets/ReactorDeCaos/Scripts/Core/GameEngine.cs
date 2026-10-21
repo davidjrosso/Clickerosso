@@ -72,6 +72,9 @@ namespace ReactorDeCaos
             Shop = shop.AsReadOnly();
             // Catch up legacy saves without replaying celebrations at every load.
             EvaluateMilestones(false);
+            var retainedAchievements = new HashSet<string>(state.unlockedAchievements);
+            foreach (var goal in config.achievements) retainedAchievements.Add(goal.id);
+            if (retainedAchievements.Count > 128) throw new ArgumentException("Achievement ledger capacity exceeded.");
         }
 
         public GameState Snapshot() { return state.Copy(); }
@@ -218,6 +221,7 @@ namespace ReactorDeCaos
                 }
                 if (completed.Contains(goal.id)) Stage = Math.Max(Stage, goal.reactorStage);
             }
+            EvaluateAchievements();
         }
 
         private double Credit(double amount)
