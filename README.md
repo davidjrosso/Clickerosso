@@ -146,3 +146,9 @@ La comprobación de API usa el compilador y las bibliotecas oficiales instaladas
 incluidos uGUI/TMP y TestRunner de la plantilla del Editor. No sustituye la
 resolución UPM, la importación ni PlayMode. No hay capturas del juego ejecutándose,
 APK validado ni mediciones de FPS en dispositivo.
+
+## Historia: Ecos del primer encendido
+
+La pestaña **Historia** reúne seis capítulos de NARA, objetivos con alternativas
+pasivas, planos que se conservan al ascender y un epílogo. La lectura es opcional
+y no pausa la producción. Guía, pruebas y limitaciones: [Docs/STORY.md](Docs/STORY.md).

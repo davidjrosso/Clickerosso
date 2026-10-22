@@ -143,7 +143,7 @@ namespace ReactorDeCaos
                 + "\nPotencia permanente: ×" + NumberFormat.Stat(game.PermanentMultiplier) + " a ×" + NumberFormat.Stat(game.ProjectedPermanentMultiplier)
                 + (game.RebirthSkinUnlock >= 0 ? "\nDesbloqueas y equipas: " + RebirthCatalog.SkinName(game.RebirthSkinUnlock) : "")
                 + "\n\nSe reinician energía, compras, hitos del ciclo, combo y sobrecarga."
-                + "\n\nConservas logros, recompensas pendientes, esencia, maestrías, skins y ajustes."
+                + "\n\nConservas historia, planos, sintonía, logros, recompensas pendientes, esencia, maestrías, skins y ajustes."
                 + "\n\nComienzas con " + game.StarterCoils + " microgenerador y potencia NV. " + game.StarterTapLevel + ".";
             confirmation.SetActive(true);
             Canvas.ForceUpdateCanvases(); confirmationScroll.verticalNormalizedPosition = 1;

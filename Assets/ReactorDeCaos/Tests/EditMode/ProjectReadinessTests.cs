@@ -69,6 +69,18 @@ namespace ReactorDeCaos.Tests
         }
 
         [Test]
+        public void StoryIllustrationIsImportedAsAClampedNonReadableUiTexture()
+        {
+            var texture = Resources.Load<Texture2D>("Art/StorySignal");
+            Assert.That(texture, Is.Not.Null);
+            Assert.That(texture.width / (float)texture.height, Is.EqualTo(1.5f).Within(.01f));
+            var importer = (TextureImporter)AssetImporter.GetAtPath(AssetDatabase.GetAssetPath(texture));
+            Assert.That(importer.mipmapEnabled, Is.False);
+            Assert.That(importer.isReadable, Is.False);
+            Assert.That(importer.wrapMode, Is.EqualTo(TextureWrapMode.Clamp));
+        }
+
+        [Test]
         public void ReactorFontHasMaterialAtlasAndSpanishGlyphs()
         {
             TMP_FontAsset font = Resources.Load<TMP_FontAsset>("Fonts/ReactorFont");

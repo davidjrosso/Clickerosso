@@ -1,0 +1,65 @@
+{
+  "method": "static anchor arithmetic; not native rendering or typography validation",
+  "profiles": [
+    {
+      "profile": "compact",
+      "logicalWidth": 320,
+      "logicalHeight": 568,
+      "safeInsets": [
+        0,
+        0
+      ],
+      "minimumControlDimension": 48.33,
+      "controlsChecked": 38,
+      "nonoverlapChecks": "passed"
+    },
+    {
+      "profile": "standard",
+      "logicalWidth": 360,
+      "logicalHeight": 640,
+      "safeInsets": [
+        0,
+        0
+      ],
+      "minimumControlDimension": 54.46,
+      "controlsChecked": 38,
+      "nonoverlapChecks": "passed"
+    },
+    {
+      "profile": "tall_notch",
+      "logicalWidth": 390,
+      "logicalHeight": 844,
+      "safeInsets": [
+        47,
+        34
+      ],
+      "minimumControlDimension": 59.22,
+      "controlsChecked": 38,
+      "nonoverlapChecks": "passed"
+    },
+    {
+      "profile": "android_tall",
+      "logicalWidth": 412,
+      "logicalHeight": 915,
+      "safeInsets": [
+        32,
+        24
+      ],
+      "minimumControlDimension": 62.56,
+      "controlsChecked": 38,
+      "nonoverlapChecks": "passed"
+    },
+    {
+      "profile": "tablet_portrait",
+      "logicalWidth": 768,
+      "logicalHeight": 1024,
+      "safeInsets": [
+        24,
+        20
+      ],
+      "minimumControlDimension": 83.39,
+      "controlsChecked": 38,
+      "nonoverlapChecks": "passed"
+    }
+  ]
+}

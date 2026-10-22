@@ -112,7 +112,7 @@ namespace ReactorDeCaos
             for (int skin = 0; skin < RebirthCatalog.SkinCount; skin++)
                 if (RebirthCatalog.SkinUnlocked(skin, permanent.rebirths) && !RebirthCatalog.SkinUnlocked(skin, RebirthCount)) permanent.skin = skin;
             next = new GameEngine(new GameState { version = 2, rebirth = permanent,
-                coils = StarterCoils, tapLevel = StarterTapLevel,
+                coils = StarterCoils, tapLevel = StarterTapLevel, story = state.story.Copy(),
                 unlockedAchievements = (string[])state.unlockedAchievements.Clone(),
                 claimedAchievements = (string[])state.claimedAchievements.Clone() }, config);
             return true;

@@ -531,7 +531,7 @@ namespace ReactorDeCaos.Tests
             var pointer = new PointerEventData(EventSystem.current) { position = center };
             var hits = new List<RaycastResult>(); EventSystem.current.RaycastAll(pointer, hits);
             Assert.That(hits[0].gameObject, Is.EqualTo(button.gameObject));
-            for (int tab = 0; tab < 4; tab++)
+            for (int tab = 0; tab < 5; tab++)
             {
                 app.Hud.SelectTab(tab); Canvas.ForceUpdateCanvases();
                 Assert.That(app.Hud.NavigationButtons[tab].gameObject.activeInHierarchy, Is.True);
@@ -546,7 +546,7 @@ namespace ReactorDeCaos.Tests
             foreach (bool charged in new[] { false, true })
             {
                 if (charged) { for (int i = 0; i < 25; i++) app.Tap(); app.ActivateOverload(); }
-                for (int tab = 0; tab < 4; tab++)
+                for (int tab = 0; tab < 5; tab++)
                 {
                     app.Hud.SelectTab(tab); app.Hud.Refresh(app.Game, true);
                     yield return null; Canvas.ForceUpdateCanvases();
@@ -559,6 +559,86 @@ namespace ReactorDeCaos.Tests
                     }
                 }
             }
+            LogAssert.NoUnexpectedReceived();
+        }
+
+        [UnityTest]
+        public IEnumerator StoryArchiveRunsProductionHasReachableActionsAndKeepsSpoilersLocked()
+        {
+            var app = Object.FindFirstObjectByType<ReactorApp>();
+            app.Hud.StoryButton.onClick.Invoke();
+            Assert.That(app.Hud.Story.IsOpen, Is.True);
+            Assert.That(app.Hud.SelectedTab, Is.EqualTo(4));
+            Assert.That(app.Hud.Story.NextButton.interactable, Is.False);
+            Assert.That(Label(app, "StoryNarrative").text, Does.Not.Contain(StoryCatalog.At(0).Resolution));
+            Assert.That(Resources.Load<Texture2D>("Art/StorySignal"), Is.Not.Null);
+            app.Hud.Story.ActionButton.onClick.Invoke();
+            Assert.That(app.Hud.SelectedTab, Is.Zero);
+            for (int i = 0; i < 100; i++) app.Tap();
+            app.Buy("coil");
+            app.Hud.SelectTab(4);
+            Canvas.ForceUpdateCanvases();
+            var action = app.Hud.Story.ActionButton;
+            Vector3 center = action.transform.TransformPoint(((RectTransform)action.transform).rect.center);
+            var hits = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(new PointerEventData(EventSystem.current) { position = center }, hits);
+            Assert.That(hits[0].gameObject, Is.EqualTo(action.gameObject));
+            double before = app.Game.Energy;
+            yield return new WaitForSecondsRealtime(.25f);
+            Assert.That(app.Game.Energy, Is.GreaterThan(before), "Reading does not pause generators.");
+            app.Hud.Story.ShowChapter(0);
+            action.onClick.Invoke();
+            Assert.That(app.Game.StoryRead, Is.EqualTo(1));
+            Assert.That(new GameEngine(new SaveStore(path, new UnityJsonCodec()).Load()).StoryRead, Is.EqualTo(1));
+            app.Hud.Back();
+            Assert.That(app.Hud.SelectedTab, Is.Zero);
+            Assert.That(app.Hud.TapButton.gameObject.activeInHierarchy, Is.True);
+            LogAssert.NoUnexpectedReceived();
+        }
+
+        [UnityTest]
+        public IEnumerator CompletedStoryCanBeReadChosenAndPreservedThroughAscensionInMain()
+        {
+            Object.Destroy(Object.FindFirstObjectByType<ReactorApp>().gameObject);
+            yield return null;
+            var disk = new SaveStore(path, new UnityJsonCodec());
+            Assert.That(disk.Save(new GameState { energy = 1000000, lifetimeEnergy = 1000000 }), Is.True);
+            yield return SceneManager.LoadSceneAsync("Main", LoadSceneMode.Single);
+            yield return null;
+            var app = Object.FindFirstObjectByType<ReactorApp>();
+            app.Hud.SelectTab(4);
+            for (int chapter = 0; chapter < StoryCatalog.Count; chapter++)
+            {
+                Assert.That(app.Hud.Story.Chapter, Is.EqualTo(chapter));
+                Canvas.ForceUpdateCanvases();
+                var narrative = Label(app, "StoryNarrative"); narrative.ForceMeshUpdate();
+                Assert.That(narrative.isTextOverflowing, Is.False, "Chapter " + chapter);
+                var scroll = narrative.GetComponentInParent<ScrollRect>();
+                scroll.verticalNormalizedPosition = 0;
+                yield return null;
+                if (chapter == 4)
+                {
+                    app.Hud.Story.CoreButton.onClick.Invoke();
+                    Assert.That(app.Game.StoryChoice, Is.EqualTo(2));
+                }
+                app.Hud.Story.ActionButton.onClick.Invoke();
+                app.Hud.Story.ActionButton.onClick.Invoke();
+                Assert.That(app.Game.StoryRead, Is.EqualTo(chapter + 1), "Duplicate same-frame action must not skip a record.");
+            }
+            Assert.That(app.Game.StoryRead, Is.EqualTo(6));
+            Assert.That(app.Rebirth(Specialization.Automation, app.Game.RebirthReward, app.Game.RebirthCount), Is.True);
+            app.Hud.SelectTab(4);
+            yield return null;
+            Assert.That(app.Hud.Story.Chapter, Is.EqualTo(6));
+            Assert.That(Label(app, "StoryNarrative").text, Does.Contain("capitán"));
+            app.Hud.Story.ActionButton.onClick.Invoke();
+            var saved = new GameEngine(disk.Load());
+            Assert.That(saved.StoryEpilogueRead, Is.True);
+            Assert.That(saved.StoryChoice, Is.EqualTo(2));
+            Assert.That(saved.Unlocked("auxiliary"), Is.True);
+            Assert.That(app.Hud.EffectsRoot.childCount, Is.EqualTo(50));
+            foreach (var graphic in app.GetComponentsInChildren<StationRestorationGraphic>(true))
+                Assert.That(graphic.GetComponent<CanvasRenderer>(), Is.Not.Null);
             LogAssert.NoUnexpectedReceived();
         }
 

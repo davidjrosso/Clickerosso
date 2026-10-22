@@ -7,6 +7,8 @@
   milestones, local saves, original art and restrained feedback.
 - Player-authorized expansion: connected reactor modules, controlled-collapse rebirths,
   essence masteries, specializations and cosmetic skins.
+- Authorized story expansion: six NARA chapters, optional archive, permanent generator
+  blueprints, cosmetic tuning and post-ascension epilogue. Preserve story on rebirth.
 - No ads, real-money purchases, accounts, servers or offline rewards.
 - Version-1 saves migrate to version 2 without resetting their current cycle.
   Commit a rebirth save successfully before replacing the live engine.

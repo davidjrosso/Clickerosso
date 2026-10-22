@@ -46,6 +46,7 @@ namespace ReactorDeCaos
             state = initial == null ? new GameState() : initial.Copy();
             if (!state.IsValid()) throw new ArgumentException("Invalid initial state.");
             if (state.version == 1) { state.version = 2; state.rebirth = new RebirthProgress(); }
+            state.story = state.story ?? new StoryProgress();
             completed = new HashSet<string>(state.completedMilestones);
             var knownMilestones = new HashSet<string>(completed);
             foreach (var goal in config.milestones) knownMilestones.Add(goal.id);
@@ -87,7 +88,13 @@ namespace ReactorDeCaos
             return Credit(amount);
         }
 
-        public bool ActivateOverload() { return Overload.Activate(OverloadDuration); }
+        public bool ActivateOverload()
+        {
+            if (!Overload.Activate(OverloadDuration)) return false;
+            state.story.overloads = Math.Min(1000000, state.story.overloads + 1);
+            EvaluateStory();
+            return true;
+        }
 
         public void Advance(double seconds)
         {
@@ -131,7 +138,7 @@ namespace ReactorDeCaos
         {
             RequireItem(id);
             return !generators.TryGetValue(id, out var generator) || string.IsNullOrEmpty(generator.unlockMilestone)
-                || completed.Contains(generator.unlockMilestone);
+                || completed.Contains(generator.unlockMilestone) || HasStoryBlueprint(id);
         }
 
         public string UnlockDescription(string id)
@@ -222,6 +229,7 @@ namespace ReactorDeCaos
                 if (completed.Contains(goal.id)) Stage = Math.Max(Stage, goal.reactorStage);
             }
             EvaluateAchievements();
+            EvaluateStory();
         }
 
         private double Credit(double amount)

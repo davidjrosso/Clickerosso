@@ -353,3 +353,24 @@ validar tipografía/gestos en móviles. Seis pruebas PlayMode nuevas se compilar
 pero no se ejecutaron. No se confunde la auditoría de anclas con renderizado ni
 el análisis PCM con escucha. Evidencia y recorrido pendiente:
 [AUDIO-MOBILE.md](AUDIO-MOBILE.md), [AudioMobile](AudioMobile/).
+
+## Historia — 2026-10-22
+
+Integrados seis capítulos de NARA, tareas activas/pasivas, planos permanentes,
+sintonía cosmética, archivo con scroll, acceso desde el reactor y epílogo de ascensión.
+Nueva ilustración original generada realmente con imagegen e integrada; luces
+procedurales acotadas representan la restauración. Guardados previos compatibles.
+
+122 pruebas .NET pasan; seis ensamblados compilan contra API oficiales. Auditoría
+estática de 38 controles en cinco perfiles, mínimo 48,33 píxeles lógicos. Tres
+sesiones simuladas de 30 minutos completan el arco en 179,2/372,7/561,7 segundos.
+La simulación inicial de ascensiones falló por ahorrar para máquinas caras con
+planos permanentes. Se conserva el resultado fallido; con una política de compra
+que limita la espera a 60 segundos, nueve combinaciones completan seis ciclos.
+No se retocaron fórmulas para obtener ese resultado; cambió la política del simulador.
+
+Intento nativo: salida 198 por falta de licencia. Las pruebas nuevas de paneles,
+lectura, raycasts, producción, elecciones, doble callback y epílogo están compiladas,
+pero no ejecutadas. No hay validación visual de Main ni de Android. Los ajustes
+incidentales del Editor se archivaron fuera del repositorio. Recorrido, diseño,
+riesgos de balance y evidencia: [STORY.md](STORY.md), [Story](Story/).

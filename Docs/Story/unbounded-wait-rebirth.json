@@ -1,0 +1,592 @@
+[
+  {
+    "branch": "Tap",
+    "profile": "active",
+    "budgetPassed": true,
+    "firstRebirthSeconds": 179.2,
+    "longestReturnSeconds": 116.2,
+    "finalRebirths": 6,
+    "finalEssence": 3,
+    "earnedEssence": 18,
+    "mastery": 5,
+    "cycles": [
+      {
+        "cycle": 0,
+        "durationSeconds": 179.2,
+        "totalSeconds": 179.20000000000002,
+        "generated": 1003248.3551881922,
+        "reward": 3,
+        "taps": 358,
+        "purchases": 66,
+        "skinUnlocked": "CORONA SOLAR",
+        "permanentMultiplier": 1.4330127018922192
+      },
+      {
+        "cycle": 1,
+        "durationSeconds": 116.2,
+        "totalSeconds": 295.40000000000003,
+        "generated": 1001869.1724631579,
+        "reward": 3,
+        "taps": 232,
+        "purchases": 53,
+        "skinUnlocked": "CORONA SOLAR",
+        "permanentMultiplier": 1.6123724356957945
+      },
+      {
+        "cycle": 2,
+        "durationSeconds": 109.1,
+        "totalSeconds": 404.5,
+        "generated": 1009254.4622687891,
+        "reward": 3,
+        "taps": 219,
+        "purchases": 54,
+        "skinUnlocked": "VAC\u00CDO VIOLETA",
+        "permanentMultiplier": 1.75
+      },
+      {
+        "cycle": 3,
+        "durationSeconds": 101.6,
+        "totalSeconds": 506.1,
+        "generated": 1000778.3848404275,
+        "reward": 3,
+        "taps": 203,
+        "purchases": 51,
+        "skinUnlocked": "VAC\u00CDO VIOLETA",
+        "permanentMultiplier": 1.8660254037844386
+      },
+      {
+        "cycle": 4,
+        "durationSeconds": 91.7,
+        "totalSeconds": 597.8000000000001,
+        "generated": 1000163.5839812051,
+        "reward": 3,
+        "taps": 183,
+        "purchases": 48,
+        "skinUnlocked": "PRISMA",
+        "permanentMultiplier": 1.9682458365518543
+      },
+      {
+        "cycle": 5,
+        "durationSeconds": 86.1,
+        "totalSeconds": 683.9000000000001,
+        "generated": 1000712.3382221669,
+        "reward": 3,
+        "taps": 172,
+        "purchases": 50,
+        "skinUnlocked": "PRISMA",
+        "permanentMultiplier": 2.060660171779821
+      }
+    ]
+  },
+  {
+    "branch": "Tap",
+    "profile": "intermittent",
+    "budgetPassed": false,
+    "firstRebirthSeconds": 372.7,
+    "longestReturnSeconds": 922.2,
+    "finalRebirths": 6,
+    "finalEssence": 3,
+    "earnedEssence": 18,
+    "mastery": 5,
+    "cycles": [
+      {
+        "cycle": 0,
+        "durationSeconds": 372.7,
+        "totalSeconds": 372.70000000000005,
+        "generated": 1001584.6258756352,
+        "reward": 3,
+        "taps": 249,
+        "purchases": 60,
+        "skinUnlocked": "CORONA SOLAR",
+        "permanentMultiplier": 1.4330127018922192
+      },
+      {
+        "cycle": 1,
+        "durationSeconds": 922.2,
+        "totalSeconds": 1294.9,
+        "generated": 1000686.9057762293,
+        "reward": 3,
+        "taps": 620,
+        "purchases": 56,
+        "skinUnlocked": "CORONA SOLAR",
+        "permanentMultiplier": 1.6123724356957945
+      },
+      {
+        "cycle": 2,
+        "durationSeconds": 807.8,
+        "totalSeconds": 2102.7000000000003,
+        "generated": 1001246.4485127233,
+        "reward": 3,
+        "taps": 536,
+        "purchases": 56,
+        "skinUnlocked": "VAC\u00CDO VIOLETA",
+        "permanentMultiplier": 1.75
+      },
+      {
+        "cycle": 3,
+        "durationSeconds": 733.3,
+        "totalSeconds": 2836,
+        "generated": 1009633.950755258,
+        "reward": 3,
+        "taps": 487,
+        "purchases": 50,
+        "skinUnlocked": "VAC\u00CDO VIOLETA",
+        "permanentMultiplier": 1.8660254037844386
+      },
+      {
+        "cycle": 4,
+        "durationSeconds": 674.4,
+        "totalSeconds": 3510.4,
+        "generated": 1002420.7491330095,
+        "reward": 3,
+        "taps": 448,
+        "purchases": 49,
+        "skinUnlocked": "PRISMA",
+        "permanentMultiplier": 1.9682458365518543
+      },
+      {
+        "cycle": 5,
+        "durationSeconds": 625.2,
+        "totalSeconds": 4135.6,
+        "generated": 1000888.0143102368,
+        "reward": 3,
+        "taps": 419,
+        "purchases": 50,
+        "skinUnlocked": "PRISMA",
+        "permanentMultiplier": 2.060660171779821
+      }
+    ]
+  },
+  {
+    "branch": "Tap",
+    "profile": "passive",
+    "budgetPassed": false,
+    "firstRebirthSeconds": 561.7,
+    "longestReturnSeconds": 4363.3,
+    "finalRebirths": 2,
+    "finalEssence": 0,
+    "earnedEssence": 6,
+    "mastery": 3,
+    "cycles": [
+      {
+        "cycle": 0,
+        "durationSeconds": 561.7,
+        "totalSeconds": 561.7,
+        "generated": 1000690.5720797922,
+        "reward": 3,
+        "taps": 25,
+        "purchases": 47,
+        "skinUnlocked": "CORONA SOLAR",
+        "permanentMultiplier": 1.4330127018922192
+      },
+      {
+        "cycle": 1,
+        "durationSeconds": 4363.3,
+        "totalSeconds": 4925,
+        "generated": 1000782.6709389379,
+        "reward": 3,
+        "taps": 0,
+        "purchases": 42,
+        "skinUnlocked": "CORONA SOLAR",
+        "permanentMultiplier": 1.6123724356957945
+      }
+    ]
+  },
+  {
+    "branch": "Automation",
+    "profile": "active",
+    "budgetPassed": false,
+    "firstRebirthSeconds": 179.2,
+    "longestReturnSeconds": 180.6,
+    "finalRebirths": 6,
+    "finalEssence": 3,
+    "earnedEssence": 18,
+    "mastery": 5,
+    "cycles": [
+      {
+        "cycle": 0,
+        "durationSeconds": 179.2,
+        "totalSeconds": 179.20000000000002,
+        "generated": 1003248.3551881922,
+        "reward": 3,
+        "taps": 358,
+        "purchases": 66,
+        "skinUnlocked": "CORONA SOLAR",
+        "permanentMultiplier": 1.4330127018922192
+      },
+      {
+        "cycle": 1,
+        "durationSeconds": 180.6,
+        "totalSeconds": 359.8,
+        "generated": 1006029.0007445712,
+        "reward": 3,
+        "taps": 361,
+        "purchases": 52,
+        "skinUnlocked": "CORONA SOLAR",
+        "permanentMultiplier": 1.6123724356957945
+      },
+      {
+        "cycle": 2,
+        "durationSeconds": 160.8,
+        "totalSeconds": 520.6,
+        "generated": 1003661.2692895669,
+        "reward": 3,
+        "taps": 322,
+        "purchases": 48,
+        "skinUnlocked": "VAC\u00CDO VIOLETA",
+        "permanentMultiplier": 1.75
+      },
+      {
+        "cycle": 3,
+        "durationSeconds": 152.7,
+        "totalSeconds": 673.3000000000001,
+        "generated": 1002941.7186757482,
+        "reward": 3,
+        "taps": 305,
+        "purchases": 51,
+        "skinUnlocked": "VAC\u00CDO VIOLETA",
+        "permanentMultiplier": 1.8660254037844386
+      },
+      {
+        "cycle": 4,
+        "durationSeconds": 139.1,
+        "totalSeconds": 812.4000000000001,
+        "generated": 1003408.1320724647,
+        "reward": 3,
+        "taps": 278,
+        "purchases": 44,
+        "skinUnlocked": "PRISMA",
+        "permanentMultiplier": 1.9682458365518543
+      },
+      {
+        "cycle": 5,
+        "durationSeconds": 135.2,
+        "totalSeconds": 947.6,
+        "generated": 1006232.052475348,
+        "reward": 3,
+        "taps": 271,
+        "purchases": 44,
+        "skinUnlocked": "PRISMA",
+        "permanentMultiplier": 2.060660171779821
+      }
+    ]
+  },
+  {
+    "branch": "Automation",
+    "profile": "intermittent",
+    "budgetPassed": false,
+    "firstRebirthSeconds": 372.7,
+    "longestReturnSeconds": 1296.9,
+    "finalRebirths": 6,
+    "finalEssence": 3,
+    "earnedEssence": 18,
+    "mastery": 5,
+    "cycles": [
+      {
+        "cycle": 0,
+        "durationSeconds": 372.7,
+        "totalSeconds": 372.70000000000005,
+        "generated": 1001584.6258756352,
+        "reward": 3,
+        "taps": 249,
+        "purchases": 60,
+        "skinUnlocked": "CORONA SOLAR",
+        "permanentMultiplier": 1.4330127018922192
+      },
+      {
+        "cycle": 1,
+        "durationSeconds": 1296.9,
+        "totalSeconds": 1669.6000000000001,
+        "generated": 1004625.3792926037,
+        "reward": 3,
+        "taps": 870,
+        "purchases": 52,
+        "skinUnlocked": "CORONA SOLAR",
+        "permanentMultiplier": 1.6123724356957945
+      },
+      {
+        "cycle": 2,
+        "durationSeconds": 1124.9,
+        "totalSeconds": 2794.5,
+        "generated": 1009426.708659688,
+        "reward": 3,
+        "taps": 750,
+        "purchases": 52,
+        "skinUnlocked": "VAC\u00CDO VIOLETA",
+        "permanentMultiplier": 1.75
+      },
+      {
+        "cycle": 3,
+        "durationSeconds": 1035.1,
+        "totalSeconds": 3829.6000000000004,
+        "generated": 1005857.2576808492,
+        "reward": 3,
+        "taps": 690,
+        "purchases": 50,
+        "skinUnlocked": "VAC\u00CDO VIOLETA",
+        "permanentMultiplier": 1.8660254037844386
+      },
+      {
+        "cycle": 4,
+        "durationSeconds": 944.1,
+        "totalSeconds": 4773.7,
+        "generated": 1004462.4233615374,
+        "reward": 3,
+        "taps": 628,
+        "purchases": 49,
+        "skinUnlocked": "PRISMA",
+        "permanentMultiplier": 1.9682458365518543
+      },
+      {
+        "cycle": 5,
+        "durationSeconds": 862.8,
+        "totalSeconds": 5636.5,
+        "generated": 1001171.6849765773,
+        "reward": 3,
+        "taps": 572,
+        "purchases": 39,
+        "skinUnlocked": "PRISMA",
+        "permanentMultiplier": 2.060660171779821
+      }
+    ]
+  },
+  {
+    "branch": "Automation",
+    "profile": "passive",
+    "budgetPassed": false,
+    "firstRebirthSeconds": 561.7,
+    "longestReturnSeconds": 2645.7,
+    "finalRebirths": 3,
+    "finalEssence": 3,
+    "earnedEssence": 9,
+    "mastery": 3,
+    "cycles": [
+      {
+        "cycle": 0,
+        "durationSeconds": 561.7,
+        "totalSeconds": 561.7,
+        "generated": 1000690.5720797922,
+        "reward": 3,
+        "taps": 25,
+        "purchases": 47,
+        "skinUnlocked": "CORONA SOLAR",
+        "permanentMultiplier": 1.4330127018922192
+      },
+      {
+        "cycle": 1,
+        "durationSeconds": 2645.7,
+        "totalSeconds": 3207.4,
+        "generated": 1001095.7264529453,
+        "reward": 3,
+        "taps": 0,
+        "purchases": 42,
+        "skinUnlocked": "CORONA SOLAR",
+        "permanentMultiplier": 1.6123724356957945
+      },
+      {
+        "cycle": 2,
+        "durationSeconds": 2249,
+        "totalSeconds": 5456.400000000001,
+        "generated": 1000633.9100923477,
+        "reward": 3,
+        "taps": 0,
+        "purchases": 42,
+        "skinUnlocked": "VAC\u00CDO VIOLETA",
+        "permanentMultiplier": 1.75
+      }
+    ]
+  },
+  {
+    "branch": "Overload",
+    "profile": "active",
+    "budgetPassed": true,
+    "firstRebirthSeconds": 179.2,
+    "longestReturnSeconds": 115.8,
+    "finalRebirths": 6,
+    "finalEssence": 3,
+    "earnedEssence": 18,
+    "mastery": 5,
+    "cycles": [
+      {
+        "cycle": 0,
+        "durationSeconds": 179.2,
+        "totalSeconds": 179.20000000000002,
+        "generated": 1003248.3551881922,
+        "reward": 3,
+        "taps": 358,
+        "purchases": 66,
+        "skinUnlocked": "CORONA SOLAR",
+        "permanentMultiplier": 1.4330127018922192
+      },
+      {
+        "cycle": 1,
+        "durationSeconds": 115.8,
+        "totalSeconds": 295,
+        "generated": 1003839.1723882778,
+        "reward": 3,
+        "taps": 232,
+        "purchases": 53,
+        "skinUnlocked": "CORONA SOLAR",
+        "permanentMultiplier": 1.6123724356957945
+      },
+      {
+        "cycle": 2,
+        "durationSeconds": 104.2,
+        "totalSeconds": 399.20000000000005,
+        "generated": 1001022.3584051967,
+        "reward": 3,
+        "taps": 208,
+        "purchases": 52,
+        "skinUnlocked": "VAC\u00CDO VIOLETA",
+        "permanentMultiplier": 1.75
+      },
+      {
+        "cycle": 3,
+        "durationSeconds": 93.3,
+        "totalSeconds": 492.5,
+        "generated": 1004328.1176675155,
+        "reward": 3,
+        "taps": 187,
+        "purchases": 48,
+        "skinUnlocked": "VAC\u00CDO VIOLETA",
+        "permanentMultiplier": 1.8660254037844386
+      },
+      {
+        "cycle": 4,
+        "durationSeconds": 91.3,
+        "totalSeconds": 583.8000000000001,
+        "generated": 1005510.9581366039,
+        "reward": 3,
+        "taps": 182,
+        "purchases": 47,
+        "skinUnlocked": "PRISMA",
+        "permanentMultiplier": 1.9682458365518543
+      },
+      {
+        "cycle": 5,
+        "durationSeconds": 88.4,
+        "totalSeconds": 672.2,
+        "generated": 1007650.812345838,
+        "reward": 3,
+        "taps": 177,
+        "purchases": 48,
+        "skinUnlocked": "PRISMA",
+        "permanentMultiplier": 2.060660171779821
+      }
+    ]
+  },
+  {
+    "branch": "Overload",
+    "profile": "intermittent",
+    "budgetPassed": false,
+    "firstRebirthSeconds": 372.7,
+    "longestReturnSeconds": 1055.8,
+    "finalRebirths": 6,
+    "finalEssence": 3,
+    "earnedEssence": 18,
+    "mastery": 5,
+    "cycles": [
+      {
+        "cycle": 0,
+        "durationSeconds": 372.7,
+        "totalSeconds": 372.70000000000005,
+        "generated": 1001584.6258756352,
+        "reward": 3,
+        "taps": 249,
+        "purchases": 60,
+        "skinUnlocked": "CORONA SOLAR",
+        "permanentMultiplier": 1.4330127018922192
+      },
+      {
+        "cycle": 1,
+        "durationSeconds": 1055.8,
+        "totalSeconds": 1428.5,
+        "generated": 1000706.2065453382,
+        "reward": 3,
+        "taps": 708,
+        "purchases": 52,
+        "skinUnlocked": "CORONA SOLAR",
+        "permanentMultiplier": 1.6123724356957945
+      },
+      {
+        "cycle": 2,
+        "durationSeconds": 911.7,
+        "totalSeconds": 2340.2000000000003,
+        "generated": 1001078.6858961609,
+        "reward": 3,
+        "taps": 603,
+        "purchases": 41,
+        "skinUnlocked": "VAC\u00CDO VIOLETA",
+        "permanentMultiplier": 1.75
+      },
+      {
+        "cycle": 3,
+        "durationSeconds": 847.1,
+        "totalSeconds": 3187.3,
+        "generated": 1009851.954787067,
+        "reward": 3,
+        "taps": 569,
+        "purchases": 48,
+        "skinUnlocked": "VAC\u00CDO VIOLETA",
+        "permanentMultiplier": 1.8660254037844386
+      },
+      {
+        "cycle": 4,
+        "durationSeconds": 771.3,
+        "totalSeconds": 3958.6000000000004,
+        "generated": 1001366.9615130497,
+        "reward": 3,
+        "taps": 510,
+        "purchases": 39,
+        "skinUnlocked": "PRISMA",
+        "permanentMultiplier": 1.9682458365518543
+      },
+      {
+        "cycle": 5,
+        "durationSeconds": 716,
+        "totalSeconds": 4674.6,
+        "generated": 1007782.2341527082,
+        "reward": 3,
+        "taps": 480,
+        "purchases": 41,
+        "skinUnlocked": "PRISMA",
+        "permanentMultiplier": 2.060660171779821
+      }
+    ]
+  },
+  {
+    "branch": "Overload",
+    "profile": "passive",
+    "budgetPassed": false,
+    "firstRebirthSeconds": 561.7,
+    "longestReturnSeconds": 4363.3,
+    "finalRebirths": 2,
+    "finalEssence": 0,
+    "earnedEssence": 6,
+    "mastery": 3,
+    "cycles": [
+      {
+        "cycle": 0,
+        "durationSeconds": 561.7,
+        "totalSeconds": 561.7,
+        "generated": 1000690.5720797922,
+        "reward": 3,
+        "taps": 25,
+        "purchases": 47,
+        "skinUnlocked": "CORONA SOLAR",
+        "permanentMultiplier": 1.4330127018922192
+      },
+      {
+        "cycle": 1,
+        "durationSeconds": 4363.3,
+        "totalSeconds": 4925,
+        "generated": 1000782.6709389379,
+        "reward": 3,
+        "taps": 0,
+        "purchases": 42,
+        "skinUnlocked": "CORONA SOLAR",
+        "permanentMultiplier": 1.6123724356957945
+      }
+    ]
+  }
+]

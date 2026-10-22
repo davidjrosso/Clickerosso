@@ -14,7 +14,7 @@ def expression(value, i=0):
     node = ast.parse(value, mode='eval')
     assert all(isinstance(n, (ast.Expression, ast.Constant, ast.Name, ast.Load, ast.BinOp,
                               ast.Add, ast.Sub, ast.Mult, ast.Div, ast.UnaryOp, ast.USub)) for n in ast.walk(node))
-    return eval(compile(node, '<anchor>', 'eval'), {'__builtins__': {}}, {'i': i})
+    return eval(compile(node, '<anchor>', 'eval'), {'__builtins__': {}}, {'i': i, 'column': i if i < 2 else 2 if i == 4 else i + 1})
 
 def anchors(file, name, i=0):
     text = (runtime / file).read_text()
@@ -41,10 +41,11 @@ for name,w,h,top,bottom in profiles:
     safe=(0,bottom,w,h-top-bottom)
     scale=w/1080
     controls={}
-    nav=[rect(safe,anchors('ReactorHud.cs','Navigation',i)) for i in range(4)]
+    nav=[rect(safe,anchors('ReactorHud.cs','Navigation',i)) for i in range(5)]
     for i,b in enumerate(nav): controls['navigation'+str(i)]=b
     controls['settings']=rect(safe,anchors('ReactorHud.cs','Settings'))
     reactor=rect(safe,anchors('ReactorHud.cs','ReactorPage'))
+    controls['storyShortcut']=rect(reactor,anchors('ReactorHud.cs','OpenStory'))
     controls['overload']=rect(reactor,anchors('ReactorHud.cs','ActivateOverload'))
     view=rect(reactor,anchors('ReactorHud.cs','ReactorViewport'))
     controls['tap']=rect(view,anchors('ReactorHud.cs','TapReactor'))
@@ -76,6 +77,17 @@ for name,w,h,top,bottom in profiles:
     achievements=rect(safe,anchors('AchievementPanel.cs','AchievementsPage'))
     card=(0,0,achievements[2]*.95,222*scale)
     controls['claim']=rect(card,anchors('AchievementPanel.cs','Claim_'))
+    story=rect(safe,anchors('StoryPanel.cs','StoryPage'))
+    for key in ['StoryPrevious','StoryNext','StoryAction']: controls[key]=rect(story,anchors('StoryPanel.cs',key))
+    choices=(0,0,story[2]*.95-48*scale,720*scale)
+    for key in ['StoryChooseNara','StoryChooseCore']: controls[key]=rect(choices,anchors('StoryPanel.cs',key))
+    assert not overlap(controls['StoryPrevious'],controls['StoryNext'])
+    for key in ['StoryPrevious','StoryNext','StoryAction']:
+        assert not overlap(controls[key],rect(story,anchors('StoryPanel.cs','StoryViewport')))
+        for button in nav: assert not overlap(button,controls[key])
+    assert not overlap(controls['StoryAction'],controls['StoryPrevious'])
+    assert not overlap(controls['StoryAction'],controls['StoryNext'])
+    assert not overlap(controls['storyShortcut'],controls['overload'])
     small={key:[round(b[2],2),round(b[3],2)] for key,b in controls.items() if min(b[2:]) < 48-0.01}
     assert not small,(name,small)
     header=[rect(safe,anchors('ReactorHud.cs',key)) for key in ['Brand','Unit','Energy','Rate','Stage','Settings']]

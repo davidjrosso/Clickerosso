@@ -93,3 +93,19 @@ Seven fixed voices bound playback. They remain provisional until listening and
 mixing in the actual game and on mobile speakers. PCM analysis is documented in
 Docs/AudioMobile/audio.json; it is not auditory validation. No claim of AI audio
 production or third-party licensing is made for these original generated files.
+
+## Story arc — 2026-10-22
+
+`Resources/Art/StorySignal.png` is an original illustration actually generated
+with OpenAI `image_gen.imagegen` for NARA's archive and copied without pixel edits.
+Source: `/workspace/generated_images/exec-1445d623-54bd-4af3-af62-bb1b025ef738.png`.
+1536×1024 RGB. Direction: abandoned titanium space station, abstract cyan holographic
+lens with concentric orbital geometry, violet/amber accents, no human face, text,
+prices, icons or baked-in UI. Used by StoryPanel as a cropped 3:2 RawImage banner,
+with a separate editable caption; standard uGUI, Clamp, no mipmaps/readable CPU copy.
+
+StationRestorationGraphic supplies bounded procedural light strips that remember
+chapter progress and adopt the chosen cyan/violet tuning. Existing reactor skins,
+module sprites and audio are reused. No new AI sound or voice was generated.
+The illustration was inspected directly; real scene rendering remains unverified
+because the Editor cannot activate a license in this environment.

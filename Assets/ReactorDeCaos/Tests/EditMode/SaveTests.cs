@@ -53,6 +53,22 @@ namespace ReactorDeCaos.Tests
         }
 
         [Test]
+        public void StoryAndEpilogueRoundTripThroughTheRealSaveEnvelope()
+        {
+            var game = new GameEngine(new GameState { energy = 1000000, lifetimeEnergy = 1000000 });
+            for (int i = 0; i < StoryCatalog.Count; i++) Assert.That(game.TryReadStory(i, store.Save), Is.True);
+            Assert.That(game.TryChooseStory(2, store.Save), Is.True);
+            Assert.That(RebirthTransaction.TryCommit(game, store, Specialization.Automation, game.RebirthReward, out var next), Is.True);
+            Assert.That(next.TryReadEpilogue(store.Save), Is.True);
+            var loaded = new GameEngine(store.Load());
+            Assert.That(loaded.StoryRead, Is.EqualTo(6));
+            Assert.That(loaded.StoryChoice, Is.EqualTo(2));
+            Assert.That(loaded.StoryEpilogueRead, Is.True);
+            Assert.That(loaded.Unlocked("auxiliary"), Is.True);
+            Assert.That(codec.Serialize(loaded.Snapshot()), Is.EqualTo(codec.Serialize(next.Snapshot())));
+        }
+
+        [Test]
         public void CorruptPrimaryRecoversPreviousGoodSave()
         {
             store.Save(new GameState { energy = 10, lifetimeEnergy = 10 });

@@ -1,0 +1,61 @@
+{
+  "date": "2026-10-22",
+  "core": {
+    "passed": 122,
+    "failed": 0,
+    "skipped": 0,
+    "command": "bash Tools/test-core.sh"
+  },
+  "officialApiCompilation": {
+    "assemblies": 6,
+    "passed": true,
+    "nativeExecution": false
+  },
+  "nativeUnity": {
+    "version": "6000.0.85f1",
+    "exitCode": 198,
+    "reason": "No valid Unity Editor license found. Please activate your license.",
+    "mainSceneExecuted": false,
+    "playModeTestsExecuted": false,
+    "androidTested": false
+  },
+  "layout": {
+    "profiles": 5,
+    "controlsPerProfile": 38,
+    "minimumLogicalPixels": 48.33,
+    "nativeRender": false,
+    "evidence": "layout.json"
+  },
+  "simulations": {
+    "firstCycleProfiles": 3,
+    "secondsPerProfile": 1800,
+    "firstCycleEconomyAndPurchaseTracesUnchanged": true,
+    "chaptersCompletedPerProfile": 6,
+    "rebirthCombinations": 9,
+    "cyclesPerCombination": 6,
+    "revisedPolicyBudgetPassed": true,
+    "purchasePlanningHorizonSeconds": 60,
+    "initialUnboundedWaitPolicyFailed": true,
+    "initialFailureEvidence": "unbounded-wait-rebirth.json"
+  },
+  "art": {
+    "file": "Assets/ReactorDeCaos/Resources/Art/StorySignal.png",
+    "generatedWith": "image_gen.imagegen",
+    "width": 1536,
+    "height": 1024,
+    "format": "RGB",
+    "sha256": "d0d85ae929942153ee1c556b916d4d2f144612fd9f2f22ea59cbc89b14c7bbab",
+    "integratedIn": "StoryPanel",
+    "inspectedImage": true,
+    "inspectedInUnity": false
+  },
+  "assetMetadata": {
+    "complete": true,
+    "uniqueGuids": true
+  },
+  "pending": [
+    "Native story panel, text, clipping and touch validation",
+    "Android frame time and safe area checks",
+    "Human testing of post-ascension purchase choices"
+  ]
+}

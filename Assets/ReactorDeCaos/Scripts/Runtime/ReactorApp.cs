@@ -17,7 +17,7 @@ namespace ReactorDeCaos
         private bool[] knownUnlocks;
         private readonly System.Collections.Generic.Dictionary<string, int> purchaseFrames = new System.Collections.Generic.Dictionary<string, int>();
         private bool skipNextFrame;
-        private int previousMilestones;
+        private int previousMilestones, savedStoryChapters;
         private float nextMilestoneNotice;
         private bool previousReady;
         private bool initialized;
@@ -32,6 +32,7 @@ namespace ReactorDeCaos
             GameState state = saves.Load();
             Game = new GameEngine(state, settings != null ? settings.values : null);
             previousMilestones = Game.CompletedMilestoneCount;
+            savedStoryChapters = Game.StoryCompleted;
             knownUnlocks = new bool[Game.Shop.Count];
             RememberUnlocks();
             Preferences = PresentationPreferences.Load();
@@ -87,6 +88,13 @@ namespace ReactorDeCaos
                 if (Game.Shop[i].IsGenerator && unlocked && !knownUnlocks[i]) feedback.GeneratorUnlocked();
                 knownUnlocks[i] = unlocked;
             }
+            if (Game.StoryCompleted != savedStoryChapters && Time.unscaledTime >= nextMilestoneNotice && Save())
+            {
+                savedStoryChapters = Game.StoryCompleted;
+                Hud.ShowNotice("NARA · Nuevo registro en Historia. Progreso guardado.");
+                feedback.Celebrate();
+                nextMilestoneNotice = Time.unscaledTime + 3.5f;
+            }
             Hud.Refresh(Game);
             feedback.Animate(Game.Stage, Game.Overload.Active, ComboIntensity);
             Hud.Assembly.Animate(Game);
@@ -140,6 +148,25 @@ namespace ReactorDeCaos
             saveTimer = 0;
         }
 
+        public bool ReadStory(int chapter)
+        {
+            if (!initialized || paused) return false;
+            bool saved = chapter == StoryCatalog.Count ? Game.TryReadEpilogue(saves.Save) : Game.TryReadStory(chapter, saves.Save);
+            if (!saved) { Hud.Story.ShowMessage("No se pudo archivar. Revisa el espacio de guardado e inténtalo de nuevo."); return false; }
+            saveTimer = 0; Hud.Refresh(Game, true);
+            Hud.Story.ShowMessage("Registro archivado. Se conservará al ascender.");
+            return true;
+        }
+
+        public void ChooseStory(int choice)
+        {
+            if (!initialized || paused) return;
+            if (!Game.TryChooseStory(choice, saves.Save))
+            { Hud.Story.ShowMessage("No se pudo guardar la sintonía. Conservas la anterior."); return; }
+            saveTimer = 0; Hud.Refresh(Game, true);
+            Hud.Story.ShowMessage("Sintonía guardada. Puedes cambiarla; tus ganancias no cambian.");
+        }
+
         public void BuyMastery(Specialization branch)
         {
             string key = "mastery:" + (int)branch;
@@ -171,6 +198,7 @@ namespace ReactorDeCaos
             }
             Game = next;
             RememberUnlocks(); purchaseFrames.Clear();
+            savedStoryChapters = Game.StoryCompleted;
             previousMilestones = Game.CompletedMilestoneCount; previousCombo = 1; previousReady = false;
             saveTimer = 0; nextMilestoneNotice = Time.unscaledTime + 3.5f;
             Hud.ResetCycle(); Hud.Refresh(Game, true);

@@ -25,6 +25,10 @@ namespace ReactorDeCaos
         public int Skin { get; private set; }
         private TextMeshProUGUI progressionLabel, achievementsLabel;
         public AchievementPanel Achievements { get; private set; }
+        public StoryPanel Story { get; private set; }
+        public Button StoryButton { get; private set; }
+        private TextMeshProUGUI storyLabel;
+        private StationRestorationGraphic station;
         public Button[] NavigationButtons { get; private set; }
         public int SelectedTab { get; private set; }
         private RectTransform reactorPage, shopPage;
@@ -119,6 +123,8 @@ namespace ReactorDeCaos
 
             RectTransform reactorViewport = Rect("ReactorViewport", reactorPage, .025f, .305f, .975f, .94f);
             reactorViewport.gameObject.AddComponent<RectMask2D>();
+            station = Rect("StationRestoration", reactorViewport, 0, 0, 1, 1).gameObject.AddComponent<StationRestorationGraphic>();
+            station.raycastTarget = false;
             var mount = Rect("CoreMount", reactorViewport, .23f, .30f, .77f, .84f).gameObject.AddComponent<SocketGraphic>();
             mount.raycastTarget = false;
             CoreVisual = Rect("CoreVisual", reactorViewport, .26f, .33f, .74f, .81f);
@@ -146,9 +152,13 @@ namespace ReactorDeCaos
             TapButton = Button("TapReactor", reactorViewport, new Color(0, 0, 0, 0), .26f, .33f, .74f, .81f);
             TapButton.onClick.AddListener(app.Tap);
             Assembly = new ReactorAssembly(this, reactorViewport, app.Game);
+            Label("ReactorInstruction", reactorViewport, "TOCA EL NÚCLEO", 23, Color.white, .22f, .245f, .78f, .30f);
             EffectsRoot = Rect("Effects", reactorViewport, 0, 0, 1, 1);
-            tapHint = Label("TapHint", reactorPage, "TOCA EL NÚCLEO PARA GENERAR\nToca un módulo para instalarlo o mejorarlo.", 24, Color.white, .05f, .24f, .95f, .30f);
-            milestone = Label("Milestone", reactorPage, "", 24, Muted, .05f, .175f, .95f, .235f);
+            StoryButton = Button("OpenStory", reactorPage, new Color(.035f, .08f, .12f, .94f), .05f, .17f, .95f, .30f);
+            StoryButton.onClick.AddListener(() => SelectTab(4));
+            Image("StoryAccent", StoryButton.transform, Cyan, 0, 0, .006f, 1);
+            tapHint = Label("TapHint", StoryButton.transform, "NARA · VER HISTORIA", 26, Cyan, .035f, .48f, .965f, .95f);
+            milestone = Label("Milestone", StoryButton.transform, "", 24, Color.white, .035f, .05f, .965f, .48f);
             OverloadButton = Button("ActivateOverload", reactorPage, new Color(.13f, .07f, .23f, .98f), .055f, .02f, .945f, .16f);
             OverloadButton.onClick.AddListener(app.ActivateOverload);
             overloadLabel = Label("OverloadLabel", OverloadButton.transform, "", 29, Color.white, .02f, .1f, .98f, .94f);
@@ -196,17 +206,19 @@ namespace ReactorDeCaos
                 shopText[i] = Label("Description", button.transform, "", 30, Color.white, .16f, .07f, .71f, .93f, TextAlignmentOptions.Left);
             }
             notice = Label("Notice", safe, "", 20, Warm, .045f, .108f, .955f, .14f);
-            NavigationButtons = new Button[4]; tabIndicators = new Image[4];
-            string[] tabNames = { "REACTOR", "MEJORAS", "LOGROS", "ASCENSIÓN" };
-            for (int i = 0; i < 4; i++)
+            NavigationButtons = new Button[5]; tabIndicators = new Image[5];
+            string[] tabNames = { "NÚCLEO", "MEJORAS", "LOGROS", "ASCENDER", "HISTORIA" };
+            for (int i = 0; i < 5; i++)
             {
                 int tab = i;
-                var button = Button("Navigation" + i, safe, new Color(.025f, .045f, .075f, .98f), .035f + i * .235f, .015f, .26f + i * .235f, .105f);
+                int column = i < 2 ? i : i == 4 ? 2 : i + 1;
+                var button = Button("Navigation" + i, safe, new Color(.025f, .045f, .075f, .98f), .035f + column * .186f, .015f, .211f + column * .186f, .105f);
                 NavigationButtons[i] = button;
-                var text = Label("NavigationLabel", button.transform, tabNames[i], 26, Color.white, .01f, .06f, .99f, .94f);
+                var text = Label("NavigationLabel", button.transform, tabNames[i], 24, Color.white, .01f, .06f, .99f, .94f);
                 tabIndicators[i] = Image("SelectedTab", button.transform, Cyan, .08f, .96f, .92f, 1);
                 button.onClick.AddListener(() => SelectTab(tab));
                 if (i == 2) achievementsLabel = text;
+                if (i == 4) storyLabel = text;
                 if (i == 3) { ProgressionButton = button; progressionLabel = text; }
             }
             Image card = Image("RewardCard", reactorPage, Panel, .05f, .175f, .95f, .30f);
@@ -224,6 +236,7 @@ namespace ReactorDeCaos
             ModulePanel = new ReactorModulePanel(this, safe, app);
             Progression = new RebirthPanel(this, safe, app);
             Achievements = new AchievementPanel(this, safe, app);
+            Story = new StoryPanel(this, safe, app);
             SelectTab(0);
             Refresh(app.Game, true);
         }
@@ -237,11 +250,11 @@ namespace ReactorDeCaos
         public void ClosePanels()
         {
             if (Menu != null && Menu.IsOpen) Menu.SetOpen(false);
-            ModulePanel?.Close(); Progression?.Close(); Achievements?.Close();
+            ModulePanel?.Close(); Progression?.Close(); Achievements?.Close(); Story?.Close();
         }
         public void SelectTab(int tab)
         {
-            if (tab < 0 || tab > 3) return;
+            if (tab < 0 || tab > 4) return;
             ClosePanels();
             SelectedTab = tab;
             reactorPage.gameObject.SetActive(tab == 0);
@@ -253,6 +266,7 @@ namespace ReactorDeCaos
             }
             if (tab == 2) Achievements.Open();
             if (tab == 3) Progression.Open();
+            if (tab == 4) Story.Open();
         }
         public void OpenModule(string id) { ModulePanel.Open(id); }
         public void Back()
@@ -273,7 +287,7 @@ namespace ReactorDeCaos
             SelectTab(0); InvalidateEconomy(); lastStage = -1;
             Assembly.Reset();
             rewardCard.gameObject.SetActive(false);
-            tapHint.gameObject.SetActive(true); milestone.gameObject.SetActive(true);
+            StoryButton.gameObject.SetActive(true);
         }
 
         public void ShowNotice(string text)
@@ -289,8 +303,7 @@ namespace ReactorDeCaos
             rewardUntil = Time.unscaledTime + 3.5f;
             rewardCard.gameObject.SetActive(true);
             rewardCard.alpha = 1;
-            tapHint.gameObject.SetActive(false);
-            milestone.gameObject.SetActive(false);
+            StoryButton.gameObject.SetActive(false);
         }
 
         private void Update()
@@ -300,8 +313,7 @@ namespace ReactorDeCaos
             if (remaining <= 0)
             {
                 rewardCard.gameObject.SetActive(false);
-                tapHint.gameObject.SetActive(true);
-                milestone.gameObject.SetActive(true);
+                StoryButton.gameObject.SetActive(true);
                 return;
             }
             rewardCard.alpha = Mathf.Clamp01(remaining / .4f);
@@ -313,6 +325,7 @@ namespace ReactorDeCaos
         {
             ApplySafeArea();
             Skin = game.Skin;
+            station.Present(game.StoryCompleted, game.StoryChoice);
             float progress = game.Overload.Active
                 ? (float)(game.Overload.Remaining / game.Overload.ActiveDuration)
                 : (float)game.Overload.ChargeFraction;
@@ -331,12 +344,13 @@ namespace ReactorDeCaos
                 lastStage = game.Stage;
                 stage.text = shortStages[Mathf.Clamp(game.Stage, 0, shortStages.Length - 1)];
             }
-            progressionLabel.text = game.CanRebirth ? "ASCENSIÓN\nDISPONIBLE" : "ASCENSIÓN";
-            achievementsLabel.text = "LOGROS" + (game.AvailableAchievements > 0 ? "\n" + game.AvailableAchievements + " POR RECLAMAR" : "");
-            ModulePanel.Refresh(); Progression.Refresh(); Achievements.Refresh();
-            MilestoneDefinition goal = game.NextGoal();
-            milestone.text = goal == null ? "HITOS COMPLETADOS · sigue ampliando tu reactor"
-                : goal.title + "  " + NumberFormat.Compact(game.GoalProgress(goal)) + " / " + NumberFormat.Compact(goal.target);
+            progressionLabel.text = game.CanRebirth ? "ASCENDER\nLISTO" : "ASCENDER";
+            achievementsLabel.text = "LOGROS" + (game.AvailableAchievements > 0 ? "\n" + game.AvailableAchievements + " LISTOS" : "");
+            storyLabel.text = "HISTORIA" + (game.UnreadStory > 0 ? "\nNUEVO" : "");
+            ModulePanel.Refresh(); Progression.Refresh(); Achievements.Refresh(); Story.Refresh();
+            tapHint.text = game.UnreadStory > 0 ? "NARA · NUEVO REGISTRO" : "NARA · VER HISTORIA";
+            milestone.text = game.StoryCompleted == StoryCatalog.Count ? "Archivo recuperado · " + game.StoryRead + " / 6 leídos"
+                : StoryCatalog.At(game.CurrentStoryChapter).Title + " · " + (game.StoryProgressFraction(game.CurrentStoryChapter) * 100).ToString("0") + "%";
             overloadLabel.text = game.Overload.Active
                 ? "SOBRECARGA ×" + NumberFormat.Stat(game.OverloadMultiplier) + "  ·  " + game.Overload.Remaining.ToString("0.0") + " s"
                 : game.Overload.Ready ? "ACTIVAR SOBRECARGA  ×" + NumberFormat.Stat(game.OverloadMultiplier)

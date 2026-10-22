@@ -35,6 +35,13 @@ internal static class RebirthSimulation
                     foreach (var item in game.Shop)
                     {
                         if (!game.Unlocked(item.Id)) continue;
+                        // Permanent blueprints expose late machines immediately after rebirth.
+                        // Compare purchases reachable within one minute, not an unaffordable
+                        // best-return machine that would idle a starter coil for an hour.
+                        double income = game.BaseProduction + nominalTaps * game.TapPower
+                            * (profile == "active" ? game.ComboCap : 1.25);
+                        double wait = Math.Max(0, game.Cost(item.Id) - game.Energy);
+                        if (wait > income * 60) continue;
                         double value = Program.Yield(game, config, item, nominalTaps, profile == "active" ? game.ComboCap : 1.25) / game.Cost(item.Id);
                         if (value > score) { best = item; score = value; }
                     }
@@ -59,7 +66,7 @@ internal static class RebirthSimulation
             bool budget = cycles.Count == 6 && firstCycle <= 1200 && longestReturn < firstCycle;
             passed &= budget;
             reports.Add(new { branch = branch.ToString(), profile,
-                budgetPassed = budget, firstRebirthSeconds = Math.Round(firstCycle, 1), longestReturnSeconds = Math.Round(longestReturn, 1),
+                budgetPassed = budget, purchasePlanningHorizonSeconds = 60, firstRebirthSeconds = Math.Round(firstCycle, 1), longestReturnSeconds = Math.Round(longestReturn, 1),
                 finalRebirths = game.RebirthCount, finalEssence = game.Essence, earnedEssence = game.EarnedEssence,
                 mastery = game.MasteryLevel(branch), cycles });
         }

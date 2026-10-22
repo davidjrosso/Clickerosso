@@ -34,6 +34,7 @@ internal static class Program
         var firstGenerators = new Dictionary<string, double>();
         var unlocked = new Dictionary<string, double>();
         var milestones = new Dictionary<string, double>();
+        var storyChapters = new Dictionary<string, double>();
         var levels = new Dictionary<string, int>();
         var growth = new List<object>();
         var csv = new List<string> { "seconds,item,level,price,balance,base_production,lifetime" };
@@ -76,6 +77,8 @@ internal static class Program
             foreach (var item in game.Shop)
                 if (item.IsGenerator && game.Unlocked(item.Id) && !unlocked.ContainsKey(item.Id)) unlocked[item.Id] = time;
             while (game.TryTakeMilestone(out var milestone)) milestones[milestone.id] = time;
+            for (int chapter = 0; chapter < game.StoryCompleted; chapter++)
+                if (!storyChapters.ContainsKey(StoryCatalog.At(chapter).Id)) storyChapters[StoryCatalog.At(chapter).Id] = time;
             if (frame % 600 == 0) growth.Add(new { seconds = time, balance = game.Energy, lifetime = game.Lifetime, baseProduction = game.BaseProduction });
         }
         var gaps = new List<double>();
@@ -97,7 +100,7 @@ internal static class Program
             maxPurchaseGapSeconds = gaps.Max(), p95PurchaseGapSeconds = gaps[(int)Math.Floor((gaps.Count - 1) * .95)],
             maxFirstFiveMinuteGapSeconds = earlyGap,
             activations, boostedSeconds, finalEnergy = game.Energy, lifetimeEnergy = game.Lifetime,
-            baseProduction = game.BaseProduction, levels, milestones, growth
+            baseProduction = game.BaseProduction, levels, milestones, storyChapters, growth
         };
     }
 
