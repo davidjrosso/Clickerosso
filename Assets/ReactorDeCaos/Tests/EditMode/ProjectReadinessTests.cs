@@ -69,6 +69,27 @@ namespace ReactorDeCaos.Tests
         }
 
         [Test]
+        public void CinematicCatalogHasRealImportedSpeechAndAlphaSprites()
+        {
+            var text = Resources.Load<TextAsset>("Narrative"); Assert.That(text, Is.Not.Null);
+            var catalog = JsonUtility.FromJson<NarrativeCatalog>(text.text); Assert.DoesNotThrow(catalog.Validate);
+            foreach (var scene in catalog.scenes)
+                foreach (var beat in scene.beats)
+                {
+                    var clip = Resources.Load<AudioClip>("Audio/Voice/" + beat.voice);
+                    Assert.That(clip, Is.Not.Null, beat.voice); Assert.That(clip.length, Is.GreaterThan(.1f));
+                }
+            Assert.That(Resources.Load<Texture2D>("Art/OrfeoExterior"), Is.Not.Null);
+            var atlas = (TextureImporter)AssetImporter.GetAtPath("Assets/ReactorDeCaos/Resources/Art/NarrativeAtlas.png");
+            Assert.That(atlas.alphaIsTransparency, Is.True); Assert.That(atlas.mipmapEnabled, Is.False);
+            using (var sprites = new NarrativeSprites())
+            {
+                Assert.That(sprites.Core, Is.Not.Null);
+                foreach (string id in new[] { "nara", "mara", "memory" }) Assert.That(sprites.Portrait(id), Is.Not.Null);
+            }
+        }
+
+        [Test]
         public void StoryIllustrationIsImportedAsAClampedNonReadableUiTexture()
         {
             var texture = Resources.Load<Texture2D>("Art/StorySignal");

@@ -36,6 +36,8 @@ namespace ReactorDeCaos.Tests
             }
             yield return SceneManager.LoadSceneAsync("Main", LoadSceneMode.Single);
             yield return null;
+            // These regression tests exercise gameplay; dedicated cinematic tests cover the opening.
+            Object.FindFirstObjectByType<ReactorApp>().Narrative.Skip();
         }
 
         [UnityTearDown]
@@ -204,7 +206,7 @@ namespace ReactorDeCaos.Tests
             }
             foreach (var graphic in app.Hud.EffectsRoot.GetComponentsInChildren<Graphic>(true))
                 Assert.That(graphic.raycastTarget, Is.False);
-            Assert.That(app.GetComponents<AudioSource>().Length, Is.EqualTo(7));
+            Assert.That(app.GetComponents<AudioSource>().Length, Is.EqualTo(9));
             double energy = app.Game.Energy;
             int originalStage = app.Game.Stage;
             for (int visualStage = 0; visualStage < 5; visualStage++)
@@ -244,7 +246,7 @@ namespace ReactorDeCaos.Tests
             app.Hud.Menu.Options[0].onClick.Invoke();
             app.Hud.Menu.Options[2].onClick.Invoke();
             foreach (var source in app.GetComponents<AudioSource>())
-                if (source != app.GetComponent<ReactorFeedback>().MusicVoice) Assert.That(source.isPlaying, Is.False);
+                if (source != app.GetComponent<ReactorFeedback>().MusicVoice && source != app.Narrative.Voice) Assert.That(source.isPlaying, Is.False);
             var loaded = PresentationPreferences.Load();
             Assert.That(loaded.sound, Is.False);
             Assert.That(loaded.reducedMotion, Is.True);
@@ -268,7 +270,7 @@ namespace ReactorDeCaos.Tests
             for (int i = 0; i < 1000; i++) { app.Tap(); control.Tap(); }
             Assert.That(app.Game.Energy, Is.EqualTo(control.Energy));
             Assert.That(app.Hud.EffectsRoot.childCount, Is.EqualTo(50));
-            Assert.That(app.GetComponents<AudioSource>().Length, Is.EqualTo(7));
+            Assert.That(app.GetComponents<AudioSource>().Length, Is.EqualTo(9));
             app.ActivateOverload(); control.ActivateOverload();
             feedback.Animate(app.Game.Stage, true, 1);
             Assert.That(Label(app, "OverloadLabel").text, Does.Contain("SOBRECARGA ×"));
@@ -335,6 +337,7 @@ namespace ReactorDeCaos.Tests
             yield return SceneManager.LoadSceneAsync("Main", LoadSceneMode.Single);
             yield return null;
             var app = Object.FindFirstObjectByType<ReactorApp>();
+            app.Narrative.Skip(); // One-time arrival briefing for legacy saves.
             var old = app.Game;
             app.Hud.ProgressionButton.onClick.Invoke();
             app.Hud.Progression.ArmButton.onClick.Invoke();
@@ -345,6 +348,8 @@ namespace ReactorDeCaos.Tests
             Assert.That(app.Game.RebirthCount, Is.Zero);
             app.Hud.Progression.ArmButton.onClick.Invoke();
             app.Hud.Progression.ConfirmButton.onClick.Invoke();
+            Assert.That(app.Narrative.IsBlocking, Is.True);
+            app.Narrative.Skip();
             Assert.That(app.Game, Is.Not.SameAs(old));
             Assert.That(app.Game.RebirthCount, Is.EqualTo(1));
             Assert.That(app.Game.Essence, Is.EqualTo(3));
@@ -443,7 +448,7 @@ namespace ReactorDeCaos.Tests
             Assert.That(audio.MusicVoice.isPlaying, Is.True);
             app.Tap();
             foreach (var voice in app.GetComponents<AudioSource>())
-                if (voice != audio.MusicVoice) Assert.That(voice.isPlaying, Is.False);
+                if (voice != audio.MusicVoice && voice != app.Narrative.Voice) Assert.That(voice.isPlaying, Is.False);
             app.Preferences.music = false; app.Preferences.sound = true; app.Preferences.SaveAndNotify();
             audio.Purchase();
             Assert.That(audio.MusicVoice.isPlaying, Is.False);
@@ -469,7 +474,7 @@ namespace ReactorDeCaos.Tests
             int unlocks = audio.GeneratorUnlockCount;
             for (int i = 0; i < 10; i++) yield return null;
             Assert.That(audio.GeneratorUnlockCount, Is.EqualTo(unlocks));
-            Assert.That(app.GetComponents<AudioSource>().Length, Is.EqualTo(7));
+            Assert.That(app.GetComponents<AudioSource>().Length, Is.EqualTo(9));
             LogAssert.NoUnexpectedReceived();
         }
 
@@ -606,6 +611,7 @@ namespace ReactorDeCaos.Tests
             yield return SceneManager.LoadSceneAsync("Main", LoadSceneMode.Single);
             yield return null;
             var app = Object.FindFirstObjectByType<ReactorApp>();
+            app.Narrative.Skip();
             app.Hud.SelectTab(4);
             for (int chapter = 0; chapter < StoryCatalog.Count; chapter++)
             {
@@ -627,6 +633,7 @@ namespace ReactorDeCaos.Tests
             }
             Assert.That(app.Game.StoryRead, Is.EqualTo(6));
             Assert.That(app.Rebirth(Specialization.Automation, app.Game.RebirthReward, app.Game.RebirthCount), Is.True);
+            app.Narrative.Skip();
             app.Hud.SelectTab(4);
             yield return null;
             Assert.That(app.Hud.Story.Chapter, Is.EqualTo(6));
@@ -639,6 +646,92 @@ namespace ReactorDeCaos.Tests
             Assert.That(app.Hud.EffectsRoot.childCount, Is.EqualTo(50));
             foreach (var graphic in app.GetComponentsInChildren<StationRestorationGraphic>(true))
                 Assert.That(graphic.GetComponent<CanvasRenderer>(), Is.Not.Null);
+            LogAssert.NoUnexpectedReceived();
+        }
+
+        [UnityTest]
+        public IEnumerator OpeningIsAutomaticFirstTapIsRealAndReplayNeverGrantsIncome()
+        {
+            Object.Destroy(Object.FindFirstObjectByType<ReactorApp>().gameObject); yield return null;
+            var disk = new SaveStore(path, new UnityJsonCodec()); disk.Save(new GameState());
+            yield return SceneManager.LoadSceneAsync("Main", LoadSceneMode.Single); yield return null;
+            var app = Object.FindFirstObjectByType<ReactorApp>();
+            Assert.That(app.Narrative.IsBlocking, Is.True);
+            Assert.That(app.Narrative.SceneId, Is.EqualTo("intro"));
+            app.Tap(); Assert.That(app.Game.Energy, Is.Zero, "Covered gameplay cannot receive taps.");
+            app.Narrative.Next(); yield return null; app.Narrative.Next();
+            Assert.That(app.Narrative.AwaitingTap, Is.True);
+            Canvas.ForceUpdateCanvases();
+            var button = app.Narrative.IgniteButton;
+            var center = button.transform.TransformPoint(((RectTransform)button.transform).rect.center);
+            var hits = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(new PointerEventData(EventSystem.current) { position = center }, hits);
+            Assert.That(hits[0].gameObject, Is.EqualTo(button.gameObject));
+            app.Narrative.IgniteButton.onClick.Invoke(); app.Narrative.IgniteButton.onClick.Invoke();
+            Assert.That(app.Game.Energy, Is.EqualTo(1));
+            var interrupted = app.Game.Snapshot();
+            app.Narrative.Skip(); Assert.That(app.Game.NarrativeIntroSeen, Is.True);
+            Assert.That(new GameEngine(disk.Load()).NarrativeIntroSeen, Is.True);
+            Assert.That(app.Narrative.Replay(-1), Is.True);
+            yield return null; app.Narrative.Next(); yield return null; app.Narrative.Next();
+            app.Narrative.IgniteButton.onClick.Invoke(); app.Narrative.Skip();
+            Assert.That(app.Game.Energy, Is.EqualTo(1));
+            Assert.That(app.GetComponents<AudioSource>().Length, Is.EqualTo(9));
+            Object.Destroy(app.gameObject); yield return null;
+            Assert.That(disk.Save(interrupted), Is.True);
+            yield return SceneManager.LoadSceneAsync("Main", LoadSceneMode.Single); yield return null;
+            app = Object.FindFirstObjectByType<ReactorApp>();
+            app.Narrative.Next(); yield return null; app.Narrative.Next();
+            app.Narrative.IgniteButton.onClick.Invoke(); app.Narrative.Skip();
+            Assert.That(app.Game.Energy, Is.EqualTo(1), "Interrupted ignition must not grant a second scripted tap.");
+            LogAssert.NoUnexpectedReceived();
+        }
+
+        [UnityTest]
+        public IEnumerator CinematicVoiceSubtitlesPauseAndIndependentMuteStayInSync()
+        {
+            var app = Object.FindFirstObjectByType<ReactorApp>();
+            app.Narrative.Replay(-1); yield return null;
+            Assert.That(app.Narrative.Voice.clip, Is.Not.Null);
+            Assert.That(Label(app, "CinematicSubtitle").text, Does.Contain("Orfeo"));
+            app.Preferences.sound = false; app.Preferences.music = false; app.Preferences.SaveAndNotify();
+            Assert.That(app.Narrative.Voice.isPlaying, Is.True);
+            app.Hud.Menu.SetOpen(true); yield return null;
+            Assert.That(app.Narrative.Voice.isPlaying, Is.False);
+            int beat = app.Narrative.BeatIndex;
+            yield return new WaitForSecondsRealtime(.25f);
+            Assert.That(app.Narrative.BeatIndex, Is.EqualTo(beat));
+            app.Hud.Menu.SetOpen(false); yield return null;
+            Assert.That(app.Narrative.Voice.isPlaying, Is.True);
+            app.Hud.Menu.VoiceVolume.value = 0;
+            Assert.That(app.Narrative.Voice.isPlaying, Is.False);
+            Assert.That(Label(app, "CinematicSubtitle").gameObject.activeInHierarchy, Is.True);
+            app.Preferences.reducedMotion = app.Preferences.reducedFlashes = app.Preferences.limitedEffects = true;
+            app.Preferences.SaveAndNotify(); yield return null;
+            app.SendMessage("OnApplicationPause", true);
+            app.Narrative.Next(); Assert.That(app.Narrative.BeatIndex, Is.EqualTo(beat));
+            app.SendMessage("OnApplicationPause", false);
+            app.Narrative.Skip(); Assert.That(app.Hud.TapButton.gameObject.activeInHierarchy, Is.True);
+            LogAssert.NoUnexpectedReceived();
+        }
+
+        [UnityTest]
+        public IEnumerator MissionsAutomaticallyOpenScenesAndProductionContinuesUnderThem()
+        {
+            var app = Object.FindFirstObjectByType<ReactorApp>();
+            for (int i = 0; i < 100; i++) app.Tap(); app.Buy("coil");
+            app.Preferences.autoDialogue = false; app.Preferences.SaveAndNotify();
+            yield return new WaitForSecondsRealtime(8.5f);
+            Assert.That(app.Narrative.IsBlocking, Is.True);
+            Assert.That(app.Narrative.SceneId, Is.EqualTo("chapter_0"));
+            double before = app.Game.Energy;
+            yield return new WaitForSecondsRealtime(.2f);
+            Assert.That(app.Game.Energy, Is.GreaterThan(before));
+            double cost = app.Game.Cost("coil"); int level = app.Game.Level("coil");
+            app.Buy("coil"); Assert.That(app.Game.Level("coil"), Is.EqualTo(level));
+            app.Narrative.Skip(); Assert.That(app.Game.NarrativeScenesSeen, Is.EqualTo(1));
+            app.Buy("coil"); Assert.That(app.Game.Level("coil"), Is.EqualTo(level + 1));
+            Assert.That(app.Hud.EffectsRoot.childCount, Is.EqualTo(50));
             LogAssert.NoUnexpectedReceived();
         }
 

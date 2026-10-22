@@ -18,6 +18,9 @@ namespace ReactorDeCaos
         public Button ActionButton { get; }
         public Button NaraButton { get; }
         public Button CoreButton { get; }
+        public Button ReplayButton { get; }
+        public Button IntroButton { get; }
+        private readonly TextMeshProUGUI replayText;
         public bool IsOpen => root.activeSelf;
         public int Chapter { get; private set; }
         private int actionFrame = -1;
@@ -52,8 +55,11 @@ namespace ReactorDeCaos
             image.texture = Resources.Load<Texture2D>("Art/StorySignal"); image.raycastTarget = false;
             var fit = illustration.gameObject.AddComponent<AspectRatioFitter>();
             fit.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent; fit.aspectRatio = 1.5f;
-            ReactorHud.Image("TransmissionShade", banner, new Color(.01f, .02f, .04f, .72f), 0, 0, 1, .26f);
-            hud.Label("TransmissionCaption", banner, "ORFEO · ECOS DEL PRIMER ENCENDIDO", 26, ReactorHud.Cyan, .04f, .025f, .96f, .24f, TextAlignmentOptions.Left);
+            ReactorHud.Image("TransmissionShade", banner, new Color(.01f, .02f, .04f, .72f), 0, .74f, 1, 1);
+            hud.Label("TransmissionCaption", banner, "ORFEO · ECOS DEL PRIMER ENCENDIDO", 26, ReactorHud.Cyan, .04f, .76f, .96f, .98f, TextAlignmentOptions.Left);
+            ReplayButton = ReactorHud.Button("ReplayChapter", banner, new Color(.035f, .13f, .18f, .96f), .055f, .04f, .945f, .45f);
+            replayText = hud.Label("ReplayChapterLabel", ReplayButton.transform, "VER CINEMÁTICA", 29, Color.white, .025f, .05f, .975f, .95f);
+            ReplayButton.onClick.AddListener(() => app.Narrative.Replay(Chapter == StoryCatalog.Count ? Chapter : Chapter < app.Game.StoryCompleted ? Chapter : -1));
             objectives = Text(hud, "StoryObjectives", content, ReactorHud.Cyan);
             var track = ReactorHud.Image("StoryTrack", content, new Color(.08f, .13f, .19f), 0, 0, 1, 1);
             track.gameObject.AddComponent<LayoutElement>().preferredHeight = 8;
@@ -69,6 +75,10 @@ namespace ReactorDeCaos
             hud.Label("CoreChoiceLabel", CoreButton.transform, "ESCUCHAR AL NÚCLEO\nLuz violeta · mismos beneficios", 28, Color.white, .02f, .08f, .98f, .92f);
             NaraButton.onClick.AddListener(() => app.ChooseStory(1)); CoreButton.onClick.AddListener(() => app.ChooseStory(2));
             message = Text(hud, "StoryMessage", content, new Color(.64f, .73f, .83f));
+            IntroButton = ReactorHud.Button("ReplayIntro", content, new Color(.045f, .11f, .17f), 0, 0, 1, 1);
+            IntroButton.gameObject.AddComponent<LayoutElement>().preferredHeight = 180;
+            hud.Label("ReplayIntroLabel", IntroButton.transform, "REPETIR EL DESPERTAR", 28, Color.white, .025f, .05f, .975f, .95f);
+            IntroButton.onClick.AddListener(() => app.Narrative.Replay(-1));
             PreviousButton = ReactorHud.Button("StoryPrevious", surface.transform, new Color(.05f, .10f, .16f), .04f, .175f, .48f, .315f);
             NextButton = ReactorHud.Button("StoryNext", surface.transform, new Color(.05f, .10f, .16f), .52f, .175f, .96f, .315f);
             hud.Label("StoryPreviousLabel", PreviousButton.transform, "ANTERIOR", 28, Color.white, .02f, .08f, .98f, .92f);
@@ -96,8 +106,16 @@ namespace ReactorDeCaos
         public void ShowChapter(int chapter)
         {
             Chapter = Mathf.Clamp(chapter, 0, LastPage);
-            message.text = "Desliza para leer. La producción continúa.\nLos objetivos se completan jugando; leer es opcional.\nLos planos conservan el acceso, no las máquinas. Tras ascender, empieza por módulos económicos.";
+            message.text = "Desliza para leer. La producción continúa.\nLas escenas aparecen durante el juego. Aquí puedes repetirlas y consultar tus registros.\nLos planos conservan el acceso, no las máquinas. Tras ascender, empieza por módulos económicos.";
             Refresh(); Canvas.ForceUpdateCanvases(); scroll.verticalNormalizedPosition = 1;
+        }
+        public void FocusChoice()
+        {
+            Canvas.ForceUpdateCanvases();
+            var target = (RectTransform)choices.transform;
+            float top = -target.anchoredPosition.y - target.rect.height * (1 - target.pivot.y);
+            float range = scroll.content.rect.height - scroll.viewport.rect.height;
+            if (range > 0) scroll.verticalNormalizedPosition = 1 - Mathf.Clamp01(top / range);
         }
         private void Act()
         {
@@ -139,6 +157,7 @@ namespace ReactorDeCaos
                 reward.text = (done ? "RECOMPENSA OBTENIDA\n" : "AL COMPLETAR\n") + chapter.Reward;
             }
             progress.anchorMax = new Vector2(epilogue ? 1 : (float)game.StoryProgressFraction(Chapter), 1);
+            replayText.text = done || epilogue ? "REPETIR CINEMÁTICA" : "VER EL DESPERTAR";
             choices.SetActive(Chapter == 4 && done);
             choiceText.text = (game.StoryChoice == 0 ? "SINTONÍA OPCIONAL\n" : "SINTONÍA GUARDADA · puedes cambiarla\n") + StoryCatalog.ChoiceResponse(game.StoryChoice);
             NaraButton.interactable = game.StoryChoice != 1; CoreButton.interactable = game.StoryChoice != 2;

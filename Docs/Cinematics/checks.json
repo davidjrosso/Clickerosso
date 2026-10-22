@@ -1,0 +1,55 @@
+{
+  "date": "2026-10-22",
+  "core": {
+    "passed": 134,
+    "failed": 0,
+    "skipped": 0
+  },
+  "unityApi": {
+    "assembliesCompiled": 6,
+    "nativeExecution": false
+  },
+  "nativeUnity": {
+    "version": "6000.0.85f1",
+    "exitCode": 198,
+    "reason": "No valid Unity Editor license found. Please activate your license.",
+    "mainSceneRun": false,
+    "playModeRun": false,
+    "androidRun": false
+  },
+  "simulations": {
+    "profiles": 3,
+    "secondsEach": 1800,
+    "rebirthCycles": 54,
+    "allBudgetsPassed": true,
+    "economicResultsUnchangedFromStoryRevision": true
+  },
+  "layout": {
+    "controls": 44,
+    "profiles": 5,
+    "minimumLogicalPixels": 48.33,
+    "nativeRender": false
+  },
+  "speech": {
+    "engine": "eSpeak NG via espeakng-loader 0.2.4",
+    "spokenLines": 46,
+    "seconds": 254.2,
+    "neural": false,
+    "provisional": true,
+    "thirdPartyRecordingsUsed": false,
+    "piperModelDownloaded": false,
+    "piperModelRequests": "HTTP 403",
+    "auditionedInUnity": false
+  },
+  "art": {
+    "generatedWithImagegen": 2,
+    "integrated": true,
+    "alphaVerified": true,
+    "nativeVisualApproval": false
+  },
+  "pending": [
+    "Scene rendering and typography in licensed Unity",
+    "Listening quality and mix on mobile speakers",
+    "Native interaction suites and Android performance"
+  ]
+}

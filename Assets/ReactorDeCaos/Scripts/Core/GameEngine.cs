@@ -73,6 +73,13 @@ namespace ReactorDeCaos
             Shop = shop.AsReadOnly();
             // Catch up legacy saves without replaying celebrations at every load.
             EvaluateMilestones(false);
+            // Existing progress gets a recap, not a forced backlog of already achieved chapters.
+            if (state.story.narrative == null)
+            {
+                bool returning = AllTimeEnergy > 0 || RebirthCount > 0 || state.coils > 0 || state.tapLevel > 0;
+                state.story.narrative = new NarrativeProgress { introSeen = returning,
+                    scenesSeen = returning ? StoryCompleted : 0, ascentSeen = RebirthCount > 0 };
+            }
             var retainedAchievements = new HashSet<string>(state.unlockedAchievements);
             foreach (var goal in config.achievements) retainedAchievements.Add(goal.id);
             if (retainedAchievements.Count > 128) throw new ArgumentException("Achievement ledger capacity exceeded.");

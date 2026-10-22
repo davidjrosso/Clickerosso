@@ -22,6 +22,9 @@ namespace ReactorDeCaos
         private Particle[] numbers, waves, sparks;
         private int numberIndex, waveIndex, sparkIndex, voiceIndex;
         private float pulse, flash, comboMix, overloadMix;
+        public bool DialogueActive { get; set; }
+        public bool CinematicSilence { get; set; }
+        private float recoilAge = 5;
         private readonly AudioSource[] tapVoices = new AudioSource[2];
         private AudioSource eventVoice, humVoice, comboVoice, unlockVoice, musicVoice;
         private readonly System.Collections.Generic.Dictionary<AudioSource, float> effectLevels = new System.Collections.Generic.Dictionary<AudioSource, float>();
@@ -146,6 +149,7 @@ namespace ReactorDeCaos
                 lastBurst = Time.unscaledTime;
             }
             pulse = overloaded ? 1.25f : 1;
+            recoilAge = 0;
             // Slow local highlight, never a full-screen strobe; repeated taps sustain it.
             flash = preferences.reducedFlashes ? 0 : .12f;
             ApplyCoreMotion();
@@ -275,7 +279,8 @@ namespace ReactorDeCaos
         {
             if (suspended) return;
             float dt = Mathf.Min(Time.unscaledDeltaTime, .1f);
-            float musicTarget = preferences.music ? .14f * preferences.musicVolume : 0;
+            float musicTarget = preferences.music && !CinematicSilence ? .14f * preferences.musicVolume * (DialogueActive ? .28f : 1) : 0;
+            recoilAge += dt;
             musicVoice.volume = Mathf.MoveTowards(musicVoice.volume, musicTarget, dt * .08f);
             if (wasOverloaded && !overloaded)
             {
@@ -332,7 +337,10 @@ namespace ReactorDeCaos
                 hud.CoreVisual.anchoredPosition = Vector2.zero;
                 return;
             }
-            hud.CoreVisual.localScale = new Vector3(1 + pulse * .055f, 1 - pulse * .025f, 1);
+            float spring = Mathf.Exp(-recoilAge * 9) * Mathf.Sin(recoilAge * 22);
+            float breath = preferences.limitedEffects ? 0 : Mathf.Sin(Time.unscaledTime * 1.7f) * .004f;
+            hud.CoreVisual.localScale = new Vector3(1 + pulse * .055f + spring * .018f + breath,
+                1 - pulse * .025f - spring * .012f + breath, 1);
             // Only the core moves. Prices, buttons and camera never shake.
             hud.CoreVisual.anchoredPosition = new Vector2(Mathf.Sin(Time.unscaledTime * 32) * pulse * 2, 0);
         }

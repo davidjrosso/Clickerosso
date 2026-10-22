@@ -9,6 +9,8 @@ namespace ReactorDeCaos
         public PresentationPreferences Preferences { get; private set; }
         public GameEngine Game { get; private set; }
         public ReactorHud Hud { get; private set; }
+        public NarrativeDirector Narrative { get; private set; }
+        private bool InputBlocked => !initialized || paused || (Narrative?.IsBlocking ?? false);
         private SaveStore saves;
         private ReactorFeedback feedback;
         private float saveTimer;
@@ -43,6 +45,8 @@ namespace ReactorDeCaos
                 feedback = gameObject.AddComponent<ReactorFeedback>();
                 feedback.Initialize(Hud);
                 initialized = true;
+                Narrative = new NarrativeDirector(this, feedback);
+                Narrative.Start(saves.LoadedExisting);
             }
             catch (Exception error)
             {
@@ -95,6 +99,7 @@ namespace ReactorDeCaos
                 feedback.Celebrate();
                 nextMilestoneNotice = Time.unscaledTime + 3.5f;
             }
+            Narrative.Tick(seconds);
             Hud.Refresh(Game);
             feedback.Animate(Game.Stage, Game.Overload.Active, ComboIntensity);
             Hud.Assembly.Animate(Game);
@@ -102,11 +107,24 @@ namespace ReactorDeCaos
 
         public void Tap()
         {
-            if (!initialized || paused) return;
+            if (InputBlocked) return;
+            TapCore();
+        }
+        public void NarrativeTap()
+        {
+            if (!initialized || paused || Narrative == null || !Narrative.CanIgnite || Narrative.IsReplay) return;
+            // A saved, interrupted opening may already contain its first tap.
+            // Replaying that ignition step must not grant a second scripted reward.
+            if (Game.AllTimeEnergy == 0) TapCore();
+            Narrative.Ignite();
+        }
+        private void TapCore()
+        {
             double reward = Game.Tap();
             if (Game.ComboMultiplier > previousCombo && Game.ComboMultiplier >= Game.ComboCap)
                 Hud.ShowNotice("Combo máximo ×" + NumberFormat.Stat(Game.ComboCap));
             if (Game.ComboMultiplier > previousCombo) feedback.ComboRise(Game.ComboMultiplier);
+            if (Game.ComboMultiplier >= 1.5) Narrative?.Notify(2);
             previousCombo = Game.ComboMultiplier;
             feedback.Tap(reward, Game.Overload.Active, ComboIntensity);
             Hud.Assembly.Tap();
@@ -117,9 +135,10 @@ namespace ReactorDeCaos
 
         public void Buy(string item)
         {
-            if (!initialized || paused || (purchaseFrames.TryGetValue(item, out int frame) && frame == Time.frameCount) || !Game.Buy(item)) return;
+            if (InputBlocked || (purchaseFrames.TryGetValue(item, out int frame) && frame == Time.frameCount) || !Game.Buy(item)) return;
             purchaseFrames[item] = Time.frameCount;
             feedback.Purchase();
+            if (item == "coil") Narrative?.Notify(0);
             Hud.Assembly.Install(item);
             Hud.ShowNotice("Mejora instalada.");
             Hud.InvalidateEconomy();
@@ -129,15 +148,16 @@ namespace ReactorDeCaos
 
         public void ActivateOverload()
         {
-            if (!initialized || paused || !Game.ActivateOverload()) return;
+            if (InputBlocked || !Game.ActivateOverload()) return;
             feedback.StartOverload();
+            Narrative?.Notify(1);
             Hud.ShowNotice("SOBRECARGA · producción y toques ×" + NumberFormat.Stat(Game.OverloadMultiplier));
             Hud.Refresh(Game, true);
         }
 
         public void ClaimAchievement(string id)
         {
-            if (!initialized || paused) return;
+            if (InputBlocked) return;
             if (!Game.TryClaimAchievement(id, saves.Save))
             {
                 Hud.Achievements.ShowMessage("No se pudo reclamar. Revisa el progreso o el espacio de guardado.");
@@ -150,7 +170,7 @@ namespace ReactorDeCaos
 
         public bool ReadStory(int chapter)
         {
-            if (!initialized || paused) return false;
+            if (InputBlocked) return false;
             bool saved = chapter == StoryCatalog.Count ? Game.TryReadEpilogue(saves.Save) : Game.TryReadStory(chapter, saves.Save);
             if (!saved) { Hud.Story.ShowMessage("No se pudo archivar. Revisa el espacio de guardado e inténtalo de nuevo."); return false; }
             saveTimer = 0; Hud.Refresh(Game, true);
@@ -160,7 +180,7 @@ namespace ReactorDeCaos
 
         public void ChooseStory(int choice)
         {
-            if (!initialized || paused) return;
+            if (InputBlocked) return;
             if (!Game.TryChooseStory(choice, saves.Save))
             { Hud.Story.ShowMessage("No se pudo guardar la sintonía. Conservas la anterior."); return; }
             saveTimer = 0; Hud.Refresh(Game, true);
@@ -170,7 +190,7 @@ namespace ReactorDeCaos
         public void BuyMastery(Specialization branch)
         {
             string key = "mastery:" + (int)branch;
-            if (!initialized || paused || (purchaseFrames.TryGetValue(key, out int frame) && frame == Time.frameCount) || !Game.BuyMastery(branch)) return;
+            if (InputBlocked || (purchaseFrames.TryGetValue(key, out int frame) && frame == Time.frameCount) || !Game.BuyMastery(branch)) return;
             purchaseFrames[key] = Time.frameCount;
             feedback.Purchase(); Hud.InvalidateEconomy(); Hud.Refresh(Game, true);
             Hud.Progression.ShowMessage(Save() ? "Maestría permanente instalada." : "No se pudo guardar. Se reintentará; conserva la sesión abierta.");
@@ -178,14 +198,14 @@ namespace ReactorDeCaos
 
         public void SelectSkin(int skin)
         {
-            if (!initialized || paused || !Game.SelectSkin(skin)) return;
+            if (InputBlocked || !Game.SelectSkin(skin)) return;
             Hud.Refresh(Game, true); Hud.Assembly.Animate(Game);
             Hud.Progression.ShowMessage(Save() ? "Skin equipada. La economía no cambia." : "No se pudo guardar la selección.");
         }
 
         public bool Rebirth(Specialization branch, int quotedReward, int quotedCycle)
         {
-            if (!initialized || paused) return false;
+            if (InputBlocked) return false;
             if (Game.RebirthCount != quotedCycle || Game.RebirthReward != quotedReward || !Game.CanRebirth)
             {
                 Hud.Progression.ShowMessage("La recompensa ha cambiado. Revisa el colapso de nuevo.");
@@ -205,7 +225,21 @@ namespace ReactorDeCaos
             Hud.ShowReward(new MilestoneDefinition { title = "ASCENSIÓN " + Game.RebirthCount,
                 rewardDescription = "+" + quotedReward + " esencia · " + RebirthCatalog.SkinName(Game.Skin) });
             feedback.Reborn(); Hud.Assembly.Animate(Game);
+            Narrative.AfterRebirth();
             return true;
+        }
+
+        public bool FinishNarrative(int chapter, bool read)
+        {
+            if (!initialized || paused) return false;
+            bool result = Game.TryFinishNarrative(chapter, read, saves.Save);
+            if (result) saveTimer = 0;
+            return result;
+        }
+        public bool MarkCommunication(int kind)
+        {
+            if (!initialized || paused) return false;
+            return Game.TryMarkCommunication(kind, saves.Save);
         }
 
         // Visual normalization only: the engine remains the sole source of rewards.
@@ -237,6 +271,7 @@ namespace ReactorDeCaos
             if (paused == inactive) return;
             paused = inactive;
             if (feedback != null) feedback.SetSuspended(inactive);
+            Narrative?.SetSuspended(inactive);
             if (inactive) { Save(); Preferences?.Save(); }
             else skipNextFrame = true;
         }
@@ -245,6 +280,7 @@ namespace ReactorDeCaos
 
         private void OnDestroy()
         {
+            Narrative?.Dispose();
             // Also persists progress when stopping Play Mode.
             Save();
             Preferences?.Save();

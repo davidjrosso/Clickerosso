@@ -53,7 +53,8 @@ namespace ReactorDeCaos
                 && ValidLevel(tapLevel) && ValidLevel(comboLevel)
                 && ValidLevel(overloadLevel) && ValidLevel(coils) && ValidLevel(plasma)
                 && ValidProgression() && ValidAchievements()
-                && (story == null || (story.IsValid() && (!story.epilogueRead || (rebirth != null && rebirth.rebirths > 0))));
+                && (story == null || (story.IsValid() && (!story.epilogueRead || (rebirth != null && rebirth.rebirths > 0))
+                    && (story.narrative == null || !story.narrative.ascentSeen || (rebirth != null && rebirth.rebirths > 0))));
         }
 
         private bool ValidProgression()

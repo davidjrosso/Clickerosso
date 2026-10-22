@@ -26,6 +26,11 @@ namespace ReactorDeCaos
         private TextMeshProUGUI progressionLabel, achievementsLabel;
         public AchievementPanel Achievements { get; private set; }
         public StoryPanel Story { get; private set; }
+        public NarrativeSprites NarrativeArt { get; private set; }
+        public RectTransform SafeRoot => safe;
+        private ReactorApp owner;
+        private string transmission;
+        private Image memoryCrystal, chamberVeil;
         public Button StoryButton { get; private set; }
         private TextMeshProUGUI storyLabel;
         private StationRestorationGraphic station;
@@ -65,7 +70,8 @@ namespace ReactorDeCaos
 
         public void Build(ReactorApp app)
         {
-            Preferences = app.Preferences;
+            owner = app; Preferences = app.Preferences;
+            NarrativeArt = new NarrativeSprites();
             sprites = new PresentationSprites(Resources.Load<PresentationAssets>("Presentation"));
             Font = Resources.Load<TMP_FontAsset>("Fonts/ReactorFont");
             if (Font == null)
@@ -106,7 +112,7 @@ namespace ReactorDeCaos
             fitter.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
             fitter.aspectRatio = 2f / 3f;
             // Dim the illustration enough for UI, without obscuring the core.
-            Image("Veil", canvas, new Color(0, .015f, .04f, .15f), 0, 0, 1, 1);
+            chamberVeil = Image("Veil", canvas, new Color(0, .015f, .04f, .15f), 0, 0, 1, 1);
             safe = Rect("SafeArea", canvas, 0, 0, 1, 1);
             ApplySafeArea();
             Image("Header", safe, new Color(.025f, .045f, .075f, .85f), .035f, .825f, .965f, .98f);
@@ -131,7 +137,7 @@ namespace ReactorDeCaos
             CoreGlow = Rect("CoreGlow", CoreVisual, -.06f, -.06f, 1.06f, 1.06f).gameObject.AddComponent<GlowGraphic>();
             CoreGlow.raycastTarget = false;
             CoreImage = Image("CoreSprite", CoreVisual, Color.white, .02f, .02f, .98f, .98f);
-            CoreImage.sprite = sprites.Core;
+            CoreImage.sprite = NarrativeArt.Core;
             CoreImage.preserveAspect = true;
             CoreFlash = Rect("CoreFlash", CoreVisual, .24f, .24f, .76f, .76f).gameObject.AddComponent<GlowGraphic>();
             CoreFlash.raycastTarget = false;
@@ -151,6 +157,8 @@ namespace ReactorDeCaos
             }
             TapButton = Button("TapReactor", reactorViewport, new Color(0, 0, 0, 0), .26f, .33f, .74f, .81f);
             TapButton.onClick.AddListener(app.Tap);
+            memoryCrystal = Image("RecoveredMemory", reactorViewport, Color.white, .445f, .84f, .555f, .96f);
+            memoryCrystal.sprite = NarrativeArt.Portrait("memory"); memoryCrystal.preserveAspect = true;
             Assembly = new ReactorAssembly(this, reactorViewport, app.Game);
             Label("ReactorInstruction", reactorViewport, "TOCA EL NÚCLEO", 23, Color.white, .22f, .245f, .78f, .30f);
             EffectsRoot = Rect("Effects", reactorViewport, 0, 0, 1, 1);
@@ -243,7 +251,7 @@ namespace ReactorDeCaos
 
         private void OnDestroy()
         {
-            sprites?.Dispose();
+            sprites?.Dispose(); NarrativeArt?.Dispose();
             if (ownsRuntimeFont) ReactorFont.Release(Font);
         }
 
@@ -254,7 +262,7 @@ namespace ReactorDeCaos
         }
         public void SelectTab(int tab)
         {
-            if (tab < 0 || tab > 4) return;
+            if (tab < 0 || tab > 4 || (owner.Narrative?.IsBlocking ?? false)) return;
             ClosePanels();
             SelectedTab = tab;
             reactorPage.gameObject.SetActive(tab == 0);
@@ -272,6 +280,7 @@ namespace ReactorDeCaos
         public void Back()
         {
             if (Menu.IsOpen) Menu.SetOpen(false);
+            else if (owner.Narrative?.IsBlocking ?? false) owner.Narrative.Skip();
             else if (Progression.IsConfirming) Progression.CancelConfirmation();
             else if (Progression.IsOpen || Achievements.IsOpen || SelectedTab != 0) SelectTab(0);
             else if (ModulePanel.IsOpen) ModulePanel.Close();
@@ -299,6 +308,7 @@ namespace ReactorDeCaos
 
         public void ShowReward(MilestoneDefinition reward)
         {
+            if (transmission != null) { ShowNotice("HITO · " + reward.title); return; }
             rewardText.text = "HITO · " + reward.title + "\n<size=80%>" + reward.rewardDescription + "</size>";
             rewardUntil = Time.unscaledTime + 3.5f;
             rewardCard.gameObject.SetActive(true);
@@ -326,6 +336,9 @@ namespace ReactorDeCaos
             ApplySafeArea();
             Skin = game.Skin;
             station.Present(game.StoryCompleted, game.StoryChoice);
+            chamberVeil.color = new Color(0, .015f, .04f, game.StoryCompleted == 0 ? .46f : .15f);
+            memoryCrystal.gameObject.SetActive(game.StoryCompleted >= 4);
+            memoryCrystal.color = game.StoryChoice == 2 ? Violet : Color.white;
             float progress = game.Overload.Active
                 ? (float)(game.Overload.Remaining / game.Overload.ActiveDuration)
                 : (float)game.Overload.ChargeFraction;
@@ -348,9 +361,10 @@ namespace ReactorDeCaos
             achievementsLabel.text = "LOGROS" + (game.AvailableAchievements > 0 ? "\n" + game.AvailableAchievements + " LISTOS" : "");
             storyLabel.text = "HISTORIA" + (game.UnreadStory > 0 ? "\nNUEVO" : "");
             ModulePanel.Refresh(); Progression.Refresh(); Achievements.Refresh(); Story.Refresh();
-            tapHint.text = game.UnreadStory > 0 ? "NARA · NUEVO REGISTRO" : "NARA · VER HISTORIA";
+            tapHint.text = game.UnreadStory > 0 ? "NARA · NUEVA TRANSMISIÓN" : "MISIÓN · " + NarrativeMission(game.StoryCompleted);
             milestone.text = game.StoryCompleted == StoryCatalog.Count ? "Archivo recuperado · " + game.StoryRead + " / 6 leídos"
-                : StoryCatalog.At(game.CurrentStoryChapter).Title + " · " + (game.StoryProgressFraction(game.CurrentStoryChapter) * 100).ToString("0") + "%";
+                : NumberFormat.Compact(game.AllTimeEnergy) + " E · " + (game.StoryProgressFraction(game.CurrentStoryChapter) * 100).ToString("0") + "% · VER OBJETIVO";
+            if (transmission != null) milestone.text = transmission;
             overloadLabel.text = game.Overload.Active
                 ? "SOBRECARGA ×" + NumberFormat.Stat(game.OverloadMultiplier) + "  ·  " + game.Overload.Remaining.ToString("0.0") + " s"
                 : game.Overload.Ready ? "ACTIVAR SOBRECARGA  ×" + NumberFormat.Stat(game.OverloadMultiplier)
@@ -382,6 +396,27 @@ namespace ReactorDeCaos
 
             }
             if (Time.unscaledTime > noticeUntil) notice.text = "GUARDADO LOCAL  ·  SIN CONEXIÓN";
+        }
+
+        private static readonly string[] missionNames = { "SOPORTE VITAL", "COMUNICACIONES", "SECTOR ROJO", "CAJA NEGRA", "ENLACE DE MEMORIA", "NUEVO ENCENDIDO", "ORFEO RECUERDA" };
+        public static string NarrativeMission(int chapter) => missionNames[Mathf.Clamp(chapter, 0, missionNames.Length - 1)];
+        public void ShowTransmission(string name, string text, Sprite avatar)
+        {
+            transmission = "<color=#74E6F2>" + name + " · </color>" + text;
+            rewardCard.gameObject.SetActive(false); StoryButton.gameObject.SetActive(true);
+            tapHint.gameObject.SetActive(false);
+            milestone.rectTransform.anchorMin = new Vector2(.025f, .03f);
+            milestone.rectTransform.anchorMax = new Vector2(.975f, .97f);
+            milestone.text = transmission;
+        }
+        public void ClearTransmission()
+        {
+            transmission = null;
+            if (tapHint == null) return;
+            tapHint.gameObject.SetActive(true);
+            milestone.rectTransform.anchorMin = new Vector2(.035f, .05f);
+            milestone.rectTransform.anchorMax = new Vector2(.965f, .48f);
+            nextTextUpdate = 0;
         }
 
         private void ApplySafeArea()

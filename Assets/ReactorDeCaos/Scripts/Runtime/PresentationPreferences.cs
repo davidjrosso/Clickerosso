@@ -10,6 +10,9 @@ namespace ReactorDeCaos
         public int version = 2;
         public bool sound = true; // Existing preference now controls effects only.
         public bool music = true;
+        public bool voice = true;
+        public bool autoDialogue = true;
+        public float voiceVolume = .8f;
         public float effectsVolume = .75f;
         public float musicVolume = .35f;
         public bool reducedFlashes;
@@ -29,6 +32,7 @@ namespace ReactorDeCaos
                 // Missing version-1 fields retain constructor defaults. Respect the old mute.
                 if (!string.IsNullOrEmpty(json) && (!json.Contains("\"music\"") || settings.version == 1))
                     settings.music = settings.sound;
+                if (!string.IsNullOrEmpty(json) && !json.Contains("\"voice\"")) settings.voice = settings.sound;
                 settings.version = 2;
                 settings.Normalize();
             }
@@ -39,6 +43,7 @@ namespace ReactorDeCaos
         private void Normalize()
         {
             effectsVolume = float.IsNaN(effectsVolume) || float.IsInfinity(effectsVolume) ? .75f : Mathf.Clamp01(effectsVolume);
+            voiceVolume = float.IsNaN(voiceVolume) || float.IsInfinity(voiceVolume) ? .8f : Mathf.Clamp01(voiceVolume);
             musicVolume = float.IsNaN(musicVolume) || float.IsInfinity(musicVolume) ? .35f : Mathf.Clamp01(musicVolume);
         }
 

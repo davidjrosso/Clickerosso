@@ -9,12 +9,13 @@ namespace ReactorDeCaos
     {
         private readonly GameObject root;
         private readonly PresentationPreferences settings;
-        private readonly TextMeshProUGUI[] labels = new TextMeshProUGUI[6];
+        private readonly TextMeshProUGUI[] labels = new TextMeshProUGUI[8];
         private readonly Button opener, close;
-        public Button[] Options { get; } = new Button[6];
+        public Button[] Options { get; } = new Button[8];
         public Slider EffectsVolume { get; }
         public Slider MusicVolume { get; }
-        private readonly TextMeshProUGUI effectsValue, musicValue;
+        public Slider VoiceVolume { get; }
+        private readonly TextMeshProUGUI effectsValue, musicValue, voiceValue;
         public bool IsOpen { get { return root.activeSelf; } }
 
         public PresentationMenu(ReactorHud hud, Transform parent, Button openButton, PresentationPreferences preferences)
@@ -36,7 +37,7 @@ namespace ReactorDeCaos
             viewport.gameObject.AddComponent<RectMask2D>();
             var hit = viewport.gameObject.AddComponent<Image>(); hit.color = new Color(0, 0, 0, .01f);
             var content = ReactorHud.Rect("SettingsContent", viewport, 0, 1, 1, 1);
-            content.pivot = new Vector2(.5f, 1); content.sizeDelta = new Vector2(0, 1436);
+            content.pivot = new Vector2(.5f, 1); content.sizeDelta = new Vector2(0, 1978);
             var scroll = viewport.gameObject.AddComponent<ScrollRect>();
             scroll.viewport = viewport; scroll.content = content; scroll.horizontal = false;
             scroll.movementType = ScrollRect.MovementType.Clamped; scroll.scrollSensitivity = 35;
@@ -54,8 +55,10 @@ namespace ReactorDeCaos
                 Options[i] = button;
                 labels[i] = hud.Label("SettingValue", button.transform, "", 29, Color.white, .04f, .05f, .96f, .95f);
             }
-            EffectsVolume = VolumeSlider(hud, content, "EffectsVolume", 1056, out effectsValue);
-            MusicVolume = VolumeSlider(hud, content, "MusicVolume", 1246, out musicValue);
+            EffectsVolume = VolumeSlider(hud, content, "EffectsVolume", 1408, out effectsValue);
+            MusicVolume = VolumeSlider(hud, content, "MusicVolume", 1598, out musicValue);
+            VoiceVolume = VolumeSlider(hud, content, "VoiceVolume", 1788, out voiceValue);
+            VoiceVolume.onValueChanged.AddListener(value => { settings.voiceVolume = value; settings.PreviewChanges(); Refresh(); });
             EffectsVolume.onValueChanged.AddListener(value => { settings.effectsVolume = value; settings.PreviewChanges(); Refresh(); });
             MusicVolume.onValueChanged.AddListener(value => { settings.musicVolume = value; settings.PreviewChanges(); Refresh(); });
             close = ReactorHud.Button("CloseSettings", panel.transform, new Color(.12f, .08f, .24f), .15f, .035f, .85f, .145f);
@@ -105,6 +108,8 @@ namespace ReactorDeCaos
                 case 3: settings.limitedEffects = !settings.limitedEffects; break;
                 case 4: settings.vibration = !settings.vibration; break;
                 case 5: settings.music = !settings.music; break;
+                case 6: settings.voice = !settings.voice; break;
+                case 7: settings.autoDialogue = !settings.autoDialogue; break;
             }
             settings.SaveAndNotify();
             Refresh();
@@ -117,6 +122,10 @@ namespace ReactorDeCaos
             labels[2].text = "MOVIMIENTO · " + (settings.reducedMotion ? "REDUCIDO" : "NORMAL");
             labels[3].text = "EFECTOS · " + (settings.limitedEffects ? "SUAVES" : "COMPLETOS");
             labels[5].text = "MÚSICA · " + (settings.music ? "ACTIVADA" : "DESACTIVADA");
+            labels[6].text = "VOCES · " + (settings.voice ? "ACTIVADAS" : "DESACTIVADAS");
+            labels[7].text = "DIÁLOGOS · " + (settings.autoDialogue ? "AVANCE AUTOMÁTICO" : "AVANZAR AL TOCAR");
+            VoiceVolume.SetValueWithoutNotify(settings.voiceVolume);
+            voiceValue.text = "VOLUMEN DE VOCES · " + Mathf.RoundToInt(settings.voiceVolume * 100) + "%";
             EffectsVolume.SetValueWithoutNotify(settings.effectsVolume);
             MusicVolume.SetValueWithoutNotify(settings.musicVolume);
             effectsValue.text = "VOLUMEN DE EFECTOS · " + Mathf.RoundToInt(settings.effectsVolume * 100) + "%";

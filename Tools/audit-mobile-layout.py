@@ -88,6 +88,15 @@ for name,w,h,top,bottom in profiles:
     assert not overlap(controls['StoryAction'],controls['StoryPrevious'])
     assert not overlap(controls['StoryAction'],controls['StoryNext'])
     assert not overlap(controls['storyShortcut'],controls['overload'])
+    for key in ['CinematicSettings','CinematicSkip','CinematicNext','NarrativeIgnite']:
+        controls[key]=rect(safe,anchors('NarrativeDirector.cs',key))
+    assert not overlap(controls['CinematicSkip'],controls['CinematicNext'])
+    dialog=rect(safe,anchors('NarrativeDirector.cs','CinematicDialogue'))
+    for key in ['CinematicSettings','CinematicSkip','CinematicNext','NarrativeIgnite']:
+        assert not overlap(controls[key],dialog),(name,key,'overlaps dialogue')
+    banner=(0,0,story[2]*.95-48*scale,420*scale)
+    controls['replayChapter']=rect(banner,anchors('StoryPanel.cs','ReplayChapter'))
+    controls['replayIntro']=(0,0,story[2]*.95,180*scale)
     small={key:[round(b[2],2),round(b[3],2)] for key,b in controls.items() if min(b[2:]) < 48-0.01}
     assert not small,(name,small)
     header=[rect(safe,anchors('ReactorHud.cs',key)) for key in ['Brand','Unit','Energy','Rate','Stage','Settings']]

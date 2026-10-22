@@ -9,6 +9,9 @@
   essence masteries, specializations and cosmetic skins.
 - Authorized story expansion: six NARA chapters, optional archive, permanent generator
   blueprints, cosmetic tuning and post-ascension epilogue. Preserve story on rebirth.
+- Authorized cinematic expansion: automatic opening/mission scenes, Mara/NARA dialogue,
+  replayable presentation, original sprites and provisional local speech. Skipping/replaying
+  a scene must never grant income or commit a second rebirth. Keep voice separate from SFX.
 - No ads, real-money purchases, accounts, servers or offline rewards.
 - Version-1 saves migrate to version 2 without resetting their current cycle.
   Commit a rebirth save successfully before replacing the live engine.

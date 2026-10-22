@@ -1,5 +1,8 @@
 # Historia — Ecos del primer encendido
 
+La presentación automática, cinemáticas, voces y nuevo arte se describen en
+[CINEMATICS.md](CINEMATICS.md); el documento siguiente conserva el diseño base del arco.
+
 Implementado sobre Main y la arquitectura existente. NARA guía la restauración de
 la estación Orfeo; las grabaciones revelan la memoria de la tripulación dentro
 del reactor y los ciclos anteriores. Seis capítulos, una sintonía opcional y un

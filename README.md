@@ -152,3 +152,10 @@ APK validado ni mediciones de FPS en dispositivo.
 La pestaña **Historia** reúne seis capítulos de NARA, objetivos con alternativas
 pasivas, planos que se conservan al ascender y un epílogo. La lectura es opcional
 y no pausa la producción. Guía, pruebas y limitaciones: [Docs/STORY.md](Docs/STORY.md).
+
+## Presentación cinematográfica
+
+La partida empieza con una escena interactiva de NARA y Mara. Las misiones presentan
+sus escenas automáticamente; Historia permite repetirlas. Incluye nuevo núcleo y
+retratos, voces sintéticas provisionales en español, subtítulos y volumen de voz
+independiente. Guía y límites de validación: [Docs/CINEMATICS.md](Docs/CINEMATICS.md).

@@ -1,0 +1,300 @@
+{
+  "method": "static media and PCM inspection; not native rendering or auditory validation",
+  "sceneDefinitions": 19,
+  "spokenLines": 46,
+  "voices": [
+    {
+      "id": "intro_0",
+      "seconds": 6.801,
+      "peak": 0.4883,
+      "rms": 0.0555
+    },
+    {
+      "id": "intro_1",
+      "seconds": 3.12,
+      "peak": 0.4883,
+      "rms": 0.0431
+    },
+    {
+      "id": "intro_2",
+      "seconds": 6.175,
+      "peak": 0.4883,
+      "rms": 0.0552
+    },
+    {
+      "id": "intro_3",
+      "seconds": 5.985,
+      "peak": 0.4883,
+      "rms": 0.0568
+    },
+    {
+      "id": "intro_4",
+      "seconds": 6.294,
+      "peak": 0.4883,
+      "rms": 0.0639
+    },
+    {
+      "id": "chapter_0_0",
+      "seconds": 4.771,
+      "peak": 0.4835,
+      "rms": 0.0592
+    },
+    {
+      "id": "chapter_0_1",
+      "seconds": 5.777,
+      "peak": 0.4883,
+      "rms": 0.0633
+    },
+    {
+      "id": "chapter_0_2",
+      "seconds": 2.336,
+      "peak": 0.4883,
+      "rms": 0.0455
+    },
+    {
+      "id": "chapter_0_3",
+      "seconds": 7.241,
+      "peak": 0.4883,
+      "rms": 0.0559
+    },
+    {
+      "id": "chapter_1_0",
+      "seconds": 5.323,
+      "peak": 0.4883,
+      "rms": 0.048
+    },
+    {
+      "id": "chapter_1_1",
+      "seconds": 5.834,
+      "peak": 0.4883,
+      "rms": 0.0536
+    },
+    {
+      "id": "chapter_1_2",
+      "seconds": 2.349,
+      "peak": 0.4883,
+      "rms": 0.0505
+    },
+    {
+      "id": "chapter_1_3",
+      "seconds": 8.725,
+      "peak": 0.4831,
+      "rms": 0.0587
+    },
+    {
+      "id": "chapter_2_0",
+      "seconds": 5.261,
+      "peak": 0.475,
+      "rms": 0.0567
+    },
+    {
+      "id": "chapter_2_1",
+      "seconds": 4.847,
+      "peak": 0.4883,
+      "rms": 0.064
+    },
+    {
+      "id": "chapter_2_2",
+      "seconds": 3.559,
+      "peak": 0.4883,
+      "rms": 0.0474
+    },
+    {
+      "id": "chapter_2_3",
+      "seconds": 4.328,
+      "peak": 0.4883,
+      "rms": 0.0411
+    },
+    {
+      "id": "chapter_2_4",
+      "seconds": 4.999,
+      "peak": 0.4883,
+      "rms": 0.0581
+    },
+    {
+      "id": "chapter_3_0",
+      "seconds": 6.567,
+      "peak": 0.4839,
+      "rms": 0.0624
+    },
+    {
+      "id": "chapter_3_1",
+      "seconds": 6.373,
+      "peak": 0.4883,
+      "rms": 0.0555
+    },
+    {
+      "id": "chapter_3_2",
+      "seconds": 4.92,
+      "peak": 0.4883,
+      "rms": 0.0399
+    },
+    {
+      "id": "chapter_3_3",
+      "seconds": 7.081,
+      "peak": 0.4883,
+      "rms": 0.0602
+    },
+    {
+      "id": "chapter_4_0",
+      "seconds": 6.499,
+      "peak": 0.4883,
+      "rms": 0.0573
+    },
+    {
+      "id": "chapter_4_1",
+      "seconds": 7.136,
+      "peak": 0.4883,
+      "rms": 0.0544
+    },
+    {
+      "id": "chapter_4_2",
+      "seconds": 5.293,
+      "peak": 0.4883,
+      "rms": 0.0426
+    },
+    {
+      "id": "chapter_4_3",
+      "seconds": 8.334,
+      "peak": 0.4528,
+      "rms": 0.0591
+    },
+    {
+      "id": "chapter_5_0",
+      "seconds": 7.253,
+      "peak": 0.4883,
+      "rms": 0.057
+    },
+    {
+      "id": "chapter_5_1",
+      "seconds": 5.241,
+      "peak": 0.4883,
+      "rms": 0.0651
+    },
+    {
+      "id": "chapter_5_2",
+      "seconds": 6.793,
+      "peak": 0.474,
+      "rms": 0.0592
+    },
+    {
+      "id": "chapter_5_3",
+      "seconds": 5.128,
+      "peak": 0.4883,
+      "rms": 0.0427
+    },
+    {
+      "id": "ascent_0",
+      "seconds": 4.27,
+      "peak": 0.4883,
+      "rms": 0.0444
+    },
+    {
+      "id": "ascent_1",
+      "seconds": 2.869,
+      "peak": 0.4883,
+      "rms": 0.0679
+    },
+    {
+      "id": "ascent_2",
+      "seconds": 2.758,
+      "peak": 0.4658,
+      "rms": 0.0576
+    },
+    {
+      "id": "ascent_3",
+      "seconds": 2.277,
+      "peak": 0.3776,
+      "rms": 0.0503
+    },
+    {
+      "id": "ascent_4",
+      "seconds": 6.151,
+      "peak": 0.4883,
+      "rms": 0.0612
+    },
+    {
+      "id": "cycle_0",
+      "seconds": 5.304,
+      "peak": 0.4883,
+      "rms": 0.0464
+    },
+    {
+      "id": "resume_0_0",
+      "seconds": 6.914,
+      "peak": 0.4883,
+      "rms": 0.0607
+    },
+    {
+      "id": "resume_1_0",
+      "seconds": 5.669,
+      "peak": 0.487,
+      "rms": 0.061
+    },
+    {
+      "id": "resume_2_0",
+      "seconds": 6.832,
+      "peak": 0.4365,
+      "rms": 0.0597
+    },
+    {
+      "id": "resume_3_0",
+      "seconds": 5.996,
+      "peak": 0.3769,
+      "rms": 0.0577
+    },
+    {
+      "id": "resume_4_0",
+      "seconds": 6.431,
+      "peak": 0.4883,
+      "rms": 0.0526
+    },
+    {
+      "id": "resume_5_0",
+      "seconds": 6.799,
+      "peak": 0.4219,
+      "rms": 0.0575
+    },
+    {
+      "id": "resume_6_0",
+      "seconds": 5.942,
+      "peak": 0.3639,
+      "rms": 0.0616
+    },
+    {
+      "id": "buy_0",
+      "seconds": 5.962,
+      "peak": 0.4883,
+      "rms": 0.0462
+    },
+    {
+      "id": "overload_0",
+      "seconds": 3.908,
+      "peak": 0.4836,
+      "rms": 0.0624
+    },
+    {
+      "id": "combo_0",
+      "seconds": 5.788,
+      "peak": 0.4628,
+      "rms": 0.0588
+    }
+  ],
+  "images": [
+    {
+      "name": "NarrativeAtlas",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "f556ee028946a4a12e5e79bc59517f69d82c7923638ecf0be71dbc6c38a26338"
+    },
+    {
+      "name": "OrfeoExterior",
+      "width": 1024,
+      "height": 1536,
+      "mode": "RGB",
+      "sha256": "c18de1dc32e03b4a8c6ceda9555509b2b1f0dafdf9e7f507074e261346dc896b"
+    }
+  ],
+  "metadataUnique": true
+}

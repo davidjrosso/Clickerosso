@@ -1,0 +1,1 @@
+espeakng-loader==0.2.4

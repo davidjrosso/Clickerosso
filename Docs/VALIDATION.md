@@ -374,3 +374,22 @@ lectura, raycasts, producción, elecciones, doble callback y epílogo están com
 pero no ejecutadas. No hay validación visual de Main ni de Android. Los ajustes
 incidentales del Editor se archivaron fuera del repositorio. Recorrido, diseño,
 riesgos de balance y evidencia: [STORY.md](STORY.md), [Story](Story/).
+
+## Presentación cinematográfica — 2026-10-22
+
+Apertura automática con primer toque real; seis escenas de misión, Mara y NARA,
+comunicaciones contextuales, resumen de regreso y escena de ascensión. La interfaz
+bloquea acciones tapadas, mantiene producción automática y permite omitir/repetir.
+Dos imágenes originales generadas e integradas aportan nuevo núcleo, retratos,
+cristal y vista exterior. 46 líneas de voz local eSpeak NG y dos ambientes están
+integrados; el doblaje es provisional y no se presenta como voz neural.
+
+Ejecutado: 134 pruebas .NET; seis ensamblados compilados; tres simulaciones de
+30 minutos y 54 ciclos con resultados económicos idénticos a la revisión anterior;
+auditoría geométrica de 44 controles en cinco perfiles; inspección de WAV, alfa y
+metadatos. El Editor termina con salida 198 por falta de licencia. Las pruebas
+nativas están compiladas pero no ejecutadas. Revisión visual, escucha de la mezcla,
+tipografía/gestos y rendimiento Android siguen pendientes.
+
+Diseño, procedimiento y limitaciones: [CINEMATICS.md](CINEMATICS.md).
+Evidencia: [Cinematics](Cinematics/).

@@ -109,3 +109,34 @@ chapter progress and adopt the chosen cyan/violet tuning. Existing reactor skins
 module sprites and audio are reused. No new AI sound or voice was generated.
 The illustration was inspected directly; real scene rendering remains unverified
 because the Editor cannot activate a license in this environment.
+
+## Cinematic presentation — 2026-10-22
+
+Two original images were actually produced with OpenAI `image_gen.imagegen`:
+
+- `Resources/Art/NarrativeAtlas.png`: source
+  `/workspace/generated_images/exec-02f2511e-c988-4617-88a4-2a4c00b231df.png`,
+  1254×1254 RGBA. Four separated objects: titanium/cyan reactor, NARA holographic
+  lens, original engineer Mara portrait and violet memory crystal. Requested true
+  transparency, no text, backgrounds, prices or existing franchise characters.
+  Copied without pixel editing; sliced through authored UVs by NarrativeSprites.
+- `Resources/Art/OrfeoExterior.png`: source
+  `/workspace/generated_images/exec-ee4b0b39-68d8-4f9a-8f94-741f84ce87dd.png`,
+  1024×1536 RGB. Original ruined orbital ring station viewed through titanium
+  windows, planet, amber emergency lights, no UI or typography. Used in cinematic
+  camera layers; the earlier reactor and NARA backgrounds remain in use.
+
+`Tools/generate-narrative-audio.py` rendered 46 original Spanish dialogue lines
+using local eSpeak NG via espeakng-loader 0.2.4. These are provisional formant
+synthesis voices, not neural AI dubbing or cloned voices. Piper was investigated
+but its model downloads returned HTTP 403; no Piper voice model was used. The
+engine/toolchain is not bundled with the Unity project, only the rendered WAVs.
+Source text and the exact voice parameters are available in Narrative.json and
+the generator. No third-party recordings or samples were used. An emergency alarm
+and door motor were synthesized with original mathematical signals. Voice quality
+and the in-game mix still require listening on the target device.
+
+Motion is authored procedurally in C#: camera drift, portrait fades, seal opening,
+bounded dust and damped reactor recoil. Text stays editable and subtitles always
+remain available. API/PCM inspection does not replace native scene validation;
+the licensed Editor remains unavailable in this environment.

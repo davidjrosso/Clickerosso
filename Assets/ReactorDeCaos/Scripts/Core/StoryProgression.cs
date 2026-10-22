@@ -9,12 +9,17 @@ namespace ReactorDeCaos
         public int completed, read, choice, overloads, bestCoils, bestQuantum, bestAuxiliary;
         public double bestCombo = 1;
         public bool epilogueRead;
-        public StoryProgress Copy() => (StoryProgress)MemberwiseClone();
+        public NarrativeProgress narrative;
+        public StoryProgress Copy()
+        {
+            var copy = (StoryProgress)MemberwiseClone(); copy.narrative = narrative?.Copy(); return copy;
+        }
         public bool IsValid() => completed >= 0 && completed <= StoryCatalog.Count && read >= 0 && read <= completed
             && choice >= 0 && choice <= 2 && (choice == 0 || completed >= 5)
             && overloads >= 0 && overloads <= 1000000 && Level(bestCoils) && Level(bestQuantum) && Level(bestAuxiliary)
             && !double.IsNaN(bestCombo) && !double.IsInfinity(bestCombo) && bestCombo >= 1 && bestCombo <= 1000
-            && (!epilogueRead || (completed == StoryCatalog.Count && read == StoryCatalog.Count));
+            && (!epilogueRead || (completed == StoryCatalog.Count && read == StoryCatalog.Count))
+            && (narrative == null || narrative.IsValid(completed));
         private static bool Level(int n) => n >= 0 && n <= EconomyConfig.MaxLevel;
     }
 
@@ -45,16 +50,16 @@ namespace ReactorDeCaos
         private static readonly StoryChapter[] chapters =
         {
             new StoryChapter("spark", "La primera chispa", 100, 200, StoryTask.Coil,
-                "NARA · ¿Puedes oírme? Soy la inteligencia de mantenimiento de la estación Orfeo. No hay energía, no hay tripulación... y tu identificación está borrada. Toca el núcleo. Una chispa basta para empezar.",
-                "Las luces de emergencia revelan una consola cubierta de polvo.\n\nNARA · Bien. El microgenerador puede trabajar mientras descansas. Hay una grabación en el circuito de comunicaciones. Su fecha es... mañana.",
+                "NARA · La estación Orfeo funciona con la última reserva. Toca el núcleo para restablecer el soporte vital. Una mujer llamada Mara pide ayuda desde el sector rojo.",
+                "El aire vuelve a circular y se ilumina la sala.\n\nMARA · Hay una foto pegada a mi consola. Creo que estás en ella.\n\nNARA · Instala generadores para fijar su posición. Trabajarán mientras exploras.",
                 "Iluminación de emergencia restaurada. Se abre el archivo de comunicaciones."),
             new StoryChapter("echoes", "Ecos en los conductos", 1000, 1500, StoryTask.Signal,
                 "NARA · El núcleo responde a tus pulsos. Un ritmo tranquilo fortalece la señal; los generadores también pueden reconstruirla. No necesitas mantenerla a la fuerza.",
-                "REGISTRO · Si estás escuchando esto, no abras el sector rojo.\n\nLa voz es la tuya. NARA tarda demasiado en responder.\n\nNARA · He recuperado los planos de plasma. Esta vez los conservaremos.",
+                "MARA · Siempre decías: una chispa basta. ¿No te acuerdas de mí?\n\nNARA · Ese sector lleva años vacío. La transmisión tiene fecha de mañana. Conservaremos el plano de plasma para alimentar su cierre.",
                 "Plano permanente: bobina de plasma. Antenas de comunicación en línea."),
             new StoryChapter("red", "Protocolo rojo", 5000, 7500, StoryTask.Overload,
                 "NARA · La puerta del sector rojo tiene un sello energético. Una sobrecarga puede abrirlo. Si prefieres esperar, la reserva automática alimentará el cierre sin riesgo.",
-                "La puerta se abre a un laboratorio vacío. Un monitor muestra miles de pulsos enviados desde el interior del reactor.\n\nSEÑAL · No estoy intentando salir. Estoy intentando recordar.\n\nNARA · Esa voz no figura en mis sistemas.",
+                "La puerta se abre a un laboratorio vacío. Mara dice que puede verte, pero solo encuentras una consola conectada al reactor.\n\nSEÑAL · No estoy intentando salir. Estoy intentando recordar.\n\nNARA · Esa voz no figura en mis sistemas.",
                 "Plano permanente: turbina cuántica. Conductos del laboratorio restaurados."),
             new StoryChapter("crew", "La tripulación ausente", 25000, 30000, StoryTask.Quantum,
                 "NARA · La turbina cuántica puede leer la caja negra. También puedo reconstruirla acumulando energía. Necesitamos saber qué ocurrió con la tripulación.",
