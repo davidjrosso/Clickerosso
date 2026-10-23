@@ -124,7 +124,8 @@ gestos y rendimiento Android, y doblaje definitivo.
 4. Seguir la tabla. Comprobar que cada tecnología aparece después de su escena,
    que los recursos no saltean el objetivo y que el archivo no revela registros futuros.
 5. Cerrar durante una consecuencia y reabrir: debe retomarse, sin duplicar desbloqueos.
-   Repetir una escena desde Archivo: no debe cambiar energía, campaña ni ascensiones.
+   Repetir una escena desde Archivo: no debe conceder energía extra ni cambiar campaña
+   o ascensiones; la producción normal de los generadores continúa.
 6. En la misión final elegir sintonía, reunir la energía y preservar recuerdos.
    Antes de terminarla Ascender debe estar bloqueado. Después revisar y confirmar.
 7. Comprobar epílogo, instalaciones reiniciadas, planos y archivo conservados.
