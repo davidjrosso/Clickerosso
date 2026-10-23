@@ -17,7 +17,7 @@ namespace ReactorDeCaos
         private readonly RawImage backdrop;
         private readonly AspectRatioFitter backdropFit;
         private readonly CanvasGroup actor;
-        private readonly TextMeshProUGUI title, speaker, subtitle, action, status;
+        private readonly TextMeshProUGUI title, speaker, subtitle, action, status, skipLabel;
         private readonly RingGraphic orbit;
         private readonly RectTransform[] dust = new RectTransform[12];
         private readonly Texture2D exterior, reactor, signal;
@@ -85,18 +85,34 @@ namespace ReactorDeCaos
             subtitle = hud.Label("CinematicSubtitle", dialogue.transform, "", 34, Color.white, .04f, .17f, .96f, .78f, TextAlignmentOptions.TopLeft);
             status = hud.Label("CinematicStatus", dialogue.transform, "", 23, new Color(.62f, .73f, .82f), .04f, .025f, .96f, .155f, TextAlignmentOptions.Left);
             SkipButton = ReactorHud.Button("CinematicSkip", surface.transform, new Color(.05f, .09f, .14f), .045f, .025f, .48f, .12f);
-            hud.Label("CinematicSkipLabel", SkipButton.transform, "OMITIR ESCENA", 27, Color.white, .025f, .05f, .975f, .95f);
+            skipLabel = hud.Label("CinematicSkipLabel", SkipButton.transform, "OMITIR ESCENA", 27, Color.white, .025f, .05f, .975f, .95f);
             NextButton = ReactorHud.Button("CinematicNext", surface.transform, new Color(.045f, .20f, .25f), .52f, .025f, .955f, .12f);
             action = hud.Label("CinematicNextLabel", NextButton.transform, "CONTINUAR", 28, Color.white, .025f, .05f, .975f, .95f);
-            SkipButton.onClick.AddListener(Skip); NextButton.onClick.AddListener(Next);
+            SkipButton.onClick.AddListener(() => {
+                if (app.Game.CampaignActive && !replay)
+                {
+                    hud.Preferences.autoDialogue = !hud.Preferences.autoDialogue;
+                    hud.Preferences.SaveAndNotify();
+                }
+                else Skip();
+            });
+            NextButton.onClick.AddListener(Next);
             hud.Preferences.Changed += ApplyAudio; root.SetActive(false);
         }
         public void Start(bool returning)
         {
             nextSceneAt = Time.unscaledTime + 8;
             if (!app.Game.NarrativeIntroSeen) Play("intro", -1, false);
+            else if (app.Game.RebirthCount > 0 && !app.Game.NarrativeAscentSeen) AfterRebirth();
+            else if (app.Game.CampaignMissionReady) PresentMission();
             else if (!app.Game.NarrativeBriefingSeen) Play("resume_" + app.Game.StoryCompleted, -2, false);
             else if (returning) Communicate(catalog.Find("resume_" + app.Game.StoryCompleted));
+        }
+        public void PresentMission()
+        {
+            if (suspended || IsBlocking || !app.Game.CampaignMissionReady) return;
+            hud.ClosePanels(); hud.SelectTab(0);
+            Play("chapter_" + app.Game.StoryCompleted, app.Game.StoryCompleted, false);
         }
         public bool Replay(int index)
         {
@@ -115,6 +131,7 @@ namespace ReactorDeCaos
             scene = catalog.Find(id); beatIndex = 0; sceneAge = 0;
             root.SetActive(true); root.transform.SetAsLastSibling();
             title.text = scene.title;
+            skipLabel.text = app.Game.CampaignActive && !replay ? "LECTURA AUTOMÁTICA" : "OMITIR ESCENA";
             leftDoor.gameObject.SetActive(scene.mood == "door"); rightDoor.gameObject.SetActive(scene.mood == "door");
             Cue.Stop(); Cue.loop = id == "intro";
             Cue.clip = Resources.Load<AudioClip>(id == "intro" ? "Audio/StoryAlarm" : scene.mood == "door" ? "Audio/StoryDoor" : "Audio/Ascension");
@@ -136,7 +153,7 @@ namespace ReactorDeCaos
             backdropFit.aspectRatio = backdrop.texture.width / (float)backdrop.texture.height;
             NextButton.interactable = !beat.interactive;
             action.text = beatIndex == scene.beats.Length - 1
-                ? (!replay && chapter == 4 ? "ELEGIR SINTONÍA" : hud.SelectedTab == 4 ? "VOLVER AL ARCHIVO" : "VOLVER AL REACTOR") : "CONTINUAR";
+                ? (!replay && chapter == 4 ? "ELEGIR SINTONÍA" : !replay && chapter == 5 ? "REVISAR ASCENSIÓN" : hud.SelectedTab == 4 ? "VOLVER AL ARCHIVO" : "CONTINUAR MISIÓN") : "CONTINUAR";
             status.text = beat.interactive ? (replay ? "TOCA PARA REPETIR EL ENCENDIDO" : "TOCA EL NÚCLEO PARA ENCENDERLO")
                 : (replay ? "REPETICIÓN" : "TRANSMISIÓN") + " · " + (beatIndex + 1) + " / " + scene.beats.Length;
             StartSpeech(beat);
@@ -158,13 +175,22 @@ namespace ReactorDeCaos
         }
         public void Skip()
         {
-            if (!IsBlocking || suspended) return;
+            if (!IsBlocking || IsPaused) return;
+            // First-time scenes have a required sequence; speed up lines without skipping the ignition.
+            if (app.Game.CampaignActive && !replay) { Next(); return; }
             Finish(true);
         }
         private void Finish(bool skipped)
         {
             bool committed = replay || (chapter == StoryCatalog.Count && app.Game.NarrativeAscentSeen)
                 || app.FinishNarrative(chapter, !skipped);
+            if (!committed && app.Game.CampaignActive)
+            {
+                beatIndex = scene.beats.Length - 1;
+                status.text = "No se pudo guardar. Libera espacio y pulsa CONTINUAR para reintentar.";
+                elapsed = 0; action.text = "REINTENTAR GUARDADO";
+                return;
+            }
             if (!committed)
             {
                 suppressedChapter = chapter;
@@ -175,6 +201,7 @@ namespace ReactorDeCaos
             hud.Refresh(app.Game, true);
             if (committed && !replay && !skipped && chapter == 4)
             { hud.SelectTab(4); hud.Story.ShowChapter(4); hud.Story.FocusChoice(); }
+            else if (committed && !replay && chapter == 5) hud.SelectTab(3);
         }
         public void Notify(int kind)
         {
@@ -201,6 +228,8 @@ namespace ReactorDeCaos
         public void SetSuspended(bool value) { suspended = value; ApplyAudio(); }
         private void ApplyAudio()
         {
+            if (IsBlocking && app.Game.CampaignActive && !replay)
+                skipLabel.text = hud.Preferences.autoDialogue ? "LECTURA: AUTO" : "LECTURA: MANUAL";
             bool enabled = hud.Preferences.voice && hud.Preferences.voiceVolume > 0;
             if (enabled && !previousVoiceEnabled) pendingVoiceStart = true;
             if (pendingVoiceStart && enabled && !IsPaused && scene != null && Voice.clip != null && elapsed < Voice.clip.length)
@@ -236,6 +265,8 @@ namespace ReactorDeCaos
                 }
                 return;
             }
+            if (app.Game.CampaignMissionReady && !hud.Menu.IsOpen && !hud.ModulePanel.IsOpen)
+            { PresentMission(); return; }
             if (!CanPresent || Time.unscaledTime < nextSceneAt) return;
             if (app.Game.RebirthCount > 0 && !app.Game.NarrativeAscentSeen && suppressedChapter != StoryCatalog.Count)
             { AfterRebirth(); return; }

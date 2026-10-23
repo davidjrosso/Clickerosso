@@ -75,7 +75,7 @@ namespace ReactorDeCaos
             }
             if (chapter == -1)
             {
-                if (NarrativeIntroSeen) return false;
+                if (NarrativeIntroSeen || (CampaignActive && Lifetime <= 0)) return false;
                 return CommitStory(persist, x => { x.narrative.introSeen = true; x.narrative.briefingSeen = true; });
             }
             if (!NarrativeIntroSeen) return false;
@@ -83,6 +83,14 @@ namespace ReactorDeCaos
             {
                 if (RebirthCount == 0 || NarrativeAscentSeen) return false;
                 return CommitStory(persist, x => x.narrative.ascentSeen = true);
+            }
+            if (CampaignActive)
+            {
+                if (chapter != StoryCompleted || !CampaignMissionReady) return false;
+                return CommitStory(persist, x => {
+                    x.completed++; x.read = x.completed; x.narrative.scenesSeen = x.completed;
+                    x.missionReady = false; x.missionOverloads = x.overloads;
+                });
             }
             if (chapter < 0 || chapter != NarrativeScenesSeen || chapter >= StoryCompleted) return false;
             return CommitStory(persist, x => {

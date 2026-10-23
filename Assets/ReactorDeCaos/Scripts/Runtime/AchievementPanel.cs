@@ -57,10 +57,15 @@ namespace ReactorDeCaos
         {
             if (!IsOpen) return;
             GameEngine game = app.Game;
-            int claimed = 0;
+            int claimed = 0, visible = 0;
             for (int i = 0; i < ClaimButtons.Length; i++)
             {
                 var goal = game.AchievementAt(i);
+                var card = (RectTransform)ClaimButtons[i].transform.parent;
+                bool revealed = game.CampaignAchievementVisible(goal);
+                card.gameObject.SetActive(revealed);
+                if (!revealed) continue;
+                card.anchoredPosition = new Vector2(0, -visible++ * 238);
                 bool done = game.AchievementClaimed(goal.id), unlocked = game.AchievementUnlocked(goal.id);
                 if (done) claimed++;
                 double progress = game.AchievementProgress(goal);
@@ -71,7 +76,8 @@ namespace ReactorDeCaos
                 actions[i].text = done ? "RECLAMADO" : (unlocked ? game.CanClaimAchievement(goal.id) ? "RECLAMAR" : "LÍMITE DE ENERGÍA" : "EN CURSO")
                     + "\n+" + NumberFormat.Compact(goal.energyReward) + " E";
             }
-            summary.text = claimed + " / " + game.AchievementCount + " reclamados · " + game.AvailableAchievements + " disponibles"
+            if (ClaimButtons.Length > 0) ((RectTransform)ClaimButtons[0].transform.parent.parent).sizeDelta = new Vector2(0, visible * 238);
+            summary.text = claimed + " / " + visible + " reclamados · " + game.AvailableAchievements + " disponibles"
                 + "\nCada recompensa se entrega una sola vez.";
         }
     }

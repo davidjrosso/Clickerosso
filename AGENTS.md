@@ -7,14 +7,18 @@
   milestones, local saves, original art and restrained feedback.
 - Player-authorized expansion: connected reactor modules, controlled-collapse rebirths,
   essence masteries, specializations and cosmetic skins.
-- Authorized story expansion: six NARA chapters, optional archive, permanent generator
-  blueprints, cosmetic tuning and post-ascension epilogue. Preserve story on rebirth.
+- Campaign revision 1: mandatory interactive awakening, six sequential missions and
+  automatic consequences after mission actions; technology is gated by completed scenes.
+  Preserve campaign, tuning and blueprints on rebirth. First ascension requires the final mission.
 - Authorized cinematic expansion: automatic opening/mission scenes, Mara/NARA dialogue,
-  replayable presentation, original sprites and provisional local speech. Skipping/replaying
-  a scene must never grant income or commit a second rebirth. Keep voice separate from SFX.
+  replayable presentation, original sprites and provisional local speech. First-time dialogue
+  can advance manually or automatically, but cannot skip ignition or the mission sequence.
+  Replays never grant income or a second rebirth. Keep voice separate from SFX.
 - No ads, real-money purchases, accounts, servers or offline rewards.
-- Version-1 saves migrate to version 2 without resetting their current cycle.
-  Commit a rebirth save successfully before replacing the live engine.
+- User explicitly authorized a clean campaign start on 2026-10-23. Runtime uses
+  reactor-campaign-1.json; do not import reactor-save.json or catch up campaign by energy.
+  Legacy core fixtures remain for economic regression only. Commit mission consequences
+  and rebirth saves successfully before applying their unlocks to the live engine.
 
 ## Working agreement
 - Work in this existing checkout. Cloud tasks are already isolated; do not

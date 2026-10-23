@@ -163,7 +163,7 @@ namespace ReactorDeCaos
             Label("ReactorInstruction", reactorViewport, "TOCA EL NÚCLEO", 23, Color.white, .22f, .245f, .78f, .30f);
             EffectsRoot = Rect("Effects", reactorViewport, 0, 0, 1, 1);
             StoryButton = Button("OpenStory", reactorPage, new Color(.035f, .08f, .12f, .94f), .05f, .17f, .95f, .30f);
-            StoryButton.onClick.AddListener(() => SelectTab(4));
+            StoryButton.onClick.AddListener(app.CampaignAction);
             Image("StoryAccent", StoryButton.transform, Cyan, 0, 0, .006f, 1);
             tapHint = Label("TapHint", StoryButton.transform, "NARA · VER HISTORIA", 26, Cyan, .035f, .48f, .965f, .95f);
             milestone = Label("Milestone", StoryButton.transform, "", 24, Color.white, .035f, .05f, .965f, .48f);
@@ -262,7 +262,7 @@ namespace ReactorDeCaos
         }
         public void SelectTab(int tab)
         {
-            if (tab < 0 || tab > 4 || (owner.Narrative?.IsBlocking ?? false)) return;
+            if (tab < 0 || tab > 4 || !owner.Game.CampaignTabAvailable(tab) || (owner.Narrative?.IsBlocking ?? false)) return;
             ClosePanels();
             SelectedTab = tab;
             reactorPage.gameObject.SetActive(tab == 0);
@@ -276,7 +276,7 @@ namespace ReactorDeCaos
             if (tab == 3) Progression.Open();
             if (tab == 4) Story.Open();
         }
-        public void OpenModule(string id) { ModulePanel.Open(id); }
+        public void OpenModule(string id) { if (owner.Game.Unlocked(id)) ModulePanel.Open(id); }
         public void Back()
         {
             if (Menu.IsOpen) Menu.SetOpen(false);
@@ -308,6 +308,12 @@ namespace ReactorDeCaos
 
         public void ShowReward(MilestoneDefinition reward)
         {
+            if (owner.Game.CampaignActive)
+            {
+                ShowNotice(string.IsNullOrEmpty(reward.id) ? reward.title + " · " + reward.rewardDescription
+                    : "HITO DE PRODUCCIÓN · " + NumberFormat.Compact(owner.Game.Lifetime) + " E producidas");
+                return;
+            }
             if (transmission != null) { ShowNotice("HITO · " + reward.title); return; }
             rewardText.text = "HITO · " + reward.title + "\n<size=80%>" + reward.rewardDescription + "</size>";
             rewardUntil = Time.unscaledTime + 3.5f;
@@ -343,7 +349,36 @@ namespace ReactorDeCaos
                 ? (float)(game.Overload.Remaining / game.Overload.ActiveDuration)
                 : (float)game.Overload.ChargeFraction;
             chargeFill.anchorMax = new Vector2(Mathf.Clamp01(progress), 1);
-            OverloadButton.interactable = game.Overload.Ready;
+            OverloadButton.interactable = game.OverloadAvailable && game.Overload.Ready;
+            OverloadButton.gameObject.SetActive(game.OverloadAvailable);
+            combo.gameObject.SetActive(game.ComboAvailable);
+            int tabCount = 0;
+            for (int i = 0; i < NavigationButtons.Length; i++) if (game.CampaignTabAvailable(i)) tabCount++;
+            int column = 0;
+            // Stable order, with wider touch targets while the opening has fewer systems.
+            for (int n = 0; n < NavigationButtons.Length; n++)
+            {
+                int i = n < 2 ? n : n == 2 ? 4 : n - 1;
+                bool available = game.CampaignTabAvailable(i);
+                NavigationButtons[i].gameObject.SetActive(available);
+                NavigationButtons[i].interactable = available;
+                if (available)
+                {
+                    var rect = (RectTransform)NavigationButtons[i].transform;
+                    float width = .93f / tabCount;
+                    rect.anchorMin = new Vector2(.035f + column * width, .015f);
+                    rect.anchorMax = new Vector2(.035f + (column + 1) * width - .01f, .105f);
+                    column++;
+                }
+            }
+            int visibleRows = 0;
+            for (int i = 0; i < ShopButtons.Length; i++)
+            {
+                bool visible = !game.CampaignActive || game.Unlocked(game.Shop[i].Id);
+                ShopButtons[i].gameObject.SetActive(visible);
+                if (visible) ((RectTransform)ShopButtons[i].transform).anchoredPosition = new Vector2(0, -visibleRows++ * 234);
+            }
+            ((RectTransform)ShopButtons[0].transform.parent).sizeDelta = new Vector2(0, visibleRows * 234);
             for (int i = 0; i < ShopButtons.Length; i++) ShopButtons[i].interactable = game.CanBuy(game.Shop[i].Id);
             if (!force && Time.unscaledTime < nextTextUpdate) return;
             nextTextUpdate = Time.unscaledTime + .08f;
@@ -359,11 +394,17 @@ namespace ReactorDeCaos
             }
             progressionLabel.text = game.CanRebirth ? "ASCENDER\nLISTO" : "ASCENDER";
             achievementsLabel.text = "LOGROS" + (game.AvailableAchievements > 0 ? "\n" + game.AvailableAchievements + " LISTOS" : "");
-            storyLabel.text = "HISTORIA" + (game.UnreadStory > 0 ? "\nNUEVO" : "");
+            storyLabel.text = "ARCHIVO" + (game.UnreadStory > 0 ? "\nNUEVO" : "");
             ModulePanel.Refresh(); Progression.Refresh(); Achievements.Refresh(); Story.Refresh();
             tapHint.text = game.UnreadStory > 0 ? "NARA · NUEVA TRANSMISIÓN" : "MISIÓN · " + NarrativeMission(game.StoryCompleted);
             milestone.text = game.StoryCompleted == StoryCatalog.Count ? "Archivo recuperado · " + game.StoryRead + " / 6 leídos"
                 : NumberFormat.Compact(game.AllTimeEnergy) + " E · " + (game.StoryProgressFraction(game.CurrentStoryChapter) * 100).ToString("0") + "% · VER OBJETIVO";
+            if (game.CampaignActive)
+            {
+                tapHint.text = (game.CampaignRequirementsMet ? "LISTO · " : "MISIÓN · ") + game.CampaignAction;
+                milestone.text = game.CampaignHint;
+                StoryButton.image.color = game.CampaignRequirementsMet ? new Color(.035f, .19f, .21f, .97f) : new Color(.035f, .08f, .12f, .94f);
+            }
             if (transmission != null) milestone.text = transmission;
             overloadLabel.text = game.Overload.Active
                 ? "SOBRECARGA ×" + NumberFormat.Stat(game.OverloadMultiplier) + "  ·  " + game.Overload.Remaining.ToString("0.0") + " s"

@@ -27,17 +27,48 @@ namespace ReactorDeCaos.Tests
             hadPreferences = PlayerPrefs.HasKey(PresentationPreferences.StorageKey);
             previousPreferences = PlayerPrefs.GetString(PresentationPreferences.StorageKey, "");
             PlayerPrefs.DeleteKey(PresentationPreferences.StorageKey);
-            path = Path.Combine(Application.persistentDataPath, "reactor-save.json");
+            path = Path.Combine(Application.persistentDataPath, GameEngine.CampaignSaveFile);
             previousFiles.Clear();
             foreach (string suffix in new[] { "", ".bak", ".tmp" })
             {
                 string file = path + suffix;
                 if (File.Exists(file)) { previousFiles[file] = File.ReadAllBytes(file); File.Delete(file); }
             }
+            // Economy/UI regressions start with the completed campaign but an empty economy.
+            // Fresh-campaign tests explicitly load a new slot and traverse the actual opening.
+            new SaveStore(path, new UnityJsonCodec()).Save(GameplayCheckpoint());
             yield return SceneManager.LoadSceneAsync("Main", LoadSceneMode.Single);
             yield return null;
-            // These regression tests exercise gameplay; dedicated cinematic tests cover the opening.
-            Object.FindFirstObjectByType<ReactorApp>().Narrative.Skip();
+        }
+
+        private static GameState GameplayCheckpoint(double energy = 0, int coils = 0)
+        {
+            var state = GameEngine.NewCampaignState();
+            state.energy = state.lifetimeEnergy = energy; state.coils = coils;
+            state.story.completed = state.story.read = state.story.narrative.scenesSeen = 6;
+            state.story.choice = 1;
+            state.story.narrative.introSeen = state.story.narrative.briefingSeen = true;
+            return state;
+        }
+        private static IEnumerator FinishScene(ReactorApp app)
+        {
+            int steps = 0;
+            while (app.Narrative.IsBlocking && steps++ < 15)
+            {
+                yield return null;
+                if (app.Narrative.AwaitingTap) app.Narrative.IgniteButton.onClick.Invoke();
+                else app.Narrative.Next();
+            }
+            Assert.That(app.Narrative.IsBlocking, Is.False);
+        }
+        private IEnumerator FreshCampaign()
+        {
+            Object.Destroy(Object.FindFirstObjectByType<ReactorApp>().gameObject);
+            yield return null;
+            Assert.That(new SaveStore(path, new UnityJsonCodec()).Save(GameEngine.NewCampaignState()), Is.True);
+            yield return SceneManager.LoadSceneAsync("Main", LoadSceneMode.Single);
+            yield return null;
+            yield return FinishScene(Object.FindFirstObjectByType<ReactorApp>());
         }
 
         [UnityTearDown]
@@ -145,7 +176,8 @@ namespace ReactorDeCaos.Tests
             Assert.That(app.Hud.ShopButtons.Length, Is.EqualTo(app.Game.Shop.Count));
             Assert.That(app.Hud.ShopButtons[5].interactable, Is.False);
             Assert.That(app.Hud.ShopButtons[5].GetComponentInChildren<TextMeshProUGUI>(true).text,
-                Does.Contain("2.5K E · BLOQUEADO"));
+                Does.Contain("2.5K E"));
+            Assert.That(app.Game.Unlocked("quantum"), Is.True, "Completed campaign keeps its technology blueprints.");
             for (int i = 0; i < 2000; i++) app.Game.Tap();
             app.Hud.Refresh(app.Game, true);
             Assert.That(app.Hud.ShopButtons[5].interactable, Is.True);
@@ -333,11 +365,10 @@ namespace ReactorDeCaos.Tests
             Object.Destroy(oldApp.gameObject);
             yield return null;
             var disk = new SaveStore(path, new UnityJsonCodec());
-            Assert.That(disk.Save(new GameState { energy = 1000000, lifetimeEnergy = 1000000, coils = 5 }), Is.True);
+            Assert.That(disk.Save(GameplayCheckpoint(1000000, 5)), Is.True);
             yield return SceneManager.LoadSceneAsync("Main", LoadSceneMode.Single);
             yield return null;
             var app = Object.FindFirstObjectByType<ReactorApp>();
-            app.Narrative.Skip(); // One-time arrival briefing for legacy saves.
             var old = app.Game;
             app.Hud.ProgressionButton.onClick.Invoke();
             app.Hud.Progression.ArmButton.onClick.Invoke();
@@ -354,6 +385,7 @@ namespace ReactorDeCaos.Tests
             Assert.That(app.Game.RebirthCount, Is.EqualTo(1));
             Assert.That(app.Game.Essence, Is.EqualTo(3));
             Assert.That(app.Game.Energy, Is.Zero);
+            yield return FinishScene(app);
             Assert.That(app.Game.Level("coil"), Is.EqualTo(1));
             Assert.That(app.Hud.Progression.IsOpen, Is.False);
             Assert.That(new GameEngine(disk.Load()).RebirthCount, Is.EqualTo(1));
@@ -465,11 +497,18 @@ namespace ReactorDeCaos.Tests
         [UnityTest]
         public IEnumerator ComboAndGeneratorCuesObserveGameplayAndKeepVoiceCountBounded()
         {
+            Object.Destroy(Object.FindFirstObjectByType<ReactorApp>().gameObject); yield return null;
+            var checkpoint = GameplayCheckpoint(1000);
+            checkpoint.story.completed = checkpoint.story.read = checkpoint.story.narrative.scenesSeen = 1;
+            checkpoint.story.choice = 0;
+            Assert.That(new SaveStore(path, new UnityJsonCodec()).Save(checkpoint), Is.True);
+            yield return SceneManager.LoadSceneAsync("Main", LoadSceneMode.Single); yield return null;
             var app = Object.FindFirstObjectByType<ReactorApp>();
             var audio = app.GetComponent<ReactorFeedback>();
             for (int i = 0; i < 1000; i++) app.Tap();
             Assert.That(audio.ComboRiseCount, Is.GreaterThan(0));
-            yield return null;
+            Assert.That(audio.GeneratorUnlockCount, Is.Zero, "Energy cannot unlock plasma before the mission.");
+            app.CampaignAction(); yield return FinishScene(app); yield return null;
             Assert.That(audio.GeneratorUnlockCount, Is.EqualTo(1), "Plasma unlock gets its own cue.");
             int unlocks = audio.GeneratorUnlockCount;
             for (int i = 0; i < 10; i++) yield return null;
@@ -570,6 +609,7 @@ namespace ReactorDeCaos.Tests
         [UnityTest]
         public IEnumerator StoryArchiveRunsProductionHasReachableActionsAndKeepsSpoilersLocked()
         {
+            yield return FreshCampaign();
             var app = Object.FindFirstObjectByType<ReactorApp>();
             app.Hud.StoryButton.onClick.Invoke();
             Assert.That(app.Hud.Story.IsOpen, Is.True);
@@ -578,9 +618,9 @@ namespace ReactorDeCaos.Tests
             Assert.That(Label(app, "StoryNarrative").text, Does.Not.Contain(StoryCatalog.At(0).Resolution));
             Assert.That(Resources.Load<Texture2D>("Art/StorySignal"), Is.Not.Null);
             app.Hud.Story.ActionButton.onClick.Invoke();
-            Assert.That(app.Hud.SelectedTab, Is.Zero);
+            Assert.That(app.Hud.SelectedTab, Is.EqualTo(1));
             for (int i = 0; i < 100; i++) app.Tap();
-            app.Buy("coil");
+            app.Buy("coil"); app.Buy("tap");
             app.Hud.SelectTab(4);
             Canvas.ForceUpdateCanvases();
             var action = app.Hud.Story.ActionButton;
@@ -593,6 +633,8 @@ namespace ReactorDeCaos.Tests
             Assert.That(app.Game.Energy, Is.GreaterThan(before), "Reading does not pause generators.");
             app.Hud.Story.ShowChapter(0);
             action.onClick.Invoke();
+            Assert.That(app.Narrative.SceneId, Is.EqualTo("chapter_0"));
+            yield return FinishScene(app);
             Assert.That(app.Game.StoryRead, Is.EqualTo(1));
             Assert.That(new GameEngine(new SaveStore(path, new UnityJsonCodec()).Load()).StoryRead, Is.EqualTo(1));
             app.Hud.Back();
@@ -607,7 +649,7 @@ namespace ReactorDeCaos.Tests
             Object.Destroy(Object.FindFirstObjectByType<ReactorApp>().gameObject);
             yield return null;
             var disk = new SaveStore(path, new UnityJsonCodec());
-            Assert.That(disk.Save(new GameState { energy = 1000000, lifetimeEnergy = 1000000 }), Is.True);
+            Assert.That(disk.Save(GameplayCheckpoint(1000000)), Is.True);
             yield return SceneManager.LoadSceneAsync("Main", LoadSceneMode.Single);
             yield return null;
             var app = Object.FindFirstObjectByType<ReactorApp>();
@@ -615,6 +657,7 @@ namespace ReactorDeCaos.Tests
             app.Hud.SelectTab(4);
             for (int chapter = 0; chapter < StoryCatalog.Count; chapter++)
             {
+                app.Hud.Story.ShowChapter(chapter);
                 Assert.That(app.Hud.Story.Chapter, Is.EqualTo(chapter));
                 Canvas.ForceUpdateCanvases();
                 var narrative = Label(app, "StoryNarrative"); narrative.ForceMeshUpdate();
@@ -627,13 +670,11 @@ namespace ReactorDeCaos.Tests
                     app.Hud.Story.CoreButton.onClick.Invoke();
                     Assert.That(app.Game.StoryChoice, Is.EqualTo(2));
                 }
-                app.Hud.Story.ActionButton.onClick.Invoke();
-                app.Hud.Story.ActionButton.onClick.Invoke();
-                Assert.That(app.Game.StoryRead, Is.EqualTo(chapter + 1), "Duplicate same-frame action must not skip a record.");
+                Assert.That(app.Game.StoryRead, Is.EqualTo(6), "Archive navigation never changes the campaign ledger.");
             }
             Assert.That(app.Game.StoryRead, Is.EqualTo(6));
             Assert.That(app.Rebirth(Specialization.Automation, app.Game.RebirthReward, app.Game.RebirthCount), Is.True);
-            app.Narrative.Skip();
+            yield return FinishScene(app);
             app.Hud.SelectTab(4);
             yield return null;
             Assert.That(app.Hud.Story.Chapter, Is.EqualTo(6));
@@ -661,6 +702,9 @@ namespace ReactorDeCaos.Tests
             app.Tap(); Assert.That(app.Game.Energy, Is.Zero, "Covered gameplay cannot receive taps.");
             app.Narrative.Next(); yield return null; app.Narrative.Next();
             Assert.That(app.Narrative.AwaitingTap, Is.True);
+            yield return null; app.Narrative.Skip();
+            Assert.That(app.Narrative.AwaitingTap, Is.True, "The ignition cannot be skipped.");
+            Assert.That(app.Game.Energy, Is.Zero);
             Canvas.ForceUpdateCanvases();
             var button = app.Narrative.IgniteButton;
             var center = button.transform.TransformPoint(((RectTransform)button.transform).rect.center);
@@ -670,8 +714,19 @@ namespace ReactorDeCaos.Tests
             app.Narrative.IgniteButton.onClick.Invoke(); app.Narrative.IgniteButton.onClick.Invoke();
             Assert.That(app.Game.Energy, Is.EqualTo(1));
             var interrupted = app.Game.Snapshot();
-            app.Narrative.Skip(); Assert.That(app.Game.NarrativeIntroSeen, Is.True);
+            app.Narrative.Skip(); Assert.That(app.Game.NarrativeIntroSeen, Is.False, "Advance is not skip-all.");
+            yield return FinishScene(app);
+            Assert.That(app.Game.NarrativeIntroSeen, Is.True);
             Assert.That(new GameEngine(disk.Load()).NarrativeIntroSeen, Is.True);
+            app.Hud.Refresh(app.Game, true);
+            Assert.That(app.Hud.OverloadButton.gameObject.activeSelf, Is.False);
+            Assert.That(Label(app, "Combo").gameObject.activeSelf, Is.False);
+            Assert.That(app.Hud.NavigationButtons[2].gameObject.activeSelf, Is.False);
+            Assert.That(app.Hud.NavigationButtons[3].gameObject.activeSelf, Is.False);
+            Assert.That(app.Hud.ShopButtons[0].gameObject.activeSelf, Is.True);
+            Assert.That(app.Hud.ShopButtons[3].gameObject.activeSelf, Is.True);
+            Assert.That(app.Hud.ShopButtons[4].gameObject.activeSelf, Is.False);
+            app.Hud.SelectTab(3); Assert.That(app.Hud.SelectedTab, Is.Zero);
             Assert.That(app.Narrative.Replay(-1), Is.True);
             yield return null; app.Narrative.Next(); yield return null; app.Narrative.Next();
             app.Narrative.IgniteButton.onClick.Invoke(); app.Narrative.Skip();
@@ -718,10 +773,12 @@ namespace ReactorDeCaos.Tests
         [UnityTest]
         public IEnumerator MissionsAutomaticallyOpenScenesAndProductionContinuesUnderThem()
         {
+            yield return FreshCampaign();
             var app = Object.FindFirstObjectByType<ReactorApp>();
-            for (int i = 0; i < 100; i++) app.Tap(); app.Buy("coil");
+            for (int i = 0; i < 100; i++) app.Tap(); app.Buy("coil"); app.Buy("tap");
             app.Preferences.autoDialogue = false; app.Preferences.SaveAndNotify();
-            yield return new WaitForSecondsRealtime(8.5f);
+            Assert.That(app.Game.StoryCompleted, Is.Zero, "Energy alone must not resolve the mission.");
+            app.CampaignAction();
             Assert.That(app.Narrative.IsBlocking, Is.True);
             Assert.That(app.Narrative.SceneId, Is.EqualTo("chapter_0"));
             double before = app.Game.Energy;
@@ -729,7 +786,8 @@ namespace ReactorDeCaos.Tests
             Assert.That(app.Game.Energy, Is.GreaterThan(before));
             double cost = app.Game.Cost("coil"); int level = app.Game.Level("coil");
             app.Buy("coil"); Assert.That(app.Game.Level("coil"), Is.EqualTo(level));
-            app.Narrative.Skip(); Assert.That(app.Game.NarrativeScenesSeen, Is.EqualTo(1));
+            yield return FinishScene(app);
+            Assert.That(app.Game.NarrativeScenesSeen, Is.EqualTo(1));
             app.Buy("coil"); Assert.That(app.Game.Level("coil"), Is.EqualTo(level + 1));
             Assert.That(app.Hud.EffectsRoot.childCount, Is.EqualTo(50));
             LogAssert.NoUnexpectedReceived();

@@ -30,7 +30,7 @@ namespace ReactorDeCaos
         }
         public double Production { get { return BaseProduction * (Overload.Active ? OverloadMultiplier : 1); } }
         public double TapPower { get { return TapPowerAt(state.tapLevel); } }
-        public double ComboMultiplier { get { return Combo.Multiplier(state.comboLevel); } }
+        public double ComboMultiplier { get { return ComboAvailable ? Combo.Multiplier(state.comboLevel) : 1; } }
         public double ComboCap { get { return config.ComboCap(state.comboLevel); } }
         public double OverloadMultiplier { get { return config.overloadMultiplier * BranchMultiplier(Specialization.Overload); } }
         public double OverloadDuration { get { return config.overloadSeconds + state.overloadLevel * config.overloadSecondsPerLevel; } }
@@ -89,15 +89,16 @@ namespace ReactorDeCaos
 
         public double Tap()
         {
-            double multiplier = Combo.Tap(state.comboLevel);
+            if (CampaignActive && !NarrativeIntroSeen) return 0;
+            double multiplier = ComboAvailable ? Combo.Tap(state.comboLevel) : 1;
             double amount = TapPower * multiplier * (Overload.Active ? OverloadMultiplier : 1);
-            Overload.Tap(config.chargePerTap);
+            if (OverloadAvailable) Overload.Tap(config.chargePerTap);
             return Credit(amount);
         }
 
         public bool ActivateOverload()
         {
-            if (!Overload.Activate(OverloadDuration)) return false;
+            if (!OverloadAvailable || !Overload.Activate(OverloadDuration)) return false;
             state.story.overloads = Math.Min(1000000, state.story.overloads + 1);
             EvaluateStory();
             return true;
@@ -144,6 +145,7 @@ namespace ReactorDeCaos
         public bool Unlocked(string id)
         {
             RequireItem(id);
+            if (CampaignActive) return CampaignItemAvailable(id);
             return !generators.TryGetValue(id, out var generator) || string.IsNullOrEmpty(generator.unlockMilestone)
                 || completed.Contains(generator.unlockMilestone) || HasStoryBlueprint(id);
         }
@@ -151,6 +153,7 @@ namespace ReactorDeCaos
         public string UnlockDescription(string id)
         {
             RequireItem(id);
+            if (CampaignActive) return CampaignUnlockDescription(id);
             if (!generators.TryGetValue(id, out var generator) || string.IsNullOrEmpty(generator.unlockMilestone)) return "";
             MilestoneDefinition goal = config.Milestone(generator.unlockMilestone);
             return goal.goal == MilestoneGoal.LifetimeEnergy ? NumberFormat.Compact(goal.target) + " E producidos"

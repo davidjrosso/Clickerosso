@@ -141,6 +141,7 @@ internal static class Program
         Console.WriteLine(allBudgetsPassed ? "All phase-2 pacing budgets passed."
             : "Pacing budgets FAILED. Inspect the saved results and purchase CSVs before retuning.");
         bool rebirthPassed = RebirthSimulation.Run(config, output);
-        return allBudgetsPassed && rebirthPassed ? 0 : 1;
+        bool campaignPassed = CampaignSimulation.Run(config, output);
+        return allBudgetsPassed && rebirthPassed && campaignPassed ? 0 : 1;
     }
 }

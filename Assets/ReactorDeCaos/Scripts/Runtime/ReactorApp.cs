@@ -30,8 +30,9 @@ namespace ReactorDeCaos
             Application.targetFrameRate = 60;
             Screen.orientation = ScreenOrientation.Portrait;
             EconomySettings settings = Resources.Load<EconomySettings>("Economy");
-            saves = new SaveStore(Path.Combine(Application.persistentDataPath, "reactor-save.json"), new UnityJsonCodec());
+            saves = new SaveStore(Path.Combine(Application.persistentDataPath, GameEngine.CampaignSaveFile), new UnityJsonCodec());
             GameState state = saves.Load();
+            if (state.story == null || state.story.campaignRevision != 1) state = GameEngine.NewCampaignState();
             Game = new GameEngine(state, settings != null ? settings.values : null);
             previousMilestones = Game.CompletedMilestoneCount;
             savedStoryChapters = Game.StoryCompleted;
@@ -56,7 +57,7 @@ namespace ReactorDeCaos
             }
             if (saves.RecoveredBackup) Hud.ShowNotice("Progreso recuperado desde la copia de seguridad.");
             else if (saves.LastIssue != null) Hud.ShowNotice("No se pudo leer el guardado. Se inició una partida nueva.");
-            else Hud.ShowNotice("Toca el núcleo. Alimenta el caos.");
+            else Hud.ShowNotice("ORFEO · Restaura la estación. Encuentra a Mara.");
         }
 
         private void Update()
@@ -95,7 +96,7 @@ namespace ReactorDeCaos
             if (Game.StoryCompleted != savedStoryChapters && Time.unscaledTime >= nextMilestoneNotice && Save())
             {
                 savedStoryChapters = Game.StoryCompleted;
-                Hud.ShowNotice("NARA · Nuevo registro en Historia. Progreso guardado.");
+                Hud.ShowNotice("MISIÓN COMPLETADA · " + Game.CampaignHint);
                 feedback.Celebrate();
                 nextMilestoneNotice = Time.unscaledTime + 3.5f;
             }
@@ -115,7 +116,13 @@ namespace ReactorDeCaos
             if (!initialized || paused || Narrative == null || !Narrative.CanIgnite || Narrative.IsReplay) return;
             // A saved, interrupted opening may already contain its first tap.
             // Replaying that ignition step must not grant a second scripted reward.
-            if (Game.AllTimeEnergy == 0) TapCore();
+            if (Game.CampaignActive)
+            {
+                double reward = Game.IgniteCampaign();
+                if (reward > 0) feedback.Tap(reward, false, 0);
+                Save();
+            }
+            else if (Game.AllTimeEnergy == 0) TapCore();
             Narrative.Ignite();
         }
         private void TapCore()
@@ -129,6 +136,23 @@ namespace ReactorDeCaos
             feedback.Tap(reward, Game.Overload.Active, ComboIntensity);
             Hud.Assembly.Tap();
             Hud.Refresh(Game, true);
+        }
+
+        public void CampaignAction()
+        {
+            if (InputBlocked) return;
+            if (Game.CampaignNeedsChoice)
+            { Hud.SelectTab(4); Hud.Story.ShowChapter(4); Hud.Story.FocusChoice(); return; }
+            if (Game.CampaignMissionReady) { Narrative.PresentMission(); return; }
+            if (Game.StoryCompleted == StoryCatalog.Count) { Hud.SelectTab(3); return; }
+            if (Game.CampaignRequirementsMet)
+            {
+                if (!Game.TryBeginCampaignMission(saves.Save))
+                { Hud.ShowNotice("No se pudo guardar la misión. Inténtalo de nuevo."); return; }
+                saveTimer = 0;
+                Narrative.PresentMission();
+            }
+            else { Hud.SelectTab(4); Hud.Story.ShowChapter(Game.CurrentStoryChapter); }
         }
 
         public void Buy(Purchase item) { Buy(EconomyConfig.ItemId(item)); }
@@ -157,7 +181,7 @@ namespace ReactorDeCaos
 
         public void ClaimAchievement(string id)
         {
-            if (InputBlocked) return;
+            if (InputBlocked || !Game.CampaignTabAvailable(2)) return;
             if (!Game.TryClaimAchievement(id, saves.Save))
             {
                 Hud.Achievements.ShowMessage("No se pudo reclamar. Revisa el progreso o el espacio de guardado.");

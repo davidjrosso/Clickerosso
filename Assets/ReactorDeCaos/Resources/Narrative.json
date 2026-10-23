@@ -8,7 +8,7 @@
       "beats": [
         {
           "speaker": "NARA",
-          "text": "¿Puedes oírme? Soy Nara. Estás en la estación Orfeo. El soporte vital funciona con la última reserva.",
+          "text": "¿Puedes oírme? Soy Nara. Estás en Orfeo. El soporte vital se está apagando. Necesito que me ayudes a recuperar la estación.",
           "portrait": "nara",
           "interactive": false,
           "voice": "intro_0"
@@ -29,15 +29,15 @@
         },
         {
           "speaker": "NARA",
-          "text": "Eso es. Una chispa real. Restablezcamos el soporte vital antes de buscar a la tripulación.",
+          "text": "Una chispa. Ahora instala Potencia y un microgenerador en Mejoras. Reuniremos cien unidades para devolver el aire a la estación.",
           "portrait": "nara",
           "interactive": false,
           "voice": "intro_3"
         },
         {
-          "speaker": "MARA",
-          "text": "¿Hay alguien ahí? Me llamo Mara. Estoy detrás de una puerta roja. Por favor, no cortes la señal.",
-          "portrait": "mara",
+          "speaker": "NARA",
+          "text": "Hay una transmisión muy débil entre los conductos. Si alguien sigue aquí, necesita que restauremos primero el soporte vital.",
+          "portrait": "nara",
           "interactive": false,
           "voice": "intro_4"
         }
@@ -58,7 +58,7 @@
         },
         {
           "speaker": "MARA",
-          "text": "Las luces se encendieron aquí también. Hay una foto pegada a mi consola. Creo que estás en ella.",
+          "text": "¿Me oyen? Me llamo Mara. Las luces se encendieron. Estoy detrás de una puerta roja. Por favor, no corten la señal.",
           "portrait": "mara",
           "interactive": false,
           "voice": "chapter_0_1"
@@ -72,7 +72,7 @@
         },
         {
           "speaker": "NARA",
-          "text": "Necesitamos más potencia para fijar su posición. Instala generadores; trabajarán mientras exploras la estación.",
+          "text": "Activé la sincronía. Un combo de uno y medio o cinco unidades por segundo reconstruirán la señal. Reúne mil unidades y localizaremos a Mara.",
           "portrait": "nara",
           "interactive": false,
           "voice": "chapter_0_3"
@@ -94,7 +94,7 @@
         },
         {
           "speaker": "NARA",
-          "text": "Imposible. El sector rojo lleva años vacío. Esa transmisión tiene una fecha de mañana.",
+          "text": "La señal viene del sector rojo. Lleva años vacío, pero el reloj de esa consola sigue contando. Hay algo que no te he contado.",
           "portrait": "nara",
           "interactive": false,
           "voice": "chapter_1_1"
@@ -108,7 +108,7 @@
         },
         {
           "speaker": "NARA",
-          "text": "He recuperado el plano de plasma. Alimenta el cierre del sector rojo. Una sobrecarga abrirá la puerta; acumular reserva también sirve.",
+          "text": "Recuperé plasma y sobrecarga. Instala una bobina y activa una sobrecarga para romper el sello. Con cinco mil unidades podremos abrir la puerta.",
           "portrait": "nara",
           "interactive": false,
           "voice": "chapter_1_3"
@@ -151,7 +151,7 @@
         },
         {
           "speaker": "NARA",
-          "text": "La turbina cuántica podrá leer la caja negra. Necesito que sepas lo que ocurrió.",
+          "text": "La consola guarda una caja negra. Recuperé la turbina cuántica. Instálala y reúne veinticinco mil unidades para leer el registro.",
           "portrait": "nara",
           "interactive": false,
           "voice": "chapter_2_4"
@@ -180,14 +180,14 @@
         },
         {
           "speaker": "TÚ",
-          "text": "Entonces no estoy buscando una habitación. Estoy intentando devolverles la vida.",
+          "text": "No hay una habitación donde rescatarte. Pero sigues aquí. No voy a dejar que tu voz se apague.",
           "portrait": "core",
           "interactive": false,
           "voice": "chapter_3_2"
         },
         {
           "speaker": "NARA",
-          "text": "Y no tienes que hacerlo solo. Recuperé el plano del núcleo auxiliar. Con él podremos escucharlos sin dañarlos.",
+          "text": "Yo dirigí la transferencia. Y después oculté el registro. Instala el núcleo auxiliar; con cien mil unidades podremos estabilizar las memorias.",
           "portrait": "nara",
           "interactive": false,
           "voice": "chapter_3_3"
@@ -209,7 +209,7 @@
         },
         {
           "speaker": "NARA",
-          "text": "Te desperté para que pudieras elegir. Mi protocolo conserva las memorias; escuchar al núcleo conserva sus voces.",
+          "text": "También preservé tu memoria. Ahora elige quién nos guiará: mi protocolo o las voces de la tripulación. Ambos caminos conservan a todos.",
           "portrait": "nara",
           "interactive": false,
           "voice": "chapter_4_1"
@@ -223,7 +223,7 @@
         },
         {
           "speaker": "NARA",
-          "text": "Elige la sintonía en Historia. Cian conmigo, violeta con ellos. Ninguna elección reduce tu poder. Podemos cambiarla juntos.",
+          "text": "Elige la sintonía en el archivo. Luego reúne un millón de unidades y preservaremos los recuerdos antes de reconstruir el reactor.",
           "portrait": "nara",
           "interactive": false,
           "voice": "chapter_4_3"
@@ -238,14 +238,14 @@
       "beats": [
         {
           "speaker": "NARA",
-          "text": "Encontré tu último mensaje: si despierto otra vez, no me ocultes la verdad. Ya habíamos intentado salvar Orfeo.",
+          "text": "La copia está completa. Encontré tu mensaje: si despierto otra vez, no me ocultes la verdad. Esta vez viajará contigo.",
           "portrait": "nara",
           "interactive": false,
           "voice": "chapter_5_0"
         },
         {
           "speaker": "MARA",
-          "text": "Esta vez no vamos a empezar desde cero. Los registros y los planos pueden cruzar contigo.",
+          "text": "No perderemos lo vivido. Los recuerdos y los planos están a salvo. Solo tendremos que reconstruir las máquinas.",
           "portrait": "mara",
           "interactive": false,
           "voice": "chapter_5_1"
@@ -332,7 +332,7 @@
       "beats": [
         {
           "speaker": "NARA",
-          "text": "La reserva está estable por ahora. Enciende el reactor e instala un microgenerador para restablecer el soporte vital.",
+          "text": "Primero el aire. Mejora Potencia e instala un microgenerador. Al producir cien unidades, restaura el soporte vital desde la misión del núcleo.",
           "portrait": "nara",
           "interactive": false,
           "voice": "resume_0_0"
@@ -347,7 +347,7 @@
       "beats": [
         {
           "speaker": "NARA",
-          "text": "Mara sigue al otro lado de la señal. Aumenta la producción para reconectar las comunicaciones.",
+          "text": "Mara espera una respuesta. Sincroniza un combo de uno y medio o genera cinco unidades por segundo. Con mil unidades podremos localizarla.",
           "portrait": "nara",
           "interactive": false,
           "voice": "resume_1_0"
@@ -362,7 +362,7 @@
       "beats": [
         {
           "speaker": "NARA",
-          "text": "Necesitamos abrir el sector rojo. Carga una sobrecarga o acumula suficiente energía para alimentar el cierre.",
+          "text": "Mara está detrás del sello rojo. Instala plasma y activa una sobrecarga. Con cinco mil unidades, abre la puerta desde la misión.",
           "portrait": "nara",
           "interactive": false,
           "voice": "resume_2_0"
@@ -377,7 +377,7 @@
       "beats": [
         {
           "speaker": "NARA",
-          "text": "La habitación estaba vacía. La caja negra y la turbina cuántica pueden explicarnos dónde está Mara.",
+          "text": "La habitación estaba vacía. Instala la turbina cuántica y produce veinticinco mil unidades para leer la caja negra.",
           "portrait": "nara",
           "interactive": false,
           "voice": "resume_3_0"
@@ -392,7 +392,7 @@
       "beats": [
         {
           "speaker": "NARA",
-          "text": "Las memorias siguen dentro del reactor. El núcleo auxiliar puede estabilizar el enlace con la tripulación.",
+          "text": "La tripulación vive en el núcleo. Instala el núcleo auxiliar y produce cien mil unidades para estabilizar sus memorias.",
           "portrait": "nara",
           "interactive": false,
           "voice": "resume_4_0"
@@ -407,7 +407,7 @@
       "beats": [
         {
           "speaker": "NARA",
-          "text": "Los registros están a salvo. Prepara energía para el siguiente encendido; Ascender te mostrará los requisitos.",
+          "text": "Elige quién guiará el enlace. Después, al producir un millón de unidades, preserva los recuerdos. Esa copia nos permitirá ascender sin olvidar.",
           "portrait": "nara",
           "interactive": false,
           "voice": "resume_5_0"
@@ -437,7 +437,7 @@
       "beats": [
         {
           "speaker": "NARA",
-          "text": "Generador conectado. Ya produce por su cuenta. Podemos dedicar la energía a buscar a Mara.",
+          "text": "Microgenerador conectado. Produce sin que mantengas pulsado el núcleo. Esa energía alimentará la recuperación de Orfeo.",
           "portrait": "nara",
           "interactive": false,
           "voice": "buy_0"

@@ -100,6 +100,8 @@ namespace ReactorDeCaos
             {
                 int level = game.Level(module.id);
                 bool unlocked = game.Unlocked(module.id);
+                module.button.gameObject.SetActive(!game.CampaignActive || unlocked);
+                module.link.gameObject.SetActive(!game.CampaignActive || unlocked);
                 if (level != module.level || unlocked != module.unlocked)
                 {
                     module.level = level; module.unlocked = unlocked;

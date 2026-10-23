@@ -5,10 +5,13 @@ from pathlib import Path
 from PIL import Image
 root=Path(__file__).resolve().parents[1];assets=root/'Assets/ReactorDeCaos/Resources'
 catalog=json.loads((assets/'Narrative.json').read_text());ids=[];voices=[]
+manifest={x['id']:x for x in json.loads((root/'Docs/Cinematics/voice.json').read_text())['clips']}
 for scene in catalog['scenes']:
  for beat in scene['beats']:
   key=beat['voice'];assert key not in ids;ids.append(key)
   path=assets/'Audio/Voice'/(key+'.wav');assert len(beat['text'])<=180
+  assert manifest[key]['text']==beat['text'] and manifest[key]['speaker']==beat['speaker']
+  assert manifest[key]['sha256']==hashlib.sha256(path.read_bytes()).hexdigest()
   with wave.open(str(path)) as w:
    assert w.getnchannels()==1 and w.getsampwidth()==2 and w.getframerate()==22050
    rate=w.getframerate();frames=w.getnframes();samples=array.array('h',w.readframes(frames))
@@ -34,4 +37,4 @@ for p in assets_root.rglob('*'):
   match=re.search(r'^guid: (\w+)',p.read_text(),re.M)
   if match:assert match[1] not in guids;guids.add(match[1])
  elif p.is_file():assert Path(str(p)+'.meta').exists(),p
-print(json.dumps(dict(method='static media and PCM inspection; not native rendering or auditory validation',sceneDefinitions=len(catalog['scenes']),spokenLines=len(ids),voices=voices,images=image_reports,metadataUnique=True),ensure_ascii=False,indent=2))
+print(json.dumps(dict(method='static media and PCM inspection; not native rendering or auditory validation',sceneDefinitions=len(catalog['scenes']),spokenLines=len(ids),voices=voices,images=image_reports,metadataUnique=True,voiceManifestMatches=True),ensure_ascii=False,indent=2))

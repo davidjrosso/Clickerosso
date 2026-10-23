@@ -157,7 +157,7 @@ namespace ReactorDeCaos
                 + "\nEspecialización actual: " + RebirthCatalog.BranchName(game.Specialization);
             requirementFill.anchorMax = new Vector2(Mathf.Clamp01((float)(game.Lifetime / game.RebirthThreshold)), 1);
             cycle.text = "REQUISITO · " + NumberFormat.Compact(game.Lifetime) + " / " + NumberFormat.Compact(game.RebirthThreshold) + " E del ciclo\n"
-                + (game.CanRebirth ? "LISTO · Recibes " + game.RebirthReward + " ESENCIAS" : game.Lifetime >= game.RebirthThreshold ? "Límite de ascensiones o esencia alcanzado"
+                + (!game.CampaignAscensionAvailable ? "Primero preserva los recuerdos y completa la última misión" : game.CanRebirth ? "LISTO · Recibes " + game.RebirthReward + " ESENCIAS" : game.Lifetime >= game.RebirthThreshold ? "Límite de ascensiones o esencia alcanzado"
                     : "Faltan " + NumberFormat.Compact(game.RebirthThreshold - game.Lifetime) + " E · Comprar no reduce el progreso")
                 + "\n" + (game.RebirthSkinUnlock >= 0 ? "Próxima skin: " + RebirthCatalog.SkinName(game.RebirthSkinUnlock)
                     : "Potencia permanente tras ascender: ×" + NumberFormat.Stat(game.ProjectedPermanentMultiplier))

@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-23",
+  "core": {
+    "passed": 150,
+    "failed": 0
+  },
+  "unityApiAssemblies": 6,
+  "campaignProfilesPassed": 3,
+  "economicProfiles30Minutes": 3,
+  "rebirthCycles": 54,
+  "mobileStaticProfiles": 5,
+  "mobileStaticControls": 44,
+  "voiceClips": 46,
+  "revisedVoiceClips": 21,
+  "nativeEditor": {
+    "attempted": true,
+    "exitCode": 198,
+    "reason": "No valid Unity Editor license found. Please activate your license.",
+    "playModeExecuted": false
+  },
+  "limitations": [
+    "No native scene rendering or audio listening validation",
+    "No Android gesture or performance test",
+    "Synthetic voices remain provisional",
+    "Simulation assumes guided purchases and immediate mission/choice input"
+  ]
+}

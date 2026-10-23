@@ -29,7 +29,7 @@ namespace ReactorDeCaos
                     (int)Math.Min(config.rebirth.rewardCap, raw));
             }
         }
-        public bool CanRebirth => RebirthReward > 0;
+        public bool CanRebirth => CampaignAscensionAvailable && RebirthReward > 0;
         public double ProjectedPermanentMultiplier => 1 + config.rebirth.essencePower * Math.Sqrt(EarnedEssence + RebirthReward);
         public int RebirthSkinUnlock
         {

@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace ReactorDeCaos
 {
-    // Reading never pauses production. No typewriter delays or blocking chapter popups.
+    // The archive contains experienced scenes and the current mission. Production keeps running.
     public sealed class StoryPanel
     {
         private readonly ReactorApp app;
@@ -122,6 +122,12 @@ namespace ReactorDeCaos
             if (actionFrame == Time.frameCount) return;
             actionFrame = Time.frameCount;
             var game = app.Game;
+            if (game.CampaignActive && Chapter == game.CurrentStoryChapter && game.StoryCompleted < StoryCatalog.Count)
+            {
+                if (game.CampaignRequirementsMet || game.CampaignMissionReady || game.CampaignNeedsChoice) app.CampaignAction();
+                else app.Hud.SelectTab(1);
+                return;
+            }
             if (Chapter > game.StoryRead) { ShowChapter(game.StoryRead); return; }
             if (Chapter == StoryCatalog.Count)
             {
@@ -159,9 +165,15 @@ namespace ReactorDeCaos
             progress.anchorMax = new Vector2(epilogue ? 1 : (float)game.StoryProgressFraction(Chapter), 1);
             replayText.text = done || epilogue ? "REPETIR CINEMÁTICA" : "VER EL DESPERTAR";
             choices.SetActive(Chapter == 4 && done);
-            choiceText.text = (game.StoryChoice == 0 ? "SINTONÍA OPCIONAL\n" : "SINTONÍA GUARDADA · puedes cambiarla\n") + StoryCatalog.ChoiceResponse(game.StoryChoice);
+            choiceText.text = (game.StoryChoice == 0 ? "ELIGE CÓMO PRESERVAR LA MEMORIA\n" : "SINTONÍA GUARDADA · puedes cambiarla\n") + StoryCatalog.ChoiceResponse(game.StoryChoice);
             NaraButton.interactable = game.StoryChoice != 1; CoreButton.interactable = game.StoryChoice != 2;
             PreviousButton.interactable = Chapter > 0; NextButton.interactable = Chapter < LastPage;
+            if (game.CampaignActive && Chapter == game.CurrentStoryChapter && game.StoryCompleted < StoryCatalog.Count)
+            {
+                actionText.text = game.CampaignNeedsChoice ? "ELEGIR SINTONÍA" : game.CampaignRequirementsMet || game.CampaignMissionReady
+                    ? game.CampaignAction : "IR A MEJORAS";
+                return;
+            }
             actionText.text = Chapter > game.StoryRead ? "LEER REGISTRO PENDIENTE"
                 : epilogue ? game.StoryEpilogueRead ? "VOLVER AL REACTOR" : "ARCHIVAR EPÍLOGO"
                 : Chapter == game.StoryRead && done ? "ARCHIVAR Y CONTINUAR"

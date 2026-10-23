@@ -1,0 +1,210 @@
+{
+  "assumptions": "Real economy and campaign. Shipped voice duration plus 1.3 s per line; instantaneous mission/choice input. No Unity rendering. Automatic style taps only for initial repairs and the required door overload. Intro time included.",
+  "passed": true,
+  "profiles": [
+    {
+      "profile": "active",
+      "completed": true,
+      "ascended": true,
+      "budgetPassed": true,
+      "totalWallSeconds": 430.6,
+      "openingSeconds": 39.1,
+      "firstPurchaseWallSeconds": 46.1,
+      "taps": 406,
+      "overloads": 7,
+      "purchases": 65,
+      "firstMachines": {
+        "coil": 53.1,
+        "plasma": 160.1,
+        "quantum": 225.1,
+        "auxiliary": 291.1
+      },
+      "missions": [
+        {
+          "chapter": 1,
+          "title": "Volver a respirar",
+          "wallSeconds": 92.1,
+          "lifetime": 132,
+          "production": 1,
+          "energyDuringScene": 29.000000000000004
+        },
+        {
+          "chapter": 2,
+          "title": "Una voz al otro lado",
+          "wallSeconds": 149.3,
+          "lifetime": 1125.05,
+          "production": 4,
+          "energyDuringScene": 118.80000000000001
+        },
+        {
+          "chapter": 3,
+          "title": "La puerta roja",
+          "wallSeconds": 217,
+          "lifetime": 6767.200000000002,
+          "production": 54,
+          "energyDuringScene": 1765.8000000000002
+        },
+        {
+          "chapter": 4,
+          "title": "Una habitaci\u00F3n vac\u00EDa",
+          "wallSeconds": 290.3,
+          "lifetime": 38076.18727744002,
+          "production": 392.22557759999995,
+          "energyDuringScene": 12982.66661856
+        },
+        {
+          "chapter": 5,
+          "title": "Los que se quedaron",
+          "wallSeconds": 347.8,
+          "lifetime": 165719.51729184002,
+          "production": 1969.3647775999998,
+          "energyDuringScene": 65382.910616320005
+        },
+        {
+          "chapter": 6,
+          "title": "No volver a olvidarlos",
+          "wallSeconds": 430.6,
+          "lifetime": 1448327.7972672312,
+          "production": 14073.883867269502,
+          "energyDuringScene": 447549.5069791702
+        }
+      ]
+    },
+    {
+      "profile": "intermittent",
+      "completed": true,
+      "ascended": true,
+      "budgetPassed": true,
+      "totalWallSeconds": 598.4,
+      "openingSeconds": 39.1,
+      "firstPurchaseWallSeconds": 56.1,
+      "taps": 251,
+      "overloads": 4,
+      "purchases": 61,
+      "firstMachines": {
+        "coil": 73.1,
+        "plasma": 251.1,
+        "quantum": 342.1,
+        "auxiliary": 428.1
+      },
+      "missions": [
+        {
+          "chapter": 1,
+          "title": "Volver a respirar",
+          "wallSeconds": 126.6,
+          "lifetime": 158,
+          "production": 2,
+          "energyDuringScene": 58
+        },
+        {
+          "chapter": 2,
+          "title": "Una voz al otro lado",
+          "wallSeconds": 238.3,
+          "lifetime": 1272.05,
+          "production": 9,
+          "energyDuringScene": 267.3
+        },
+        {
+          "chapter": 3,
+          "title": "La puerta roja",
+          "wallSeconds": 341.6,
+          "lifetime": 7260.250000000003,
+          "production": 69,
+          "energyDuringScene": 2256.3
+        },
+        {
+          "chapter": 4,
+          "title": "Una habitaci\u00F3n vac\u00EDa",
+          "wallSeconds": 427.5,
+          "lifetime": 38539.201504000004,
+          "production": 407.22557759999995,
+          "energyDuringScene": 13479.16661856
+        },
+        {
+          "chapter": 5,
+          "title": "Los que se quedaron",
+          "wallSeconds": 499,
+          "lifetime": 166120.46969184,
+          "production": 1984.3647775999998,
+          "energyDuringScene": 65880.91061632
+        },
+        {
+          "chapter": 6,
+          "title": "No volver a olvidarlos",
+          "wallSeconds": 598.4,
+          "lifetime": 1448244.3377086632,
+          "production": 14086.883867269502,
+          "energyDuringScene": 447962.9069791702
+        }
+      ]
+    },
+    {
+      "profile": "mostly_automatic",
+      "completed": true,
+      "ascended": true,
+      "budgetPassed": true,
+      "totalWallSeconds": 687.7,
+      "openingSeconds": 39.1,
+      "firstPurchaseWallSeconds": 53.1,
+      "taps": 53,
+      "overloads": 1,
+      "purchases": 48,
+      "firstMachines": {
+        "coil": 66.1,
+        "plasma": 277.1,
+        "quantum": 371.1,
+        "auxiliary": 476.1
+      },
+      "missions": [
+        {
+          "chapter": 1,
+          "title": "Volver a respirar",
+          "wallSeconds": 139.1,
+          "lifetime": 158,
+          "production": 2,
+          "energyDuringScene": 58
+        },
+        {
+          "chapter": 2,
+          "title": "Una voz al otro lado",
+          "wallSeconds": 274.1,
+          "lifetime": 1357.0000000000002,
+          "production": 12,
+          "energyDuringScene": 356.40000000000003
+        },
+        {
+          "chapter": 3,
+          "title": "La puerta roja",
+          "wallSeconds": 370.7,
+          "lifetime": 7357.700000000003,
+          "production": 72,
+          "energyDuringScene": 2354.3999999999996
+        },
+        {
+          "chapter": 4,
+          "title": "Una habitaci\u00F3n vac\u00EDa",
+          "wallSeconds": 475.7,
+          "lifetime": 38593.73408576,
+          "production": 410.22557759999995,
+          "energyDuringScene": 13578.46661856
+        },
+        {
+          "chapter": 5,
+          "title": "Los que se quedaron",
+          "wallSeconds": 555.4,
+          "lifetime": 166119.47998047998,
+          "production": 1987.3647775999998,
+          "energyDuringScene": 65980.51061631998
+        },
+        {
+          "chapter": 6,
+          "title": "No volver a olvidarlos",
+          "wallSeconds": 687.7,
+          "lifetime": 1449388.6636823867,
+          "production": 14089.883867269502,
+          "energyDuringScene": 448058.3069791702
+        }
+      ]
+    }
+  ]
+}

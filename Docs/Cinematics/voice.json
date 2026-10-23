@@ -6,10 +6,10 @@
     {
       "id": "intro_0",
       "speaker": "NARA",
-      "text": "¿Puedes oírme? Soy Nara. Estás en la estación Orfeo. El soporte vital funciona con la última reserva.",
-      "seconds": 6.801,
+      "text": "¿Puedes oírme? Soy Nara. Estás en Orfeo. El soporte vital se está apagando. Necesito que me ayudes a recuperar la estación.",
+      "seconds": 8.422,
       "peak": 0.4883,
-      "sha256": "de2309cc7852f0fd5a2c15d49c720ef8e5f8c3b391464371d96fbe0394733907"
+      "sha256": "1d5171b61f7aab7885026c529e9c8bb54ca664df03ea0dd6c97f34b500a5f9f7"
     },
     {
       "id": "intro_1",
@@ -30,18 +30,18 @@
     {
       "id": "intro_3",
       "speaker": "NARA",
-      "text": "Eso es. Una chispa real. Restablezcamos el soporte vital antes de buscar a la tripulación.",
-      "seconds": 5.985,
+      "text": "Una chispa. Ahora instala Potencia y un microgenerador en Mejoras. Reuniremos cien unidades para devolver el aire a la estación.",
+      "seconds": 7.571,
       "peak": 0.4883,
-      "sha256": "08a4aa77a0ee7b8535817e165e40c144da27c15d46d50abb7b00f16a23180a3d"
+      "sha256": "8f84d5f2f5ad6a6d9fc4c5d12ab400612b4dd487ab45198956dd389673bae50b"
     },
     {
       "id": "intro_4",
-      "speaker": "MARA",
-      "text": "¿Hay alguien ahí? Me llamo Mara. Estoy detrás de una puerta roja. Por favor, no cortes la señal.",
-      "seconds": 6.294,
-      "peak": 0.4883,
-      "sha256": "e5348af6f05ba26cc72adb7c88a5a0f5193001da0b8eb70a407f65a023dc7a8e"
+      "speaker": "NARA",
+      "text": "Hay una transmisión muy débil entre los conductos. Si alguien sigue aquí, necesita que restauremos primero el soporte vital.",
+      "seconds": 7.33,
+      "peak": 0.4319,
+      "sha256": "9fa930d097932fb6f789331931518ce9184e02d3335e21f49bfd38c601df4f87"
     },
     {
       "id": "chapter_0_0",
@@ -54,10 +54,10 @@
     {
       "id": "chapter_0_1",
       "speaker": "MARA",
-      "text": "Las luces se encendieron aquí también. Hay una foto pegada a mi consola. Creo que estás en ella.",
-      "seconds": 5.777,
+      "text": "¿Me oyen? Me llamo Mara. Las luces se encendieron. Estoy detrás de una puerta roja. Por favor, no corten la señal.",
+      "seconds": 7.797,
       "peak": 0.4883,
-      "sha256": "ff3406761cb30814cc6688a8cfae7f2fb19b96b63981fe13b371b2e6694e5caf"
+      "sha256": "6674366026aca49a05edce8b4998209e5a107d7931c83eb7eb218df47bb1abb0"
     },
     {
       "id": "chapter_0_2",
@@ -70,10 +70,10 @@
     {
       "id": "chapter_0_3",
       "speaker": "NARA",
-      "text": "Necesitamos más potencia para fijar su posición. Instala generadores; trabajarán mientras exploras la estación.",
-      "seconds": 7.241,
+      "text": "Activé la sincronía. Un combo de uno y medio o cinco unidades por segundo reconstruirán la señal. Reúne mil unidades y localizaremos a Mara.",
+      "seconds": 8.803,
       "peak": 0.4883,
-      "sha256": "a7b26c67bf2eee23d5258350d1a851de766b03a86c77c2f1c1657808ff5dd136"
+      "sha256": "bf14d760e55b8eac21aa7c7afe3b4a73c2eb7ff3c86ecb3da0ec1d9e5232d33d"
     },
     {
       "id": "chapter_1_0",
@@ -86,10 +86,10 @@
     {
       "id": "chapter_1_1",
       "speaker": "NARA",
-      "text": "Imposible. El sector rojo lleva años vacío. Esa transmisión tiene una fecha de mañana.",
-      "seconds": 5.834,
+      "text": "La señal viene del sector rojo. Lleva años vacío, pero el reloj de esa consola sigue contando. Hay algo que no te he contado.",
+      "seconds": 7.908,
       "peak": 0.4883,
-      "sha256": "17c648989a97b6e240d02c68536144c2c7515649e3a019fb8d18451faad3c8a1"
+      "sha256": "c77b095132b4400029888ce2ce673ee5254202f23e82250ab52dc12dbec3fe89"
     },
     {
       "id": "chapter_1_2",
@@ -102,10 +102,10 @@
     {
       "id": "chapter_1_3",
       "speaker": "NARA",
-      "text": "He recuperado el plano de plasma. Alimenta el cierre del sector rojo. Una sobrecarga abrirá la puerta; acumular reserva también sirve.",
-      "seconds": 8.725,
-      "peak": 0.4831,
-      "sha256": "10ed0cdf8ed42812db218133583a364b7f3fa97336d921b0ca0eae2b8fe295cd"
+      "text": "Recuperé plasma y sobrecarga. Instala una bobina y activa una sobrecarga para romper el sello. Con cinco mil unidades podremos abrir la puerta.",
+      "seconds": 8.843,
+      "peak": 0.4176,
+      "sha256": "dc2135e5d734418ff64faf0d3137d4948967bf00293c505a05347b63802f50b8"
     },
     {
       "id": "chapter_2_0",
@@ -142,10 +142,10 @@
     {
       "id": "chapter_2_4",
       "speaker": "NARA",
-      "text": "La turbina cuántica podrá leer la caja negra. Necesito que sepas lo que ocurrió.",
-      "seconds": 4.999,
+      "text": "La consola guarda una caja negra. Recuperé la turbina cuántica. Instálala y reúne veinticinco mil unidades para leer el registro.",
+      "seconds": 8.114,
       "peak": 0.4883,
-      "sha256": "15a938d262ba780955f203d421b9972cb379628951609b2a8229431356b6efb3"
+      "sha256": "b3361655f7648d8d76604dd0fa17100d9ddf6dad508cdba0c3835ea7fe16a7d5"
     },
     {
       "id": "chapter_3_0",
@@ -166,18 +166,18 @@
     {
       "id": "chapter_3_2",
       "speaker": "TÚ",
-      "text": "Entonces no estoy buscando una habitación. Estoy intentando devolverles la vida.",
-      "seconds": 4.92,
+      "text": "No hay una habitación donde rescatarte. Pero sigues aquí. No voy a dejar que tu voz se apague.",
+      "seconds": 5.738,
       "peak": 0.4883,
-      "sha256": "3a42a8f717a2bc38f95676f66f777df7943a5963b86a893a891d2ae81da6bdb5"
+      "sha256": "b58429e66b528f4a5886241f75c8127f462dcb88f12d60c37135317322f9a030"
     },
     {
       "id": "chapter_3_3",
       "speaker": "NARA",
-      "text": "Y no tienes que hacerlo solo. Recuperé el plano del núcleo auxiliar. Con él podremos escucharlos sin dañarlos.",
-      "seconds": 7.081,
+      "text": "Yo dirigí la transferencia. Y después oculté el registro. Instala el núcleo auxiliar; con cien mil unidades podremos estabilizar las memorias.",
+      "seconds": 9.175,
       "peak": 0.4883,
-      "sha256": "fdc10933c729487e48795717e91fec8276dc21fadf99834f886ab4156653def7"
+      "sha256": "998f08140ce1e9a8b67102a544f6cac6382823915f27bc0a3e0449258253414b"
     },
     {
       "id": "chapter_4_0",
@@ -190,10 +190,10 @@
     {
       "id": "chapter_4_1",
       "speaker": "NARA",
-      "text": "Te desperté para que pudieras elegir. Mi protocolo conserva las memorias; escuchar al núcleo conserva sus voces.",
-      "seconds": 7.136,
+      "text": "También preservé tu memoria. Ahora elige quién nos guiará: mi protocolo o las voces de la tripulación. Ambos caminos conservan a todos.",
+      "seconds": 8.497,
       "peak": 0.4883,
-      "sha256": "7e35c7995a47c84bb1a740ed2d6aa22ea0dd3e315873d2108e2a58892459b82b"
+      "sha256": "5af18a07a5184621ac7a651095ce1be803cae26cad1cb59f3d0ef38b8a9103c4"
     },
     {
       "id": "chapter_4_2",
@@ -206,26 +206,26 @@
     {
       "id": "chapter_4_3",
       "speaker": "NARA",
-      "text": "Elige la sintonía en Historia. Cian conmigo, violeta con ellos. Ninguna elección reduce tu poder. Podemos cambiarla juntos.",
-      "seconds": 8.334,
-      "peak": 0.4528,
-      "sha256": "2172fbdf173209577ab800d4abc0c8d6735fc5e1fec0742aba13d401015ddec2"
+      "text": "Elige la sintonía en el archivo. Luego reúne un millón de unidades y preservaremos los recuerdos antes de reconstruir el reactor.",
+      "seconds": 7.676,
+      "peak": 0.4672,
+      "sha256": "20b3536d2f910b9ddc66387b655cdb2f49258de695ae8dded7684ed25c1690d2"
     },
     {
       "id": "chapter_5_0",
       "speaker": "NARA",
-      "text": "Encontré tu último mensaje: si despierto otra vez, no me ocultes la verdad. Ya habíamos intentado salvar Orfeo.",
-      "seconds": 7.253,
+      "text": "La copia está completa. Encontré tu mensaje: si despierto otra vez, no me ocultes la verdad. Esta vez viajará contigo.",
+      "seconds": 7.959,
       "peak": 0.4883,
-      "sha256": "3528c0a91821dd0cf05d42557731fe8db2cf6d6c2a19da49919a4f637c9d4286"
+      "sha256": "20310f2c36095ef5d53816f0ea9106d9bb754d159be37cf9e652105a75017a34"
     },
     {
       "id": "chapter_5_1",
       "speaker": "MARA",
-      "text": "Esta vez no vamos a empezar desde cero. Los registros y los planos pueden cruzar contigo.",
-      "seconds": 5.241,
+      "text": "No perderemos lo vivido. Los recuerdos y los planos están a salvo. Solo tendremos que reconstruir las máquinas.",
+      "seconds": 6.621,
       "peak": 0.4883,
-      "sha256": "b2be94fadca6f75c46a66d23d7fd153c85729cfafebff0b5931d1089fbb56473"
+      "sha256": "a8abdc36ba57c1c8a4b1da88d0a3e11e25d87bba333e929230b89660c1ec8bbb"
     },
     {
       "id": "chapter_5_2",
@@ -294,50 +294,50 @@
     {
       "id": "resume_0_0",
       "speaker": "NARA",
-      "text": "La reserva está estable por ahora. Enciende el reactor e instala un microgenerador para restablecer el soporte vital.",
-      "seconds": 6.914,
+      "text": "Primero el aire. Mejora Potencia e instala un microgenerador. Al producir cien unidades, restaura el soporte vital desde la misión del núcleo.",
+      "seconds": 8.807,
       "peak": 0.4883,
-      "sha256": "c193c50f8108523946b6204ffc91d4d7f40c44e8da167ac65f43b411d794446a"
+      "sha256": "05df53fcdbdc57cf64a2361c2941e06e2fa506a319a93a41a55bc9dd43527488"
     },
     {
       "id": "resume_1_0",
       "speaker": "NARA",
-      "text": "Mara sigue al otro lado de la señal. Aumenta la producción para reconectar las comunicaciones.",
-      "seconds": 5.669,
-      "peak": 0.487,
-      "sha256": "e70004bd6163c9af3dc0ccdcae5c9ba44c5167180f3709952d0117ef94e4c36e"
+      "text": "Mara espera una respuesta. Sincroniza un combo de uno y medio o genera cinco unidades por segundo. Con mil unidades podremos localizarla.",
+      "seconds": 8.586,
+      "peak": 0.4883,
+      "sha256": "07b055461c262d306b7c3df926530d8dd6ae1430fd9ec7575caedf231ff12c2b"
     },
     {
       "id": "resume_2_0",
       "speaker": "NARA",
-      "text": "Necesitamos abrir el sector rojo. Carga una sobrecarga o acumula suficiente energía para alimentar el cierre.",
-      "seconds": 6.832,
-      "peak": 0.4365,
-      "sha256": "6220ed069bff8c236dba1dab4a2e3147aa13d8cb92d5aa624306dce0014b0251"
+      "text": "Mara está detrás del sello rojo. Instala plasma y activa una sobrecarga. Con cinco mil unidades, abre la puerta desde la misión.",
+      "seconds": 8.282,
+      "peak": 0.4883,
+      "sha256": "29a9da5caa16d48893933976346c25ce07aeeb6f2c99faacba4d3e7f5564452c"
     },
     {
       "id": "resume_3_0",
       "speaker": "NARA",
-      "text": "La habitación estaba vacía. La caja negra y la turbina cuántica pueden explicarnos dónde está Mara.",
-      "seconds": 5.996,
-      "peak": 0.3769,
-      "sha256": "60e5ae6f644eecf3ff363b7868618f10bc7488fe8b3142df1308c3c003baeb1c"
+      "text": "La habitación estaba vacía. Instala la turbina cuántica y produce veinticinco mil unidades para leer la caja negra.",
+      "seconds": 6.836,
+      "peak": 0.4005,
+      "sha256": "9bff5bdb707a89b53738d9fb2c80ba3ccf00d782003b23e35e334350b7999649"
     },
     {
       "id": "resume_4_0",
       "speaker": "NARA",
-      "text": "Las memorias siguen dentro del reactor. El núcleo auxiliar puede estabilizar el enlace con la tripulación.",
-      "seconds": 6.431,
+      "text": "La tripulación vive en el núcleo. Instala el núcleo auxiliar y produce cien mil unidades para estabilizar sus memorias.",
+      "seconds": 7.19,
       "peak": 0.4883,
-      "sha256": "099e9875634b7f7c6e353394643c0c8887dd71e09a03197a379ae0d801c9a361"
+      "sha256": "9e2ef5fab0f88fbfc44e4d2206bd78b7a1c1d80d19e7e337dcd38a7be460f258"
     },
     {
       "id": "resume_5_0",
       "speaker": "NARA",
-      "text": "Los registros están a salvo. Prepara energía para el siguiente encendido; Ascender te mostrará los requisitos.",
-      "seconds": 6.799,
-      "peak": 0.4219,
-      "sha256": "0cb58735e492c0f4f07cbe2c05220ae620b0779a4896daf8b9b4d6a64fc118d7"
+      "text": "Elige quién guiará el enlace. Después, al producir un millón de unidades, preserva los recuerdos. Esa copia nos permitirá ascender sin olvidar.",
+      "seconds": 9.329,
+      "peak": 0.4832,
+      "sha256": "1dc9939d0a790728f9dc9772652a03860b4d44d5bf2a3c37541ae0bbd9902eb0"
     },
     {
       "id": "resume_6_0",
@@ -350,10 +350,10 @@
     {
       "id": "buy_0",
       "speaker": "NARA",
-      "text": "Generador conectado. Ya produce por su cuenta. Podemos dedicar la energía a buscar a Mara.",
-      "seconds": 5.962,
+      "text": "Microgenerador conectado. Produce sin que mantengas pulsado el núcleo. Esa energía alimentará la recuperación de Orfeo.",
+      "seconds": 7.701,
       "peak": 0.4883,
-      "sha256": "8f928e4ed03cfd2958dd9f69dfdb4003c1ea9eadfa11ca15bfc729e18cd837b2"
+      "sha256": "bea4d855762f7f2dfcc6c421021de8fa4adec24c8be036586c303a219b77567a"
     },
     {
       "id": "overload_0",

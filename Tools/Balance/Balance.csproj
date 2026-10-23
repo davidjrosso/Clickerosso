@@ -10,5 +10,6 @@
     <Compile Include="../../Assets/ReactorDeCaos/Scripts/Core/*.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="RebirthSimulation.cs" />
+    <Compile Include="CampaignSimulation.cs" />
   </ItemGroup>
 </Project>

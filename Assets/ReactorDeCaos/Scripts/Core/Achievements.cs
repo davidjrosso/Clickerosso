@@ -85,7 +85,7 @@ namespace ReactorDeCaos
         public bool CanClaimAchievement(string id)
         {
             var goal = Array.Find(config.achievements, x => x.id == id);
-            return goal != null && AchievementUnlocked(id) && !AchievementClaimed(id)
+            return goal != null && CampaignAchievementVisible(goal) && AchievementUnlocked(id) && !AchievementClaimed(id)
                 && (EconomyConfig.MaxEnergy - Energy) - state.energyRemainder >= goal.energyReward
                 && (EconomyConfig.MaxEnergy - Lifetime) - state.lifetimeRemainder >= goal.energyReward;
         }

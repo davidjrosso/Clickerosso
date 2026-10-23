@@ -140,3 +140,12 @@ Motion is authored procedurally in C#: camera drift, portrait fades, seal openin
 bounded dust and damped reactor recoil. Text stays editable and subtitles always
 remain available. API/PCM inspection does not replace native scene validation;
 the licensed Editor remains unavailable in this environment.
+
+## Campaña secuencial — 2026-10-23
+
+Se reutilizan NarrativeAtlas, OrfeoExterior y los demás sprites existentes; no se
+generaron imágenes nuevas. Ventilación, antenas, puerta, registros y enlace son
+geometría 2D original de StationRestorationGraphic. Se regeneraron 21 líneas revisadas
+con el mismo eSpeak NG local y se integraron sus WAV PCM. Las otras 25 conservaron
+sus archivos. Textos y hashes: Docs/Cinematics/voice.json. Son voces provisionales,
+no doblaje neural; la escucha y mezcla dentro del juego siguen pendientes.

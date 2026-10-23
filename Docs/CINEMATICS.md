@@ -1,5 +1,7 @@
 # Orfeo — escenas, comunicaciones y encendido interactivo
 
+> Documento de la entrega anterior. El recorrido vigente, las reglas de guardado y la validación actual están en [CAMPAIGN.md](CAMPAIGN.md). La campaña reemplaza el avance por energía, el saltado de primeras escenas y la migración de partidas antiguas descritos aquí.
+
 ## Qué cambia al jugar
 
 Una partida nueva abre con la vista de Orfeo, alarma suave, NARA, subtítulos y voz.

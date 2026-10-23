@@ -4,23 +4,20 @@ MVP de un arcade incremental offline para Android, con Unity 2D y C#.
 Toca el núcleo, encadena combos, activa la sobrecarga e invierte en mejoras
 y generadores automáticos.
 
-**Estado actual:** reactor y módulos sobre soportes integrados en una nueva
-cámara ilustrada; navegación Reactor, Mejoras, Logros y Ascensión. Nueve logros
-con energía reclamable una sola vez y conservación entre ciclos. La ascensión
-muestra requisitos, recompensa, especialización y confirmación. Se conservan
-maestrías, skins, guardados y la economía anterior.
+**Estado actual:** campaña de rescate en Orfeo. La partida empieza con el despertar
+interactivo de NARA; después se encadenan seis misiones, sus escenas y sus tecnologías.
+El objetivo inicial es recuperar la estación y encontrar a Mara. Acumular energía no
+saltea misiones ni habilita una ascensión antes del cierre del arco.
 
-**99 pruebas** de dominio/guardado aprobadas, seis ensamblados compilados y
-**54 ciclos simulados** en nueve combinaciones de rama y estilo de juego.
-Sin reclamar los nuevos logros, los resultados coinciden con la fase 4.
-El Editor sigue bloqueado por falta de licencia: pruebas nativas y revisión
-visual en Main pendientes. Consulta [navegación, recompensas y cómo probar](Docs/UI-REFRESH.md),
-[fórmulas de ascensión](Docs/PHASE4.md) y [evidencia](Docs/VALIDATION.md).
+Esta revisión empieza una partida nueva en `reactor-campaign-1.json`.
+Los guardados anteriores quedan aparte y no se importan, tal como se autorizó.
+La campaña se conserva después de ascender.
 
-**Sonido y móvil:** música ambiental y efectos con volúmenes independientes,
-sonidos de combo/desbloqueo/ascensión, controles táctiles ampliados y scroll en
-Ajustes y Ascensión. Cinco perfiles pasan la auditoría geométrica; la escucha y
-el recorrido nativo siguen pendientes. [Detalles y pruebas](Docs/AUDIO-MOBILE.md).
+Guía completa y recorrido de prueba: [Docs/CAMPAIGN.md](Docs/CAMPAIGN.md).
+**150 pruebas .NET aprobadas**, compilación de seis ensamblados contra las API de Unity,
+tres recorridos completos simulados y 54 ciclos económicos simulados.
+La ejecución nativa del Editor sigue bloqueada por falta de licencia; no se afirma
+validación visual, sonora o Android. Las voces españolas continúan siendo provisionales.
 
 ## Abrir y jugar
 
@@ -33,25 +30,27 @@ el recorrido nativo siguen pendientes. [Detalles y pruebas](Docs/AUDIO-MOBILE.md
    superior de Unity (junto a File/Edit/Window). Detén Play antes de usarlo.
 4. Usa **Tools → Reactor de Caos → Open Main Scene** o abre
    `Assets/ReactorDeCaos/Scenes/Main.unity` y pulsa **Play**.
-5. Toca el núcleo central. Tras cargar el medidor, pulsa **Activar sobrecarga**.
-   Abre **Mejoras** y desliza para acceder a las tres mejoras y cuatro generadores.
-6. Toca los módulos alrededor del núcleo para abrir sus fichas e instalar o
-   mejorar tecnología. **Logros** muestra objetivos y recompensas reclamables.
-   **Ascensión** abre requisitos, especialización, maestrías y skins. La primera
-   ascensión se habilita con **1 M de energía** acumulada en el ciclo; comprar no
-   reduce el progreso. Revisa y confirma los efectos antes de reiniciar.
+5. Avanza los diálogos del despertar y toca el núcleo cuando NARA lo indique.
+   Mejora Potencia e instala un microgenerador. La tarjeta de misión bajo el reactor
+   indica qué hacer y permite **Restaurar soporte vital** cuando todo esté preparado.
+6. Completa las misiones para habilitar combo, plasma/sobrecarga, turbina cuántica
+   y núcleo auxiliar, en ese orden. **Archivo** permite consultar la misión y repetir
+   escenas ya vividas. **Logros** aparece después del soporte vital. **Ascender** se
+   presenta al preparar la memoria; exige la última misión y 1 M E producidas en el ciclo.
+   Revisa y confirma los efectos antes de reiniciar las instalaciones.
 7. En **AJUSTES**, arriba a la derecha, configura música y efectos por separado, destellos,
    movimiento y vibración. Desliza para ver los controles de volumen. Las preferencias persisten aparte del progreso.
    La vibración está desactivada de inicio; la cámara y la interfaz no tiemblan.
 
 Se usa entrada táctil/ratón mediante uGUI. El guardado está en
-`Application.persistentDataPath/reactor-save.json`, con copia `.bak`.
+`Application.persistentDataPath/reactor-campaign-1.json`, con copia `.bak`.
 No se otorgan recompensas por tiempo desconectado.
 
 Selecciona `Assets/ReactorDeCaos/Resources/Economy.asset` para editar en el
 Inspector la potencia, curva de combo, sobrecarga y los catálogos `upgrades`,
 `generators`, `milestones` y `achievements`, incluidos producción, precios,
-condiciones de desbloqueo, objetivos y recompensas reclamables.
+objetivos y recompensas reclamables. En campaña, los desbloqueos tecnológicos los
+controla `Core/Campaign.cs`; los hitos económicos no permiten eludir las misiones.
 La sección `values.rebirth` configura el umbral, esencia, maestrías, ramas y
 los módulos iniciales de cada renacimiento. Los cambios se aplican al comenzar una nueva sesión de Play. No sustituyen
 los niveles comprados que ya estén guardados.
@@ -147,15 +146,13 @@ incluidos uGUI/TMP y TestRunner de la plantilla del Editor. No sustituye la
 resolución UPM, la importación ni PlayMode. No hay capturas del juego ejecutándose,
 APK validado ni mediciones de FPS en dispositivo.
 
-## Historia: Ecos del primer encendido
+## Campaña y presentación
 
-La pestaña **Historia** reúne seis capítulos de NARA, objetivos con alternativas
-pasivas, planos que se conservan al ascender y un epílogo. La lectura es opcional
-y no pausa la producción. Guía, pruebas y limitaciones: [Docs/STORY.md](Docs/STORY.md).
+El recorrido **escena → misión → acción → consecuencia → tecnología** se describe en
+[Docs/CAMPAIGN.md](Docs/CAMPAIGN.md). La primera presentación forma parte del juego;
+las repeticiones del Archivo son opcionales y no entregan recompensas. Se mantienen
+los sprites originales integrados, movimientos reducidos, controles de voz/música/efectos
+y subtítulos. La estación conserva ventilación, antenas, puerta y memoria recuperadas.
 
-## Presentación cinematográfica
-
-La partida empieza con una escena interactiva de NARA y Mara. Las misiones presentan
-sus escenas automáticamente; Historia permite repetirlas. Incluye nuevo núcleo y
-retratos, voces sintéticas provisionales en español, subtítulos y volumen de voz
-independiente. Guía y límites de validación: [Docs/CINEMATICS.md](Docs/CINEMATICS.md).
+[Docs/CINEMATICS.md](Docs/CINEMATICS.md) describe los medios de la entrega cinematográfica
+anterior; sus reglas de saltado/migración fueron reemplazadas por esta campaña.

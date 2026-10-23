@@ -1,5 +1,7 @@
 # Historia — Ecos del primer encendido
 
+> Documento de la entrega anterior. El recorrido vigente, las reglas de guardado y la validación actual están en [CAMPAIGN.md](CAMPAIGN.md). La campaña reemplaza el avance por energía, el saltado de primeras escenas y la migración de partidas antiguas descritos aquí.
+
 La presentación automática, cinemáticas, voces y nuevo arte se describen en
 [CINEMATICS.md](CINEMATICS.md); el documento siguiente conserva el diseño base del arco.
 

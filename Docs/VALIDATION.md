@@ -393,3 +393,25 @@ tipografía/gestos y rendimiento Android siguen pendientes.
 
 Diseño, procedimiento y limitaciones: [CINEMATICS.md](CINEMATICS.md).
 Evidencia: [Cinematics](Cinematics/).
+
+## 2026-10-23 — campaña obligatoria y secuencial
+
+Se implementó el recorrido aprobado: despertar con encendido obligatorio, seis misiones
+con acciones concretas, consecuencias guardadas antes de desbloquear tecnología y
+ascensión condicionada al cierre del arco. La nueva ranura `reactor-campaign-1.json`
+no importa progreso antiguo (reinicio autorizado por el usuario). La campaña sí
+permanece entre ascensiones. Se sincronizaron diálogos y 21 WAV revisados, se introducen
+los sistemas progresivamente y se añadieron consecuencias visuales fijas en la estación.
+
+Evidencia vigente y pasos: [CAMPAIGN.md](CAMPAIGN.md), `Campaign/checks.json`,
+`Campaign/media.json`, `Campaign/layout.json` y `Campaign/balance/`.
+150 pruebas .NET pasan; seis ensamblados compilan contra API oficiales.
+Tres campañas completas llegan a la primera ascensión; también pasan tres perfiles
+económicos de 30 minutos y 54 ciclos. La auditoría estática cubre 44 controles/cinco
+perfiles y 46 WAV con subtítulos, hashes y metadatos.
+
+El intento nativo con Unity 6000.0.85f1 termina con 198 y `No valid Unity Editor license
+found. Please activate your license.` El log contiene además avisos de base de datos
+de solo lectura y EPIPE al finalizar UPM. No se ejecutaron las pruebas nativas ni se
+hizo revisión audiovisual en Main o Android. Los ProjectSettings incidentales del
+arranque se archivaron fuera del repositorio. Las voces siguen siendo provisionales.
