@@ -9,6 +9,7 @@ namespace ReactorDeCaos
     public sealed class GameState
     {
         public int version = 1;
+        public StationProgress station; // Optional expansion; initialized without retroactive absence income.
         public StoryProgress story; // Optional: older saves catch up from their recorded progress.
         public RebirthProgress rebirth; // Absent in legacy saves; migrated by GameEngine.
         public double energy;
@@ -33,6 +34,7 @@ namespace ReactorDeCaos
             var copy = (GameState)MemberwiseClone();
             copy.rebirth = rebirth?.Copy();
             copy.story = story?.Copy();
+            copy.station = station?.Copy();
             copy.unlockedAchievements = (string[])(unlockedAchievements ?? Array.Empty<string>()).Clone();
             copy.claimedAchievements = (string[])(claimedAchievements ?? Array.Empty<string>()).Clone();
             copy.generators = generators == null ? Array.Empty<GeneratorLevel>()
@@ -52,7 +54,9 @@ namespace ReactorDeCaos
                 && (lifetimeEnergy > energy || (lifetimeEnergy == energy && lifetimeRemainder >= energyRemainder))
                 && ValidLevel(tapLevel) && ValidLevel(comboLevel)
                 && ValidLevel(overloadLevel) && ValidLevel(coils) && ValidLevel(plasma)
-                && ValidProgression() && ValidAchievements()
+                && ValidProgression() && ValidAchievements() && (station == null || (station.IsValid()
+                    && (station.rooms == 0 || (story != null && story.campaignRevision == 1
+                        && story.completed >= StationCatalog.Room(station.rooms - 1).Chapter))))
                 && (story == null || story.campaignRevision == 0 || rebirth == null || rebirth.rebirths == 0 || story.completed == StoryCatalog.Count)
                 && (story == null || (story.IsValid() && (!story.epilogueRead || (rebirth != null && rebirth.rebirths > 0))
                     && (story.narrative == null || !story.narrative.ascentSeen || (rebirth != null && rebirth.rebirths > 0))));

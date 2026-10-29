@@ -48,6 +48,8 @@ namespace ReactorDeCaos
                         || (beat.portrait != "nara" && beat.portrait != "mara" && beat.portrait != "memory" && beat.portrait != "core")
                         || (beat.interactive && scene.id != "intro")) throw new ArgumentException("Invalid narrative beat.");
             }
+            for (int i = 0; i < StationCatalog.MemoryCount; i++)
+                if (!ids.Contains("station_" + i)) throw new ArgumentException("Missing station memory scene.");
             foreach (string id in new[] { "intro", "ascent", "cycle", "buy", "overload", "combo" })
                 if (!ids.Contains(id)) throw new ArgumentException("Missing narrative scene " + id);
             for (int i = 0; i < StoryCatalog.Count; i++)

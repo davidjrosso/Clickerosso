@@ -25,7 +25,7 @@ namespace ReactorDeCaos
             {
                 double total = 0;
                 foreach (var generator in config.generators) total += generator.Production(Level(generator.id));
-                return total * PermanentMultiplier * BranchMultiplier(Specialization.Automation);
+                return total * PermanentMultiplier * BranchMultiplier(Specialization.Automation) * StationProductionMultiplier;
             }
         }
         public double Production { get { return BaseProduction * (Overload.Active ? OverloadMultiplier : 1); } }
@@ -47,6 +47,7 @@ namespace ReactorDeCaos
             if (!state.IsValid()) throw new ArgumentException("Invalid initial state.");
             if (state.version == 1) { state.version = 2; state.rebirth = new RebirthProgress(); }
             state.story = state.story ?? new StoryProgress();
+            state.station = state.station ?? new StationProgress();
             completed = new HashSet<string>(state.completedMilestones);
             var knownMilestones = new HashSet<string>(completed);
             foreach (var goal in config.milestones) knownMilestones.Add(goal.id);
@@ -108,6 +109,7 @@ namespace ReactorDeCaos
         {
             if (double.IsNaN(seconds) || double.IsInfinity(seconds) || seconds < 0 || seconds > 86400)
                 throw new ArgumentOutOfRangeException(nameof(seconds));
+            if (state.station.expeditionActive) state.station.expeditionRemaining = Math.Max(0, state.station.expeditionRemaining - seconds);
             Combo.Advance(seconds);
             double boosted = Overload.Advance(seconds);
             Credit(BaseProduction * (seconds + boosted * (OverloadMultiplier - 1)));
@@ -266,7 +268,7 @@ namespace ReactorDeCaos
                 case "tap": return TapPowerAt(level);
                 case "combo": return config.ComboCap(level);
                 case "overload": return config.overloadSeconds + level * config.overloadSecondsPerLevel;
-                default: return generators[id].Production(level) * PermanentMultiplier * BranchMultiplier(Specialization.Automation);
+                default: return generators[id].Production(level) * PermanentMultiplier * BranchMultiplier(Specialization.Automation) * StationProductionMultiplier;
             }
         }
     }

@@ -1,0 +1,397 @@
+{
+  "method": "static media and PCM inspection; not native rendering or auditory validation",
+  "sceneDefinitions": 23,
+  "spokenLines": 62,
+  "voices": [
+    {
+      "id": "intro_0",
+      "seconds": 8.422,
+      "peak": 0.4883,
+      "rms": 0.0545
+    },
+    {
+      "id": "intro_1",
+      "seconds": 3.12,
+      "peak": 0.4883,
+      "rms": 0.0431
+    },
+    {
+      "id": "intro_2",
+      "seconds": 6.175,
+      "peak": 0.4883,
+      "rms": 0.0552
+    },
+    {
+      "id": "intro_3",
+      "seconds": 7.571,
+      "peak": 0.4883,
+      "rms": 0.0537
+    },
+    {
+      "id": "intro_4",
+      "seconds": 7.33,
+      "peak": 0.4319,
+      "rms": 0.06
+    },
+    {
+      "id": "chapter_0_0",
+      "seconds": 4.771,
+      "peak": 0.4835,
+      "rms": 0.0592
+    },
+    {
+      "id": "chapter_0_1",
+      "seconds": 7.797,
+      "peak": 0.4883,
+      "rms": 0.0617
+    },
+    {
+      "id": "chapter_0_2",
+      "seconds": 2.336,
+      "peak": 0.4883,
+      "rms": 0.0455
+    },
+    {
+      "id": "chapter_0_3",
+      "seconds": 8.803,
+      "peak": 0.4883,
+      "rms": 0.0574
+    },
+    {
+      "id": "chapter_1_0",
+      "seconds": 5.323,
+      "peak": 0.4883,
+      "rms": 0.048
+    },
+    {
+      "id": "chapter_1_1",
+      "seconds": 7.908,
+      "peak": 0.4883,
+      "rms": 0.0523
+    },
+    {
+      "id": "chapter_1_2",
+      "seconds": 2.349,
+      "peak": 0.4883,
+      "rms": 0.0505
+    },
+    {
+      "id": "chapter_1_3",
+      "seconds": 8.843,
+      "peak": 0.4176,
+      "rms": 0.0596
+    },
+    {
+      "id": "chapter_2_0",
+      "seconds": 5.261,
+      "peak": 0.475,
+      "rms": 0.0567
+    },
+    {
+      "id": "chapter_2_1",
+      "seconds": 4.847,
+      "peak": 0.4883,
+      "rms": 0.064
+    },
+    {
+      "id": "chapter_2_2",
+      "seconds": 3.559,
+      "peak": 0.4883,
+      "rms": 0.0474
+    },
+    {
+      "id": "chapter_2_3",
+      "seconds": 4.328,
+      "peak": 0.4883,
+      "rms": 0.0411
+    },
+    {
+      "id": "chapter_2_4",
+      "seconds": 8.114,
+      "peak": 0.4883,
+      "rms": 0.0534
+    },
+    {
+      "id": "chapter_3_0",
+      "seconds": 6.567,
+      "peak": 0.4839,
+      "rms": 0.0624
+    },
+    {
+      "id": "chapter_3_1",
+      "seconds": 6.373,
+      "peak": 0.4883,
+      "rms": 0.0555
+    },
+    {
+      "id": "chapter_3_2",
+      "seconds": 5.738,
+      "peak": 0.4883,
+      "rms": 0.0459
+    },
+    {
+      "id": "chapter_3_3",
+      "seconds": 9.175,
+      "peak": 0.4883,
+      "rms": 0.0526
+    },
+    {
+      "id": "chapter_4_0",
+      "seconds": 6.499,
+      "peak": 0.4883,
+      "rms": 0.0573
+    },
+    {
+      "id": "chapter_4_1",
+      "seconds": 8.497,
+      "peak": 0.4883,
+      "rms": 0.0506
+    },
+    {
+      "id": "chapter_4_2",
+      "seconds": 5.293,
+      "peak": 0.4883,
+      "rms": 0.0426
+    },
+    {
+      "id": "chapter_4_3",
+      "seconds": 7.676,
+      "peak": 0.4672,
+      "rms": 0.0617
+    },
+    {
+      "id": "chapter_5_0",
+      "seconds": 7.959,
+      "peak": 0.4883,
+      "rms": 0.0543
+    },
+    {
+      "id": "chapter_5_1",
+      "seconds": 6.621,
+      "peak": 0.4883,
+      "rms": 0.0589
+    },
+    {
+      "id": "chapter_5_2",
+      "seconds": 6.793,
+      "peak": 0.474,
+      "rms": 0.0592
+    },
+    {
+      "id": "chapter_5_3",
+      "seconds": 5.128,
+      "peak": 0.4883,
+      "rms": 0.0427
+    },
+    {
+      "id": "ascent_0",
+      "seconds": 4.27,
+      "peak": 0.4883,
+      "rms": 0.0444
+    },
+    {
+      "id": "ascent_1",
+      "seconds": 2.869,
+      "peak": 0.4883,
+      "rms": 0.0679
+    },
+    {
+      "id": "ascent_2",
+      "seconds": 2.758,
+      "peak": 0.4658,
+      "rms": 0.0576
+    },
+    {
+      "id": "ascent_3",
+      "seconds": 2.277,
+      "peak": 0.3776,
+      "rms": 0.0503
+    },
+    {
+      "id": "ascent_4",
+      "seconds": 6.151,
+      "peak": 0.4883,
+      "rms": 0.0612
+    },
+    {
+      "id": "cycle_0",
+      "seconds": 5.304,
+      "peak": 0.4883,
+      "rms": 0.0464
+    },
+    {
+      "id": "resume_0_0",
+      "seconds": 8.807,
+      "peak": 0.4883,
+      "rms": 0.0586
+    },
+    {
+      "id": "resume_1_0",
+      "seconds": 8.586,
+      "peak": 0.4883,
+      "rms": 0.0595
+    },
+    {
+      "id": "resume_2_0",
+      "seconds": 8.282,
+      "peak": 0.4883,
+      "rms": 0.0503
+    },
+    {
+      "id": "resume_3_0",
+      "seconds": 6.836,
+      "peak": 0.4005,
+      "rms": 0.0584
+    },
+    {
+      "id": "resume_4_0",
+      "seconds": 7.19,
+      "peak": 0.4883,
+      "rms": 0.0543
+    },
+    {
+      "id": "resume_5_0",
+      "seconds": 9.329,
+      "peak": 0.4832,
+      "rms": 0.0586
+    },
+    {
+      "id": "resume_6_0",
+      "seconds": 5.942,
+      "peak": 0.3639,
+      "rms": 0.0616
+    },
+    {
+      "id": "buy_0",
+      "seconds": 7.701,
+      "peak": 0.4883,
+      "rms": 0.0463
+    },
+    {
+      "id": "overload_0",
+      "seconds": 3.908,
+      "peak": 0.4836,
+      "rms": 0.0624
+    },
+    {
+      "id": "combo_0",
+      "seconds": 5.788,
+      "peak": 0.4628,
+      "rms": 0.0588
+    },
+    {
+      "id": "station_0_0",
+      "seconds": 5.799,
+      "peak": 0.4883,
+      "rms": 0.0643
+    },
+    {
+      "id": "station_0_1",
+      "seconds": 3.677,
+      "peak": 0.4364,
+      "rms": 0.046
+    },
+    {
+      "id": "station_0_2",
+      "seconds": 6.6,
+      "peak": 0.4883,
+      "rms": 0.0606
+    },
+    {
+      "id": "station_0_3",
+      "seconds": 7.464,
+      "peak": 0.4341,
+      "rms": 0.0564
+    },
+    {
+      "id": "station_1_0",
+      "seconds": 5.222,
+      "peak": 0.4675,
+      "rms": 0.06
+    },
+    {
+      "id": "station_1_1",
+      "seconds": 4.515,
+      "peak": 0.4883,
+      "rms": 0.0686
+    },
+    {
+      "id": "station_1_2",
+      "seconds": 2.217,
+      "peak": 0.4274,
+      "rms": 0.054
+    },
+    {
+      "id": "station_1_3",
+      "seconds": 6.416,
+      "peak": 0.4883,
+      "rms": 0.0547
+    },
+    {
+      "id": "station_2_0",
+      "seconds": 5.752,
+      "peak": 0.4841,
+      "rms": 0.0567
+    },
+    {
+      "id": "station_2_1",
+      "seconds": 6.715,
+      "peak": 0.4883,
+      "rms": 0.0604
+    },
+    {
+      "id": "station_2_2",
+      "seconds": 4.46,
+      "peak": 0.4883,
+      "rms": 0.0454
+    },
+    {
+      "id": "station_2_3",
+      "seconds": 6.665,
+      "peak": 0.4883,
+      "rms": 0.0603
+    },
+    {
+      "id": "station_3_0",
+      "seconds": 4.298,
+      "peak": 0.3956,
+      "rms": 0.0586
+    },
+    {
+      "id": "station_3_1",
+      "seconds": 4.221,
+      "peak": 0.4883,
+      "rms": 0.0679
+    },
+    {
+      "id": "station_3_2",
+      "seconds": 4.095,
+      "peak": 0.4883,
+      "rms": 0.0454
+    },
+    {
+      "id": "station_3_3",
+      "seconds": 6.051,
+      "peak": 0.4883,
+      "rms": 0.0641
+    }
+  ],
+  "images": [
+    {
+      "name": "NarrativeAtlas",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "f556ee028946a4a12e5e79bc59517f69d82c7923638ecf0be71dbc6c38a26338"
+    },
+    {
+      "name": "OrfeoExterior",
+      "width": 1024,
+      "height": 1536,
+      "mode": "RGB",
+      "sha256": "c18de1dc32e03b4a8c6ceda9555509b2b1f0dafdf9e7f507074e261346dc896b"
+    }
+  ],
+  "metadataUnique": true,
+  "voiceManifestMatches": true
+}

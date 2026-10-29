@@ -1,0 +1,190 @@
+{
+  "assumptions": "Real campaign/economy; sequential room repairs, guided purchases, shipped dialogue durations. One 4-minute close/reopen after launching the drone. No Unity rendering.",
+  "passed": true,
+  "profiles": [
+    {
+      "profile": "active",
+      "passed": true,
+      "finished": true,
+      "preserved": true,
+      "totalWallSeconds": 746.4,
+      "taps": 347,
+      "awayReward": 504,
+      "events": [
+        {
+          "seconds": 91.2,
+          "scene": 0,
+          "chapter": 1,
+          "memories": 0
+        },
+        {
+          "seconds": 112.2,
+          "rooms": 1,
+          "production": 2.1
+        },
+        {
+          "seconds": 141.1,
+          "scene": 10,
+          "chapter": 1,
+          "memories": 1
+        },
+        {
+          "seconds": 381.2,
+          "returnedAfterSeconds": 240,
+          "awayReward": 504,
+          "droneReady": true
+        },
+        {
+          "seconds": 411,
+          "scene": 1,
+          "chapter": 2,
+          "memories": 1
+        },
+        {
+          "seconds": 434.7,
+          "scene": 11,
+          "chapter": 2,
+          "memories": 2
+        },
+        {
+          "seconds": 494.9,
+          "scene": 2,
+          "chapter": 3,
+          "memories": 2
+        },
+        {
+          "seconds": 497,
+          "rooms": 2,
+          "production": 60.50000000000001
+        },
+        {
+          "seconds": 525.9,
+          "scene": 12,
+          "chapter": 3,
+          "memories": 3
+        },
+        {
+          "seconds": 593.1,
+          "scene": 3,
+          "chapter": 4,
+          "memories": 3
+        },
+        {
+          "seconds": 593.2,
+          "rooms": 3,
+          "production": 452.20941424
+        },
+        {
+          "seconds": 617.2,
+          "scene": 13,
+          "chapter": 4,
+          "memories": 4
+        },
+        {
+          "seconds": 668.4,
+          "scene": 4,
+          "chapter": 5,
+          "memories": 4
+        },
+        {
+          "seconds": 746.4,
+          "scene": 5,
+          "chapter": 6,
+          "memories": 4
+        }
+      ]
+    },
+    {
+      "profile": "mostly_automatic",
+      "passed": true,
+      "finished": true,
+      "preserved": true,
+      "totalWallSeconds": 924.7,
+      "taps": 53,
+      "awayReward": 2772,
+      "events": [
+        {
+          "seconds": 138.2,
+          "scene": 0,
+          "chapter": 1,
+          "memories": 0
+        },
+        {
+          "seconds": 234.1,
+          "rooms": 1,
+          "production": 11.55
+        },
+        {
+          "seconds": 263,
+          "scene": 10,
+          "chapter": 1,
+          "memories": 1
+        },
+        {
+          "seconds": 292.8,
+          "scene": 1,
+          "chapter": 2,
+          "memories": 1
+        },
+        {
+          "seconds": 532.9,
+          "returnedAfterSeconds": 240,
+          "awayReward": 2772,
+          "droneReady": true
+        },
+        {
+          "seconds": 556.6,
+          "scene": 11,
+          "chapter": 2,
+          "memories": 2
+        },
+        {
+          "seconds": 613.9,
+          "scene": 2,
+          "chapter": 3,
+          "memories": 2
+        },
+        {
+          "seconds": 614,
+          "rooms": 2,
+          "production": 104.50000000000001
+        },
+        {
+          "seconds": 642.9,
+          "scene": 12,
+          "chapter": 3,
+          "memories": 3
+        },
+        {
+          "seconds": 706.1,
+          "scene": 3,
+          "chapter": 4,
+          "memories": 3
+        },
+        {
+          "seconds": 706.2,
+          "rooms": 3,
+          "production": 411.09850400000016
+        },
+        {
+          "seconds": 730.2,
+          "scene": 13,
+          "chapter": 4,
+          "memories": 4
+        },
+        {
+          "seconds": 804.3,
+          "scene": 4,
+          "chapter": 5,
+          "memories": 4
+        },
+        {
+          "seconds": 924.7,
+          "scene": 5,
+          "chapter": 6,
+          "memories": 4
+        }
+      ]
+    }
+  ]
+}

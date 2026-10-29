@@ -175,7 +175,7 @@ namespace ReactorDeCaos
         }
         private bool CommitStory(Func<GameState, bool> persist, Action<StoryProgress> change)
         {
-            if (writingStory || persist == null) return false;
+            if (writingStory || writingStation || claiming || persist == null) return false;
             writingStory = true;
             try
             {

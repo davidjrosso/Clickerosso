@@ -169,7 +169,7 @@ namespace ReactorDeCaos.Tests
             foreach (var scene in catalog.scenes)
                 foreach (var beat in scene.beats) { lines++; if (beat.interactive) interactive++; }
             Assert.That(interactive, Is.EqualTo(1));
-            Assert.That(lines, Is.EqualTo(46));
+            Assert.That(lines, Is.EqualTo(62));
             catalog.scenes[0].beats[0].voice = "../bad";
             Assert.Throws<ArgumentException>(catalog.Validate);
         }

@@ -473,6 +473,150 @@
           "voice": "combo_0"
         }
       ]
+    },
+    {
+      "id": "station_0",
+      "title": "MARA · EL JARDÍN APAGADO",
+      "background": "reactor",
+      "mood": "quiet",
+      "beats": [
+        {
+          "speaker": "MARA",
+          "text": "Yo cuidaba este invernadero. Decía que una estación también necesitaba algo que no fuera una máquina.",
+          "portrait": "mara",
+          "interactive": false,
+          "voice": "station_0_0"
+        },
+        {
+          "speaker": "TÚ",
+          "text": "Las luces ya funcionan. Pero las bandejas están vacías.",
+          "portrait": "core",
+          "interactive": false,
+          "voice": "station_0_1"
+        },
+        {
+          "speaker": "MARA",
+          "text": "Guardé una cápsula en el jardín exterior. Una flor que se abre hacia las estrellas. ¿Podemos traerla de vuelta?",
+          "portrait": "mara",
+          "interactive": false,
+          "voice": "station_0_2"
+        },
+        {
+          "speaker": "NARA",
+          "text": "La baliza responde. Envía el dron desde Orfeo. Tardará tres minutos; puedes seguir con el reactor mientras viaja.",
+          "portrait": "nara",
+          "interactive": false,
+          "voice": "station_0_3"
+        }
+      ]
+    },
+    {
+      "id": "station_1",
+      "title": "MARA · UNA SEMILLA ENTRE LOS RESTOS",
+      "background": "exterior",
+      "mood": "quiet",
+      "beats": [
+        {
+          "speaker": "NARA",
+          "text": "El dron regresó. La cápsula sigue sellada. En la etiqueta hay un nombre: Mara.",
+          "portrait": "nara",
+          "interactive": false,
+          "voice": "station_1_0"
+        },
+        {
+          "speaker": "MARA",
+          "text": "Pensé que ya no quedaría nada mío ahí fuera. Es pequeña, pero sigue esperando.",
+          "portrait": "mara",
+          "interactive": false,
+          "voice": "station_1_1"
+        },
+        {
+          "speaker": "TÚ",
+          "text": "Entonces le vamos a encontrar un lugar.",
+          "portrait": "core",
+          "interactive": false,
+          "voice": "station_1_2"
+        },
+        {
+          "speaker": "NARA",
+          "text": "La enfermería del sector rojo tiene un equipo de conservación. Restaura esa sala para reparar la cubierta.",
+          "portrait": "nara",
+          "interactive": false,
+          "voice": "station_1_3"
+        }
+      ]
+    },
+    {
+      "id": "station_2",
+      "title": "MARA · LO QUE SIGUE VIVO",
+      "background": "reactor",
+      "mood": "quiet",
+      "beats": [
+        {
+          "speaker": "NARA",
+          "text": "La enfermería está en línea. La semilla conserva actividad; la cápsula vuelve a protegerla.",
+          "portrait": "nara",
+          "interactive": false,
+          "voice": "station_2_0"
+        },
+        {
+          "speaker": "MARA",
+          "text": "No la plantes todavía. Le prometí un cielo, no otra lámpara. El observatorio podía seguir la estrella de mi casa.",
+          "portrait": "mara",
+          "interactive": false,
+          "voice": "station_2_1"
+        },
+        {
+          "speaker": "TÚ",
+          "text": "Voy a encenderlo. Esta vez no estamos reparando algo solo para sobrevivir.",
+          "portrait": "core",
+          "interactive": false,
+          "voice": "station_2_2"
+        },
+        {
+          "speaker": "NARA",
+          "text": "Necesitamos las coordenadas de la caja negra y el observatorio restaurado para orientar los espejos hacia el jardín.",
+          "portrait": "nara",
+          "interactive": false,
+          "voice": "station_2_3"
+        }
+      ]
+    },
+    {
+      "id": "station_3",
+      "title": "MARA · UNA FLOR PARA VOLVER",
+      "background": "exterior",
+      "mood": "quiet",
+      "beats": [
+        {
+          "speaker": "NARA",
+          "text": "Espejos alineados. La luz de tu estrella llega al invernadero, Mara.",
+          "portrait": "nara",
+          "interactive": false,
+          "voice": "station_3_0"
+        },
+        {
+          "speaker": "MARA",
+          "text": "Se abrió. Después de todo este tiempo... todavía sabía cómo hacerlo.",
+          "portrait": "mara",
+          "interactive": false,
+          "voice": "station_3_1"
+        },
+        {
+          "speaker": "TÚ",
+          "text": "La cuidaremos. Aunque tengamos que reconstruir el reactor otra vez.",
+          "portrait": "core",
+          "interactive": false,
+          "voice": "station_3_2"
+        },
+        {
+          "speaker": "MARA",
+          "text": "Entonces ya tengo un lugar al que volver. Gracias por no tratar mis recuerdos como otra pieza de la máquina.",
+          "portrait": "mara",
+          "interactive": false,
+          "voice": "station_3_3"
+        }
+      ]
     }
   ]
 }

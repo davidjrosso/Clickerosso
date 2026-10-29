@@ -20,7 +20,7 @@ for scene in catalog['scenes']:
   assert 0<peak<.5 and rms>0
   assert abs(samples[0])<5 and abs(samples[-1])<5
   voices.append(dict(id=key,seconds=round(frames/rate,3),peak=round(peak,4),rms=round(rms,4)))
-assert len(ids)==46
+assert len(ids)==62
 image_reports=[]
 for name,alpha in [('NarrativeAtlas',True),('OrfeoExterior',False)]:
  path=assets/'Art'/(name+'.png');im=Image.open(path)

@@ -16,7 +16,7 @@ namespace ReactorDeCaos
         public bool OverloadAvailable => !CampaignActive || (NarrativeIntroSeen && StoryCompleted >= 2);
         public bool CampaignAscensionAvailable => !CampaignActive || StoryCompleted == StoryCatalog.Count;
         public bool CampaignNeedsChoice => CampaignActive && StoryCompleted == 5 && StoryChoice == 0;
-        public bool CampaignTabAvailable(int tab) => !CampaignActive || tab == 0 || (NarrativeIntroSeen
+        public bool CampaignTabAvailable(int tab) => tab == 5 ? StationAvailable || PendingOfflineEnergy > 0 : !CampaignActive || tab == 0 || (NarrativeIntroSeen
             && (tab == 1 || tab == 4 || (tab == 2 && StoryCompleted >= 1) || (tab == 3 && StoryCompleted >= 5)));
         public bool CampaignAchievementVisible(AchievementDefinition goal) => !CampaignActive || (CampaignTabAvailable(2)
             && (goal.goal != AchievementGoal.GeneratorLevel || Unlocked(goal.generatorId))

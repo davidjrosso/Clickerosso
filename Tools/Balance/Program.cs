@@ -142,6 +142,7 @@ internal static class Program
             : "Pacing budgets FAILED. Inspect the saved results and purchase CSVs before retuning.");
         bool rebirthPassed = RebirthSimulation.Run(config, output);
         bool campaignPassed = CampaignSimulation.Run(config, output);
-        return allBudgetsPassed && rebirthPassed && campaignPassed ? 0 : 1;
+        bool stationPassed = StationSimulation.Run(config, output);
+        return allBudgetsPassed && rebirthPassed && campaignPassed && stationPassed ? 0 : 1;
     }
 }

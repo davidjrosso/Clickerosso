@@ -93,7 +93,7 @@ namespace ReactorDeCaos
         // overload timers belong to this instance and are never reset by claiming a reward.
         public bool TryClaimAchievement(string id, Func<GameState, bool> persist)
         {
-            if (claiming || persist == null || !CanClaimAchievement(id)) return false;
+            if (claiming || writingStation || writingStory || persist == null || !CanClaimAchievement(id)) return false;
             claiming = true;
             try
             {

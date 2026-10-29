@@ -1,0 +1,55 @@
+{
+  "date": "2026-10-29",
+  "core": {
+    "command": "bash Tools/test-core.sh",
+    "passed": 167,
+    "failed": 0,
+    "skipped": 0,
+    "newStationCases": 17
+  },
+  "unityApi": {
+    "command": "python3 Tools/check-unity-api.py",
+    "assembliesCompiled": 6,
+    "passed": true,
+    "nativeExecution": false
+  },
+  "simulation": {
+    "command": "bash Tools/simulate-balance.sh TestResults/Station",
+    "passed": true,
+    "stationPaths": 2,
+    "campaignPaths": 3,
+    "economyProfiles": 3,
+    "rebirthCycles": 54,
+    "evidence": "balance/"
+  },
+  "media": {
+    "spokenLines": 62,
+    "newSpokenLines": 16,
+    "sceneDefinitions": 23,
+    "manifestAndMetadataPassed": true,
+    "synthesis": "Local eSpeak NG, provisional",
+    "newGeneratedImages": 0,
+    "evidence": "media.json"
+  },
+  "layout": {
+    "method": "Static anchor arithmetic, not native rendering",
+    "profiles": 5,
+    "representativeMeasurementsPerProfile": 51,
+    "minimumLogicalControlDimension": 48.33,
+    "evidence": "layout.json"
+  },
+  "unityNative": {
+    "attempted": true,
+    "editor": "6000.0.85f1",
+    "exitCode": 198,
+    "reason": "No valid Unity Editor license found. Please activate your license.",
+    "playModeExecuted": false,
+    "androidExecuted": false
+  },
+  "pending": [
+    "Real scene rendering and text layout",
+    "In-scene listening and voice mix",
+    "Mobile gestures, pause/resume and frame time on hardware",
+    "Art and voice polish"
+  ]
+}

@@ -149,3 +149,13 @@ geometría 2D original de StationRestorationGraphic. Se regeneraron 21 líneas r
 con el mismo eSpeak NG local y se integraron sus WAV PCM. Las otras 25 conservaron
 sus archivos. Textos y hashes: Docs/Cinematics/voice.json. Son voces provisionales,
 no doblaje neural; la escucha y mezcla dentro del juego siguen pendientes.
+
+## Orfeo vive — 2026-10-29
+
+StationVistaGraphic dibuja originalmente las tres salas, la flor y el dron con geometría
+2D fija. No se generaron imágenes ni se editaron píxeles para esta expansión. Los
+retratos y fondos anteriores se reutilizan en cuatro escenas de Mara. Se sintetizaron
+realmente dieciséis WAV españoles con eSpeak NG local; los 46 WAV anteriores se
+conservaron. Se mantienen las mismas condiciones y limitaciones del sintetizador ya
+documentadas. Manifiesto actualizado: Docs/Cinematics/voice.json. No son voces neurales
+ni se considera final su mezcla. La validación audiovisual en Unity sigue pendiente.

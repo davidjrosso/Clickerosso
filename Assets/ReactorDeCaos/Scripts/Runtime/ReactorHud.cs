@@ -26,6 +26,7 @@ namespace ReactorDeCaos
         private TextMeshProUGUI progressionLabel, achievementsLabel;
         public AchievementPanel Achievements { get; private set; }
         public StoryPanel Story { get; private set; }
+        public StationPanel Station { get; private set; }
         public NarrativeSprites NarrativeArt { get; private set; }
         public RectTransform SafeRoot => safe;
         private ReactorApp owner;
@@ -224,7 +225,7 @@ namespace ReactorDeCaos
                 NavigationButtons[i] = button;
                 var text = Label("NavigationLabel", button.transform, tabNames[i], 24, Color.white, .01f, .06f, .99f, .94f);
                 tabIndicators[i] = Image("SelectedTab", button.transform, Cyan, .08f, .96f, .92f, 1);
-                button.onClick.AddListener(() => SelectTab(tab));
+                button.onClick.AddListener(() => SelectTab(tab == 4 && owner.Game.CampaignTabAvailable(5) ? 5 : tab));
                 if (i == 2) achievementsLabel = text;
                 if (i == 4) storyLabel = text;
                 if (i == 3) { ProgressionButton = button; progressionLabel = text; }
@@ -245,6 +246,7 @@ namespace ReactorDeCaos
             Progression = new RebirthPanel(this, safe, app);
             Achievements = new AchievementPanel(this, safe, app);
             Story = new StoryPanel(this, safe, app);
+            Station = new StationPanel(this, safe, app);
             SelectTab(0);
             Refresh(app.Game, true);
         }
@@ -258,23 +260,24 @@ namespace ReactorDeCaos
         public void ClosePanels()
         {
             if (Menu != null && Menu.IsOpen) Menu.SetOpen(false);
-            ModulePanel?.Close(); Progression?.Close(); Achievements?.Close(); Story?.Close();
+            ModulePanel?.Close(); Progression?.Close(); Achievements?.Close(); Story?.Close(); Station?.Close();
         }
         public void SelectTab(int tab)
         {
-            if (tab < 0 || tab > 4 || !owner.Game.CampaignTabAvailable(tab) || (owner.Narrative?.IsBlocking ?? false)) return;
+            if (tab < 0 || tab > 5 || !owner.Game.CampaignTabAvailable(tab) || (owner.Narrative?.IsBlocking ?? false)) return;
             ClosePanels();
             SelectedTab = tab;
             reactorPage.gameObject.SetActive(tab == 0);
             shopPage.gameObject.SetActive(tab == 1);
             for (int i = 0; i < tabIndicators.Length; i++)
             {
-                tabIndicators[i].gameObject.SetActive(i == tab);
-                NavigationButtons[i].image.color = i == tab ? new Color(.055f, .12f, .17f) : new Color(.025f, .045f, .075f, .98f);
+                tabIndicators[i].gameObject.SetActive(i == (tab == 5 ? 4 : tab));
+                NavigationButtons[i].image.color = i == (tab == 5 ? 4 : tab) ? new Color(.055f, .12f, .17f) : new Color(.025f, .045f, .075f, .98f);
             }
             if (tab == 2) Achievements.Open();
             if (tab == 3) Progression.Open();
             if (tab == 4) Story.Open();
+            if (tab == 5) Station.Open();
         }
         public void OpenModule(string id) { if (owner.Game.Unlocked(id)) ModulePanel.Open(id); }
         public void Back()
@@ -394,8 +397,9 @@ namespace ReactorDeCaos
             }
             progressionLabel.text = game.CanRebirth ? "ASCENDER\nLISTO" : "ASCENDER";
             achievementsLabel.text = "LOGROS" + (game.AvailableAchievements > 0 ? "\n" + game.AvailableAchievements + " LISTOS" : "");
-            storyLabel.text = "ARCHIVO" + (game.UnreadStory > 0 ? "\nNUEVO" : "");
-            ModulePanel.Refresh(); Progression.Refresh(); Achievements.Refresh(); Story.Refresh();
+            storyLabel.text = game.CampaignTabAvailable(5) ? "ORFEO" + (game.ExpeditionReady || game.PendingOfflineEnergy > 0 || game.PendingStationMemory >= 0 ? "\nLISTO" : "")
+                : "ARCHIVO" + (game.UnreadStory > 0 ? "\nNUEVO" : "");
+            ModulePanel.Refresh(); Progression.Refresh(); Achievements.Refresh(); Story.Refresh(); Station.Refresh();
             tapHint.text = game.UnreadStory > 0 ? "NARA · NUEVA TRANSMISIÓN" : "MISIÓN · " + NarrativeMission(game.StoryCompleted);
             milestone.text = game.StoryCompleted == StoryCatalog.Count ? "Archivo recuperado · " + game.StoryRead + " / 6 leídos"
                 : NumberFormat.Compact(game.AllTimeEnergy) + " E · " + (game.StoryProgressFraction(game.CurrentStoryChapter) * 100).ToString("0") + "% · VER OBJETIVO";

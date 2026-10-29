@@ -1,3 +1,5 @@
+using System;
+
 namespace ReactorDeCaos
 {
     public static class RebirthTransaction
@@ -6,9 +8,14 @@ namespace ReactorDeCaos
         public static bool TryCommit(GameEngine current, SaveStore store, Specialization branch,
             int quotedReward, out GameEngine committed)
         {
+            return TryCommit(current, store == null ? (Func<GameState, bool>)null : store.Save, branch, quotedReward, out committed);
+        }
+        public static bool TryCommit(GameEngine current, Func<GameState, bool> persist, Specialization branch,
+            int quotedReward, out GameEngine committed)
+        {
             committed = current;
-            if (current == null || store == null || !current.TryPrepareRebirth(branch, quotedReward, out var next)) return false;
-            if (!store.Save(next.Snapshot())) return false;
+            if (current == null || persist == null || !current.TryPrepareRebirth(branch, quotedReward, out var next)) return false;
+            if (!persist(next.Snapshot())) return false;
             committed = next;
             return true;
         }

@@ -415,3 +415,21 @@ found. Please activate your license.` El log contiene además avisos de base de 
 de solo lectura y EPIPE al finalizar UPM. No se ejecutaron las pruebas nativas ni se
 hizo revisión audiovisual en Main o Android. Los ProjectSettings incidentales del
 arranque se archivaron fuera del repositorio. Las voces siguen siendo provisionales.
+
+## 2026-10-29 — estación viva, regreso y Mara
+
+Se integran tres salas permanentes, un dron con viaje de tres minutos, la historia
+«Una flor para volver» (cuatro escenas, dieciséis WAV nuevos) y producción reclamable
+hasta ocho horas por ausencia. Se mantiene la ranura de campaña y se inicializa el
+reloj sin ingresos retroactivos. La ascensión conserva salas, recuerdos, dron y reserva.
+
+167 pruebas .NET pasan; seis ensamblados compilan contra API oficiales. Dos recorridos
+nuevos de estación cierran campaña e historia de Mara y ascienden conservándolas,
+incluyendo cierre/regreso de cuatro minutos. También pasan tres campañas, tres perfiles
+económicos y 54 ciclos anteriores. Auditorías de 51 medidas de controles/cinco perfiles
+y 62 voces con hashes y subtítulos. Evidencia: [STATION.md](STATION.md), `Station/`.
+
+El intento nativo continúa bloqueado por licencia: Editor 6000.0.85f1, salida 198,
+`No valid Unity Editor license found. Please activate your license.` No se declara
+PlayMode, escucha, renderizado ni Android ejecutados. Arte procedural y voces siguen
+provisionales. Se archivaron fuera del checkout los ajustes incidentales del Editor.

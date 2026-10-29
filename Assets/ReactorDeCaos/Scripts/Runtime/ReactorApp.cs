@@ -10,8 +10,14 @@ namespace ReactorDeCaos
         public GameEngine Game { get; private set; }
         public ReactorHud Hud { get; private set; }
         public NarrativeDirector Narrative { get; private set; }
-        private bool InputBlocked => !initialized || paused || (Narrative?.IsBlocking ?? false);
+        private bool InputBlocked => !initialized || paused || arrivalPending || (Narrative?.IsBlocking ?? false);
         private SaveStore saves;
+        private EconomyConfig economySettings;
+        private bool arrivalPending, showArrival;
+        private long suspensionUtc;
+        private float arrivalRetry;
+        private int stationActionFrame = -1;
+        private static long UtcNow => DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         private ReactorFeedback feedback;
         private float saveTimer;
         private bool paused, applicationPaused;
@@ -32,8 +38,13 @@ namespace ReactorDeCaos
             EconomySettings settings = Resources.Load<EconomySettings>("Economy");
             saves = new SaveStore(Path.Combine(Application.persistentDataPath, GameEngine.CampaignSaveFile), new UnityJsonCodec());
             GameState state = saves.Load();
+            bool recoveredBackup = saves.RecoveredBackup, returning = saves.LoadedExisting;
+            string loadIssue = saves.LastIssue;
             if (state.story == null || state.story.campaignRevision != 1) state = GameEngine.NewCampaignState();
-            Game = new GameEngine(state, settings != null ? settings.values : null);
+            economySettings = settings != null ? settings.values : null;
+            Game = new GameEngine(state, economySettings);
+            arrivalPending = !Game.TryResumeStation(UtcNow, Persist);
+            showArrival = (Game.PendingOfflineEnergy > 0 && Game.PendingOfflineSeconds >= 60) || Game.ExpeditionReady;
             previousMilestones = Game.CompletedMilestoneCount;
             savedStoryChapters = Game.StoryCompleted;
             knownUnlocks = new bool[Game.Shop.Count];
@@ -47,7 +58,7 @@ namespace ReactorDeCaos
                 feedback.Initialize(Hud);
                 initialized = true;
                 Narrative = new NarrativeDirector(this, feedback);
-                Narrative.Start(saves.LoadedExisting);
+                Narrative.Start(returning);
             }
             catch (Exception error)
             {
@@ -55,8 +66,8 @@ namespace ReactorDeCaos
                 Debug.LogException(error, this);
                 return;
             }
-            if (saves.RecoveredBackup) Hud.ShowNotice("Progreso recuperado desde la copia de seguridad.");
-            else if (saves.LastIssue != null) Hud.ShowNotice("No se pudo leer el guardado. Se inició una partida nueva.");
+            if (recoveredBackup) Hud.ShowNotice("Progreso recuperado desde la copia de seguridad.");
+            else if (loadIssue != null) Hud.ShowNotice("No se pudo leer el guardado. Se inició una partida nueva.");
             else Hud.ShowNotice("ORFEO · Restaura la estación. Encuentra a Mara.");
         }
 
@@ -65,7 +76,19 @@ namespace ReactorDeCaos
             if (!initialized || paused) return;
             if (Input.GetKeyDown(KeyCode.Escape)) Hud.Back();
             if (skipNextFrame) { skipNextFrame = false; return; }
-            // Time spent suspended never becomes offline production.
+            if (arrivalPending)
+            {
+                arrivalRetry -= Time.unscaledDeltaTime;
+                if (arrivalRetry <= 0)
+                {
+                    arrivalRetry = 2;
+                    arrivalPending = !Game.TryResumeStation(UtcNow, Persist, suspensionUtc);
+                    if (!arrivalPending) { suspensionUtc = 0; showArrival = (Game.PendingOfflineEnergy > 0 && Game.PendingOfflineSeconds >= 60) || Game.ExpeditionReady; }
+                    else Hud.ShowNotice("No se pudo guardar el regreso. Libera espacio; se reintentará.");
+                }
+                return;
+            }
+            // Absence is settled once, separately from the live frame clock.
             float seconds = Mathf.Min(Time.unscaledDeltaTime, 86400f);
             Game.Advance(seconds);
             if (Game.ComboMultiplier < previousCombo && Game.ComboMultiplier <= 1)
@@ -101,6 +124,8 @@ namespace ReactorDeCaos
                 nextMilestoneNotice = Time.unscaledTime + 3.5f;
             }
             Narrative.Tick(seconds);
+            if (showArrival && !Narrative.IsBlocking && !Hud.Menu.IsOpen && Game.CampaignTabAvailable(5))
+            { showArrival = false; Narrative.ClearArrivalTransmission(); Hud.SelectTab(5); Hud.Station.ShowMessage(Game.ExpeditionReady ? "Bienvenido a Orfeo. El dron regresó; su recompensa te espera." : "Bienvenido a Orfeo. Tus generadores siguieron trabajando."); }
             Hud.Refresh(Game);
             feedback.Animate(Game.Stage, Game.Overload.Active, ComboIntensity);
             Hud.Assembly.Animate(Game);
@@ -113,7 +138,7 @@ namespace ReactorDeCaos
         }
         public void NarrativeTap()
         {
-            if (!initialized || paused || Narrative == null || !Narrative.CanIgnite || Narrative.IsReplay) return;
+            if (!initialized || paused || arrivalPending || Narrative == null || !Narrative.CanIgnite || Narrative.IsReplay) return;
             // A saved, interrupted opening may already contain its first tap.
             // Replaying that ignition step must not grant a second scripted reward.
             if (Game.CampaignActive)
@@ -147,7 +172,7 @@ namespace ReactorDeCaos
             if (Game.StoryCompleted == StoryCatalog.Count) { Hud.SelectTab(3); return; }
             if (Game.CampaignRequirementsMet)
             {
-                if (!Game.TryBeginCampaignMission(saves.Save))
+                if (!Game.TryBeginCampaignMission(Persist))
                 { Hud.ShowNotice("No se pudo guardar la misión. Inténtalo de nuevo."); return; }
                 saveTimer = 0;
                 Narrative.PresentMission();
@@ -182,7 +207,7 @@ namespace ReactorDeCaos
         public void ClaimAchievement(string id)
         {
             if (InputBlocked || !Game.CampaignTabAvailable(2)) return;
-            if (!Game.TryClaimAchievement(id, saves.Save))
+            if (!Game.TryClaimAchievement(id, Persist))
             {
                 Hud.Achievements.ShowMessage("No se pudo reclamar. Revisa el progreso o el espacio de guardado.");
                 return;
@@ -195,7 +220,7 @@ namespace ReactorDeCaos
         public bool ReadStory(int chapter)
         {
             if (InputBlocked) return false;
-            bool saved = chapter == StoryCatalog.Count ? Game.TryReadEpilogue(saves.Save) : Game.TryReadStory(chapter, saves.Save);
+            bool saved = chapter == StoryCatalog.Count ? Game.TryReadEpilogue(Persist) : Game.TryReadStory(chapter, Persist);
             if (!saved) { Hud.Story.ShowMessage("No se pudo archivar. Revisa el espacio de guardado e inténtalo de nuevo."); return false; }
             saveTimer = 0; Hud.Refresh(Game, true);
             Hud.Story.ShowMessage("Registro archivado. Se conservará al ascender.");
@@ -205,7 +230,7 @@ namespace ReactorDeCaos
         public void ChooseStory(int choice)
         {
             if (InputBlocked) return;
-            if (!Game.TryChooseStory(choice, saves.Save))
+            if (!Game.TryChooseStory(choice, Persist))
             { Hud.Story.ShowMessage("No se pudo guardar la sintonía. Conservas la anterior."); return; }
             saveTimer = 0; Hud.Refresh(Game, true);
             Hud.Story.ShowMessage("Sintonía guardada. Puedes cambiarla; tus ganancias no cambian.");
@@ -235,7 +260,7 @@ namespace ReactorDeCaos
                 Hud.Progression.ShowMessage("La recompensa ha cambiado. Revisa el colapso de nuevo.");
                 return false;
             }
-            if (!RebirthTransaction.TryCommit(Game, saves, branch, quotedReward, out var next))
+            if (!RebirthTransaction.TryCommit(Game, Persist, branch, quotedReward, out var next))
             {
                 Hud.Progression.ShowMessage("No se pudo guardar el colapso. Tu reactor se conserva.");
                 return false;
@@ -255,15 +280,58 @@ namespace ReactorDeCaos
 
         public bool FinishNarrative(int chapter, bool read)
         {
-            if (!initialized || paused) return false;
-            bool result = Game.TryFinishNarrative(chapter, read, saves.Save);
+            if (!initialized || paused || arrivalPending) return false;
+            bool result = chapter <= -10 && chapter > -14
+                ? Game.TryFinishStationMemory(-10 - chapter, Persist)
+                : Game.TryFinishNarrative(chapter, read, Persist);
             if (result) saveTimer = 0;
             return result;
         }
         public bool MarkCommunication(int kind)
         {
-            if (!initialized || paused) return false;
-            return Game.TryMarkCommunication(kind, saves.Save);
+            if (!initialized || paused || arrivalPending) return false;
+            return Game.TryMarkCommunication(kind, Persist);
+        }
+
+        public void RestoreRoom(int index)
+        {
+            if (InputBlocked || stationActionFrame == Time.frameCount) return;
+            if (!Game.TryRestoreRoom(index, Persist)) { Hud.Station.ShowMessage("Revisa los requisitos, la energía y el espacio de guardado."); return; }
+            StationChanged("Sala restaurada · beneficio permanente activado");
+            Narrative.PresentStationMemory(Game.PendingStationMemory);
+        }
+        public void StartExpedition()
+        {
+            if (InputBlocked || stationActionFrame == Time.frameCount) return;
+            if (!Game.TryStartExpedition(Persist)) { Hud.Station.ShowMessage("No se pudo enviar el dron. Revisa el objetivo y el guardado."); return; }
+            StationChanged("Dron enviado. Puedes seguir jugando o salir; el resultado no caduca.");
+        }
+        public void ClaimExpedition()
+        {
+            if (InputBlocked || stationActionFrame == Time.frameCount) return;
+            if (!Game.TryClaimExpedition(Persist)) { Hud.Station.ShowMessage("No se pudo recoger. Revisa el tiempo, el límite de energía o el guardado."); return; }
+            StationChanged("Dron recibido · recompensa guardada");
+            if (Game.PendingStationMemory >= 0) Narrative.PresentStationMemory(Game.PendingStationMemory);
+        }
+        public void ClaimOffline()
+        {
+            if (InputBlocked || stationActionFrame == Time.frameCount) return;
+            if (!Game.TryClaimOffline(Persist)) { Hud.Station.ShowMessage("No se pudo reclamar. Tu reserva sigue esperando."); return; }
+            StationChanged("Energía recibida y guardada");
+        }
+        private void StationChanged(string message)
+        {
+            stationActionFrame = Time.frameCount;
+            saveTimer = 0; feedback.Celebrate(); Hud.InvalidateEconomy(); Hud.Refresh(Game, true);
+            Hud.Station.ShowMessage(message);
+        }
+        private bool Persist(GameState candidate)
+        {
+            candidate.station = candidate.station ?? new StationProgress();
+            long stamp = paused && suspensionUtc > 0 ? suspensionUtc : UtcNow;
+            candidate.station.lastUtcSeconds = Math.Max(candidate.station.lastUtcSeconds, stamp);
+            candidate.station.offlineRate = Math.Min(EconomyConfig.MaxEnergy, new GameEngine(candidate, economySettings).BaseProduction);
+            return saves.Save(candidate);
         }
 
         // Visual normalization only: the engine remains the sole source of rewards.
@@ -274,7 +342,8 @@ namespace ReactorDeCaos
         {
             if (!initialized) return false;
             saveTimer = 0;
-            if (saves != null && Game != null && !saves.Save(Game.Snapshot()))
+            if (arrivalPending) return false;
+            if (saves != null && Game != null && !Game.TryCheckpointStation(paused && suspensionUtc > 0 ? suspensionUtc : UtcNow, Persist))
             {
                 Hud.ShowNotice("No se pudo guardar. Comprueba el espacio disponible.");
                 Debug.LogWarning("Reactor save failed: " + saves.LastIssue);
@@ -296,8 +365,21 @@ namespace ReactorDeCaos
             paused = inactive;
             if (feedback != null) feedback.SetSuspended(inactive);
             Narrative?.SetSuspended(inactive);
-            if (inactive) { Save(); Preferences?.Save(); }
-            else skipNextFrame = true;
+            if (inactive)
+            {
+                if (!arrivalPending) suspensionUtc = UtcNow;
+                Save(); Preferences?.Save();
+            }
+            else
+            {
+                if (initialized)
+                {
+                    long absence = suspensionUtc > 0 ? Math.Max(0, UtcNow - suspensionUtc) : 0;
+                    arrivalPending = !Game.TryResumeStation(UtcNow, Persist, suspensionUtc);
+                    if (!arrivalPending) { suspensionUtc = 0; showArrival = (Game.PendingOfflineEnergy > 0 && absence >= 60) || Game.ExpeditionReady; }
+                }
+                skipNextFrame = true;
+            }
         }
 
         private void OnApplicationQuit() { Save(); Preferences?.Save(); }

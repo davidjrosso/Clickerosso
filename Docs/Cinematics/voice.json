@@ -370,6 +370,134 @@
       "seconds": 5.788,
       "peak": 0.4628,
       "sha256": "331b2af20a2d26f811e859f87924231caf35ac2cafcb6d2f88dd6136e9fcd02d"
+    },
+    {
+      "id": "station_0_0",
+      "speaker": "MARA",
+      "text": "Yo cuidaba este invernadero. Decía que una estación también necesitaba algo que no fuera una máquina.",
+      "seconds": 5.799,
+      "peak": 0.4883,
+      "sha256": "92879147dba8e2a26b514a027271b9e30a568a46b550836af9e934b1b9e0ace6"
+    },
+    {
+      "id": "station_0_1",
+      "speaker": "TÚ",
+      "text": "Las luces ya funcionan. Pero las bandejas están vacías.",
+      "seconds": 3.677,
+      "peak": 0.4364,
+      "sha256": "95c590a1a2cc307f04cd0cda1693348fc6ec6960396edfa2c82c8b71d63f58d3"
+    },
+    {
+      "id": "station_0_2",
+      "speaker": "MARA",
+      "text": "Guardé una cápsula en el jardín exterior. Una flor que se abre hacia las estrellas. ¿Podemos traerla de vuelta?",
+      "seconds": 6.6,
+      "peak": 0.4883,
+      "sha256": "d8d76163e4771350edfb03c1edf5096e502a6a6b9b4da33bfb3b8cc5c3744aae"
+    },
+    {
+      "id": "station_0_3",
+      "speaker": "NARA",
+      "text": "La baliza responde. Envía el dron desde Orfeo. Tardará tres minutos; puedes seguir con el reactor mientras viaja.",
+      "seconds": 7.464,
+      "peak": 0.4341,
+      "sha256": "c7d9469fab6fd61cc31af993a94ab33bfcf83ad5ec5f636802a594d2909892ec"
+    },
+    {
+      "id": "station_1_0",
+      "speaker": "NARA",
+      "text": "El dron regresó. La cápsula sigue sellada. En la etiqueta hay un nombre: Mara.",
+      "seconds": 5.222,
+      "peak": 0.4675,
+      "sha256": "132978d5a4c727d47d6b0aa09736599c6fb65081c2c84c9ff8f8cea0b317b2c8"
+    },
+    {
+      "id": "station_1_1",
+      "speaker": "MARA",
+      "text": "Pensé que ya no quedaría nada mío ahí fuera. Es pequeña, pero sigue esperando.",
+      "seconds": 4.515,
+      "peak": 0.4883,
+      "sha256": "e7ba80e4974543427d2835cfbcec68bda85ee61157a15c2b433599fab38f1e48"
+    },
+    {
+      "id": "station_1_2",
+      "speaker": "TÚ",
+      "text": "Entonces le vamos a encontrar un lugar.",
+      "seconds": 2.217,
+      "peak": 0.4274,
+      "sha256": "ff09a1b4618f526534b71837fe0a32a90b21660ea93305581d5a3eb400951f7c"
+    },
+    {
+      "id": "station_1_3",
+      "speaker": "NARA",
+      "text": "La enfermería del sector rojo tiene un equipo de conservación. Restaura esa sala para reparar la cubierta.",
+      "seconds": 6.416,
+      "peak": 0.4883,
+      "sha256": "40373e6c795101647d8a10587dde55078ed9f8ea5f7e5512f632d8ef771cc465"
+    },
+    {
+      "id": "station_2_0",
+      "speaker": "NARA",
+      "text": "La enfermería está en línea. La semilla conserva actividad; la cápsula vuelve a protegerla.",
+      "seconds": 5.752,
+      "peak": 0.4841,
+      "sha256": "def0127558078763d828a6723fc4874f16309ff042e6f187698b1538dd8268dc"
+    },
+    {
+      "id": "station_2_1",
+      "speaker": "MARA",
+      "text": "No la plantes todavía. Le prometí un cielo, no otra lámpara. El observatorio podía seguir la estrella de mi casa.",
+      "seconds": 6.715,
+      "peak": 0.4883,
+      "sha256": "633a89e5caa92abb37815eb338d9d8f0f9d674f596d4bef5ef6a1a6598890626"
+    },
+    {
+      "id": "station_2_2",
+      "speaker": "TÚ",
+      "text": "Voy a encenderlo. Esta vez no estamos reparando algo solo para sobrevivir.",
+      "seconds": 4.46,
+      "peak": 0.4883,
+      "sha256": "27a494b2d47f17c534252b8b95efc24f661d96b7681c29856b57577b4957d83f"
+    },
+    {
+      "id": "station_2_3",
+      "speaker": "NARA",
+      "text": "Necesitamos las coordenadas de la caja negra y el observatorio restaurado para orientar los espejos hacia el jardín.",
+      "seconds": 6.665,
+      "peak": 0.4883,
+      "sha256": "1a02e7ee83c2045eb80067f4825b81fba18046a64010d9586af3699fd304120e"
+    },
+    {
+      "id": "station_3_0",
+      "speaker": "NARA",
+      "text": "Espejos alineados. La luz de tu estrella llega al invernadero, Mara.",
+      "seconds": 4.298,
+      "peak": 0.3956,
+      "sha256": "3c97231abc157c7028a1fb6ea8be88c5c3c03e1d645a73d102b08bb8b997ecf5"
+    },
+    {
+      "id": "station_3_1",
+      "speaker": "MARA",
+      "text": "Se abrió. Después de todo este tiempo... todavía sabía cómo hacerlo.",
+      "seconds": 4.221,
+      "peak": 0.4883,
+      "sha256": "ac8a2ec0d00d14b14220bc449f177b9f278f1564cdae5ce974e0b33f13721a88"
+    },
+    {
+      "id": "station_3_2",
+      "speaker": "TÚ",
+      "text": "La cuidaremos. Aunque tengamos que reconstruir el reactor otra vez.",
+      "seconds": 4.095,
+      "peak": 0.4883,
+      "sha256": "4458ca9ee39ce4a819827bdfb8ca9136ac275d1e8847c36c1564eddd9c20c7f1"
+    },
+    {
+      "id": "station_3_3",
+      "speaker": "MARA",
+      "text": "Entonces ya tengo un lugar al que volver. Gracias por no tratar mis recuerdos como otra pieza de la máquina.",
+      "seconds": 6.051,
+      "peak": 0.4883,
+      "sha256": "6d2a89d2e8a34261bacd79030dd611f1e023171a87c5eb0bdec0159db580c522"
     }
   ]
 }

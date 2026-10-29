@@ -114,6 +114,19 @@ namespace ReactorDeCaos
             hud.ClosePanels(); hud.SelectTab(0);
             Play("chapter_" + app.Game.StoryCompleted, app.Game.StoryCompleted, false);
         }
+        public void ClearArrivalTransmission()
+        {
+            if (!communication || IsBlocking) return;
+            StopSpeech(); scene = null; nextSceneAt = Time.unscaledTime + 8;
+        }
+        public bool PresentStationMemory(int index, bool isReplay = false)
+        {
+            if (index < 0 || index >= StationCatalog.MemoryCount || IsBlocking || suspended
+                || (isReplay ? index >= app.Game.StationMemories : index != app.Game.PendingStationMemory)) return false;
+            hud.ClosePanels(); hud.SelectTab(5);
+            Play("station_" + index, -10 - index, isReplay);
+            return true;
+        }
         public bool Replay(int index)
         {
             if (IsBlocking || suspended || !app.Game.CanReplayNarrative(index)) return false;
@@ -153,7 +166,7 @@ namespace ReactorDeCaos
             backdropFit.aspectRatio = backdrop.texture.width / (float)backdrop.texture.height;
             NextButton.interactable = !beat.interactive;
             action.text = beatIndex == scene.beats.Length - 1
-                ? (!replay && chapter == 4 ? "ELEGIR SINTONÍA" : !replay && chapter == 5 ? "REVISAR ASCENSIÓN" : hud.SelectedTab == 4 ? "VOLVER AL ARCHIVO" : "CONTINUAR MISIÓN") : "CONTINUAR";
+                ? (chapter <= -10 ? "VOLVER A ORFEO" : !replay && chapter == 4 ? "ELEGIR SINTONÍA" : !replay && chapter == 5 ? "REVISAR ASCENSIÓN" : hud.SelectedTab == 4 ? "VOLVER AL ARCHIVO" : "CONTINUAR MISIÓN") : "CONTINUAR";
             status.text = beat.interactive ? (replay ? "TOCA PARA REPETIR EL ENCENDIDO" : "TOCA EL NÚCLEO PARA ENCENDERLO")
                 : (replay ? "REPETICIÓN" : "TRANSMISIÓN") + " · " + (beatIndex + 1) + " / " + scene.beats.Length;
             StartSpeech(beat);
@@ -202,6 +215,7 @@ namespace ReactorDeCaos
             if (committed && !replay && !skipped && chapter == 4)
             { hud.SelectTab(4); hud.Story.ShowChapter(4); hud.Story.FocusChoice(); }
             else if (committed && !replay && chapter == 5) hud.SelectTab(3);
+            else if (committed && chapter <= -10) hud.SelectTab(5);
         }
         public void Notify(int kind)
         {
@@ -267,6 +281,10 @@ namespace ReactorDeCaos
             }
             if (app.Game.CampaignMissionReady && !hud.Menu.IsOpen && !hud.ModulePanel.IsOpen)
             { PresentMission(); return; }
+            if (app.Game.PendingStationMemory >= 0 && Time.unscaledTime >= nextSceneAt
+                && !hud.Menu.IsOpen && !hud.ModulePanel.IsOpen && (hud.SelectedTab == 0 || hud.SelectedTab == 5)
+                && !app.Game.Overload.Active)
+            { PresentStationMemory(app.Game.PendingStationMemory); return; }
             if (!CanPresent || Time.unscaledTime < nextSceneAt) return;
             if (app.Game.RebirthCount > 0 && !app.Game.NarrativeAscentSeen && suppressedChapter != StoryCatalog.Count)
             { AfterRebirth(); return; }

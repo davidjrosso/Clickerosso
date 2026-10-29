@@ -794,6 +794,79 @@ namespace ReactorDeCaos.Tests
         }
 
         [UnityTest]
+        public IEnumerator StationRoomsExpeditionAndMaraArcWorkInTheRealHud()
+        {
+            Object.Destroy(Object.FindFirstObjectByType<ReactorApp>().gameObject); yield return null;
+            var disk = new SaveStore(path, new UnityJsonCodec());
+            Assert.That(disk.Save(GameplayCheckpoint(1000000, 5)), Is.True);
+            yield return SceneManager.LoadSceneAsync("Main", LoadSceneMode.Single); yield return null;
+            var app = Object.FindFirstObjectByType<ReactorApp>();
+            app.Hud.NavigationButtons[4].onClick.Invoke();
+            Assert.That(app.Hud.SelectedTab, Is.EqualTo(5));
+            Canvas.ForceUpdateCanvases();
+            var archive = app.Hud.Station.ArchiveButton;
+            var center = archive.transform.TransformPoint(((RectTransform)archive.transform).rect.center);
+            var hits = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(new PointerEventData(EventSystem.current) { position = center }, hits);
+            Assert.That(hits[0].gameObject, Is.EqualTo(archive.gameObject));
+            int objects = app.GetComponentsInChildren<Transform>(true).Length;
+            app.Hud.Station.RoomButtons[0].onClick.Invoke();
+            app.Hud.Station.RoomButtons[0].onClick.Invoke();
+            Assert.That(app.Game.RestoredRooms, Is.EqualTo(1));
+            Assert.That(app.Narrative.SceneId, Is.EqualTo("station_0"));
+            yield return FinishScene(app); yield return null;
+            app.Hud.Station.ExpeditionButton.onClick.Invoke();
+            app.Hud.Station.ExpeditionButton.onClick.Invoke();
+            Assert.That(app.Game.ExpeditionActive, Is.True);
+            app.Game.Advance(181); yield return null;
+            app.Hud.Station.ExpeditionButton.onClick.Invoke();
+            app.Hud.Station.ExpeditionButton.onClick.Invoke();
+            Assert.That(app.Game.ExpeditionClaims, Is.EqualTo(1));
+            Assert.That(app.Narrative.SceneId, Is.EqualTo("station_1"));
+            yield return FinishScene(app); yield return null;
+            app.Hud.Station.RoomButtons[1].onClick.Invoke();
+            yield return FinishScene(app); yield return null;
+            app.Hud.Station.RoomButtons[2].onClick.Invoke();
+            yield return FinishScene(app);
+            Assert.That(app.Game.RestoredRooms, Is.EqualTo(3));
+            Assert.That(app.Game.StationMemories, Is.EqualTo(4));
+            Assert.That(Label(app, "StationMemory").text, Does.Contain("Historia completada"));
+            Assert.That(new GameEngine(disk.Load()).StationMemories, Is.EqualTo(4));
+            Assert.That(app.Narrative.PresentStationMemory(3, true), Is.True);
+            app.Narrative.Skip();
+            Assert.That(app.Game.ExpeditionClaims, Is.EqualTo(1));
+            Assert.That(app.Game.RestoredRooms, Is.EqualTo(3));
+            for (int i = 0; i < 100; i++) app.Hud.Station.Refresh();
+            Assert.That(app.GetComponentsInChildren<Transform>(true).Length, Is.EqualTo(objects));
+            Assert.That(app.GetComponentInChildren<StationVistaGraphic>(true).GetComponent<CanvasRenderer>(), Is.Not.Null);
+            LogAssert.NoUnexpectedReceived();
+        }
+
+        [UnityTest]
+        public IEnumerator ReturningPlayerSeesProductionReportAndClaimCannotDuplicate()
+        {
+            Object.Destroy(Object.FindFirstObjectByType<ReactorApp>().gameObject); yield return null;
+            var disk = new SaveStore(path, new UnityJsonCodec());
+            var seed = new GameEngine(GameplayCheckpoint(10000, 2));
+            seed.TryCheckpointStation(System.DateTimeOffset.UtcNow.ToUnixTimeSeconds() - 3600, disk.Save);
+            yield return SceneManager.LoadSceneAsync("Main", LoadSceneMode.Single); yield return null; yield return null;
+            var app = Object.FindFirstObjectByType<ReactorApp>();
+            Assert.That(app.Hud.Station.IsOpen, Is.True);
+            Assert.That(app.Game.PendingOfflineEnergy, Is.GreaterThanOrEqualTo(seed.BaseProduction * 3600));
+            Assert.That(app.Game.Energy, Is.LessThan(10010), "Income is staged for claiming.");
+            double balance = app.Game.Energy, reward = app.Game.PendingOfflineEnergy;
+            app.Hud.Station.OfflineButton.onClick.Invoke();
+            app.Hud.Station.OfflineButton.onClick.Invoke();
+            Assert.That(app.Game.Energy, Is.EqualTo(balance + reward).Within(.00001));
+            Assert.That(app.Game.PendingOfflineEnergy, Is.Zero);
+            Assert.That(new GameEngine(disk.Load()).PendingOfflineEnergy, Is.Zero);
+            app.Hud.Station.ArchiveButton.onClick.Invoke();
+            Assert.That(app.Hud.Story.IsOpen, Is.True);
+            app.Hud.Back(); Assert.That(app.Hud.SelectedTab, Is.Zero);
+            LogAssert.NoUnexpectedReceived();
+        }
+
+        [UnityTest]
         public IEnumerator PauseStopsInputAndProductionAndResumeRestoresBoth()
         {
             var app = Object.FindFirstObjectByType<ReactorApp>();

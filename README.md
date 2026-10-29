@@ -9,13 +9,18 @@ interactivo de NARA; después se encadenan seis misiones, sus escenas y sus tecn
 El objetivo inicial es recuperar la estación y encontrar a Mara. Acumular energía no
 saltea misiones ni habilita una ascensión antes del cierre del arco.
 
-Esta revisión empieza una partida nueva en `reactor-campaign-1.json`.
-Los guardados anteriores quedan aparte y no se importan, tal como se autorizó.
-La campaña se conserva después de ascender.
+La expansión actual **conserva tu campaña** en `reactor-campaign-1.json` y agrega
+los datos de la estación. Los guardados anteriores a la campaña (`reactor-save.json`)
+siguen separados. La campaña y las salas restauradas se conservan después de ascender.
+
+**Orfeo vive:** invernadero, enfermería y observatorio recuperables; expedición de tres
+minutos; producción durante la ausencia hasta ocho horas y recompensas reclamables
+sin caducidad. Mara tiene una historia de cuatro escenas con cierre propio.
+[Contenido, fórmulas y cómo probar](Docs/STATION.md).
 
 Guía completa y recorrido de prueba: [Docs/CAMPAIGN.md](Docs/CAMPAIGN.md).
-**150 pruebas .NET aprobadas**, compilación de seis ensamblados contra las API de Unity,
-tres recorridos completos simulados y 54 ciclos económicos simulados.
+**167 pruebas .NET aprobadas**, compilación de seis ensamblados contra las API de Unity,
+tres campañas, dos recorridos de la estación con regreso y 54 ciclos económicos simulados.
 La ejecución nativa del Editor sigue bloqueada por falta de licencia; no se afirma
 validación visual, sonora o Android. Las voces españolas continúan siendo provisionales.
 
@@ -35,7 +40,8 @@ validación visual, sonora o Android. Las voces españolas continúan siendo pro
    indica qué hacer y permite **Restaurar soporte vital** cuando todo esté preparado.
 6. Completa las misiones para habilitar combo, plasma/sobrecarga, turbina cuántica
    y núcleo auxiliar, en ese orden. **Archivo** permite consultar la misión y repetir
-   escenas ya vividas. **Logros** aparece después del soporte vital. **Ascender** se
+   escenas ya vividas. Al recuperar el soporte vital, la pestaña del Archivo pasa a **Orfeo**:
+   desde allí restaura salas, envía el dron y abre el **Archivo**. **Logros** aparece después del soporte vital. **Ascender** se
    presenta al preparar la memoria; exige la última misión y 1 M E producidas en el ciclo.
    Revisa y confirma los efectos antes de reiniciar las instalaciones.
 7. En **AJUSTES**, arriba a la derecha, configura música y efectos por separado, destellos,
@@ -44,7 +50,11 @@ validación visual, sonora o Android. Las voces españolas continúan siendo pro
 
 Se usa entrada táctil/ratón mediante uGUI. El guardado está en
 `Application.persistentDataPath/reactor-campaign-1.json`, con copia `.bak`.
-No se otorgan recompensas por tiempo desconectado.
+Al volver se reserva hasta ocho horas de producción base de los generadores para
+reclamar en **Orfeo**. La sobrecarga y el combo no se aplican durante la ausencia.
+Las ausencias cortas también cuentan; los cambios de foco menores a un minuto no
+abren automáticamente el informe. La primera carga tras actualizar fija el reloj,
+sin inventar ingresos por tiempo anterior a esta función.
 
 Selecciona `Assets/ReactorDeCaos/Resources/Economy.asset` para editar en el
 Inspector la potencia, curva de combo, sobrecarga y los catálogos `upgrades`,

@@ -14,7 +14,11 @@
   replayable presentation, original sprites and provisional local speech. First-time dialogue
   can advance manually or automatically, but cannot skip ignition or the mission sequence.
   Replays never grant income or a second rebirth. Keep voice separate from SFX.
-- No ads, real-money purchases, accounts, servers or offline rewards.
+- Authorized living-station expansion (2026-10-29): three permanent rooms, one bounded
+  three-minute expedition, Mara's four-scene garden arc, and claimable absence production.
+  Absence uses saved base production (no combo/overload), capped at eight hours per absence;
+  claims do not expire and commit before feedback. Preserve campaign-1 saves and station on rebirth.
+- No ads, real-money purchases, accounts or servers.
 - User explicitly authorized a clean campaign start on 2026-10-23. Runtime uses
   reactor-campaign-1.json; do not import reactor-save.json or catch up campaign by energy.
   Legacy core fixtures remain for economic regression only. Commit mission consequences

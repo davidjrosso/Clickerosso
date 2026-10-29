@@ -97,6 +97,16 @@ for name,w,h,top,bottom in profiles:
     banner=(0,0,story[2]*.95-48*scale,420*scale)
     controls['replayChapter']=rect(banner,anchors('StoryPanel.cs','ReplayChapter'))
     controls['replayIntro']=(0,0,story[2]*.95,180*scale)
+    station=rect(safe,anchors('StationPanel.cs','StationPage'))
+    controls['stationArchive']=rect(station,anchors('StationPanel.cs','StationArchive'))
+    controls['archiveStation']=rect(story,anchors('StoryPanel.cs','ArchiveStation'))
+    stationview=rect(station,anchors('StationPanel.cs','StationViewport'))
+    assert not overlap(controls['stationArchive'],stationview)
+    assert not overlap(controls['archiveStation'],rect(story,anchors('StoryPanel.cs','StoryViewport')))
+    assert 'preferredHeight = 180' in (runtime/'StationPanel.cs').read_text()
+    for key in ['offlineClaim','expeditionAction','restoreRoom','memoryContinue','memoryReplay']:
+        controls[key]=(0,0,stationview[2]-40*scale,180*scale)
+    for button in nav: assert not overlap(button,stationview)
     small={key:[round(b[2],2),round(b[3],2)] for key,b in controls.items() if min(b[2:]) < 48-0.01}
     assert not small,(name,small)
     header=[rect(safe,anchors('ReactorHud.cs',key)) for key in ['Brand','Unit','Energy','Rate','Stage','Settings']]
