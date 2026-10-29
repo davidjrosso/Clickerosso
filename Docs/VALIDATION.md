@@ -1,5 +1,20 @@
 # Evidencia de validación — 2026-10-20
 
+## Voces latinoamericanas — 2026-10-29
+
+- Identificados 62 WAV de eSpeak NG, cargados por NarrativeDirector desde Resources.
+- Preparado flujo local Qwen3-TTS: cuatro identidades sintéticas, dirección de actuación,
+  modelos fijados por revisión, generación offline, instalación separada y manifiesto.
+- `Tools/test-neural-voices.py`: **4 pruebas aprobadas**. Incluyen IDs inseguros/duplicados,
+  silencio, límites de pico y rechazo de textos, hashes, dirección o referencias obsoletas
+  antes de reemplazar cualquier audio del catálogo.
+- Las voces de España de la primera prueba se descartaron tras precisar el acento requerido.
+- No se generó audio con ElevenLabs ni se consultaron claves o saldo privado.
+- No hay SDK .NET instalado en este entorno. Los Editores disponibles no corresponden
+  a la versión fijada 6000.0.85f1; no se ejecutaron Unity, PlayMode ni Android.
+- La revisión sonora de acento e interpretación permanece pendiente hasta disponer de tomas.
+  Ver [VOICES.md](VOICES.md) para reproducción, limitaciones y fuentes.
+
 ## Estado actual: fase 2, progresión y economía
 
 - Catálogo de cuatro familias y tres mejoras; tienda creada desde sus datos.

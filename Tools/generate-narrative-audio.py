@@ -5,6 +5,9 @@ Run with /workspace/toolchains/story-tts/bin/python Tools/generate-narrative-aud
 """
 import array, ctypes, hashlib, json, math, random, sys, wave
 from pathlib import Path
+if '--allow-placeholder' not in sys.argv:
+ raise SystemExit('Legacy robotic voices disabled. Use generate-cinematic-voices.py; to explicitly restore placeholders pass --allow-placeholder.')
+sys.argv.remove('--allow-placeholder')
 import espeakng_loader
 root=Path(__file__).resolve().parents[1]
 output=root/'Assets/ReactorDeCaos/Resources/Audio/Voice';output.mkdir(parents=True,exist_ok=True)

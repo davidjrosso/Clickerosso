@@ -23,3 +23,6 @@ Tests/obj/
 *.jks
 *.ulf
 .DS_Store
+__pycache__/
+/.voice-env/
+/.voice-models/
