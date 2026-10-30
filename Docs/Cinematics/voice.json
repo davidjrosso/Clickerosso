@@ -1,503 +1,1638 @@
 {
-  "engine": "eSpeak NG via espeakng-loader 0.2.4",
-  "neuralVoice": false,
+  "engine": "Qwen3-TTS VoiceDesign 1.7B + Base 0.6B (local CUDA)",
+  "neuralVoice": true,
   "sampleRate": 22050,
+  "models": {
+    "design": [
+      "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+      "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+    ],
+    "base": [
+      "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+      "5d83992436eae1d760afd27aff78a71d676296fc"
+    ]
+  },
+  "accentDirection": "Latin American Spanish, neutral Mexican pronunciation, seseo, no Castilian accent",
   "clips": [
     {
       "id": "intro_0",
       "speaker": "NARA",
       "text": "¿Puedes oírme? Soy Nara. Estás en Orfeo. El soporte vital se está apagando. Necesito que me ayudes a recuperar la estación.",
-      "seconds": 8.422,
+      "character": "nara",
+      "seed": 2363901807,
+      "batch": [
+        "intro_0",
+        "intro_1",
+        "intro_2",
+        "intro_3"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "15ac5f4c6a8fefb8919c6b2e7d546a6fdee1f813c0bdcbce308fd17534d95ae5",
+      "seconds": 9.6,
       "peak": 0.4883,
-      "sha256": "1d5171b61f7aab7885026c529e9c8bb54ca664df03ea0dd6c97f34b500a5f9f7"
+      "sha256": "85adc294912f5db466be8f52041acb212041b92e722ee7a30ee22572d1d65347"
     },
     {
       "id": "intro_1",
       "speaker": "TÚ",
       "text": "No recuerdo cómo llegué. ¿Dónde están los demás?",
-      "seconds": 3.12,
+      "character": "core",
+      "seed": 2363901807,
+      "batch": [
+        "intro_0",
+        "intro_1",
+        "intro_2",
+        "intro_3"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "45237f52bd5ff5079e8de9b97b64c20e52486864070104383d32dcda3fe380ab",
+      "seconds": 3.76,
       "peak": 0.4883,
-      "sha256": "2acdd1640701afca3b6e8fb47c0bf818b2fe650c455ce4c67d9fc43fe5ffa5b9"
+      "sha256": "6464231de0f5ea73a5d4f413b8e23dd8e71640a4e98b10bbba7471ab22045f90"
     },
     {
       "id": "intro_2",
       "speaker": "NARA",
       "text": "Primero, la luz. Frente a ti hay un reactor. Toca su núcleo; yo estabilizaré el encendido.",
-      "seconds": 6.175,
-      "peak": 0.4883,
-      "sha256": "6a4c7d710e09d097b241b946b86a7f5c0cc0dd8c93003fbb7736341b9391fc0e"
+      "character": "nara",
+      "seed": 2363901807,
+      "batch": [
+        "intro_0",
+        "intro_1",
+        "intro_2",
+        "intro_3"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "15ac5f4c6a8fefb8919c6b2e7d546a6fdee1f813c0bdcbce308fd17534d95ae5",
+      "seconds": 7.6,
+      "peak": 0.4471,
+      "sha256": "bb19d76a0ea1bc6ac1b6f0f294412cdaabcc0459613287d595dd6356d66d878b"
     },
     {
       "id": "intro_3",
       "speaker": "NARA",
       "text": "Una chispa. Ahora instala Potencia y un microgenerador en Mejoras. Reuniremos cien unidades para devolver el aire a la estación.",
-      "seconds": 7.571,
-      "peak": 0.4883,
-      "sha256": "8f84d5f2f5ad6a6d9fc4c5d12ab400612b4dd487ab45198956dd389673bae50b"
+      "character": "nara",
+      "seed": 2363901807,
+      "batch": [
+        "intro_0",
+        "intro_1",
+        "intro_2",
+        "intro_3"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "15ac5f4c6a8fefb8919c6b2e7d546a6fdee1f813c0bdcbce308fd17534d95ae5",
+      "seconds": 9.04,
+      "peak": 0.4517,
+      "sha256": "5bc0bbca1703eb07c49e694801de7a91605a6bc032d2cad8948043dfe76541d5"
     },
     {
       "id": "intro_4",
       "speaker": "NARA",
       "text": "Hay una transmisión muy débil entre los conductos. Si alguien sigue aquí, necesita que restauremos primero el soporte vital.",
-      "seconds": 7.33,
-      "peak": 0.4319,
-      "sha256": "9fa930d097932fb6f789331931518ce9184e02d3335e21f49bfd38c601df4f87"
+      "character": "nara",
+      "seed": 2553399720,
+      "batch": [
+        "intro_4",
+        "chapter_0_0"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "15ac5f4c6a8fefb8919c6b2e7d546a6fdee1f813c0bdcbce308fd17534d95ae5",
+      "seconds": 8.16,
+      "peak": 0.4338,
+      "sha256": "681892ef33e3b5e925049838a044fc23bdaf5ef5964cda494fdb17ac680602df"
     },
     {
       "id": "chapter_0_0",
       "speaker": "NARA",
       "text": "El aire vuelve a circular. Ya no dependemos de la reserva. Buen trabajo.",
-      "seconds": 4.771,
-      "peak": 0.4835,
-      "sha256": "6592505215e72c95afe34dcbda0408f65fb53ccf7c39cf6e13c2c8cb84c685a8"
+      "character": "nara",
+      "seed": 2553399720,
+      "batch": [
+        "intro_4",
+        "chapter_0_0"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "15ac5f4c6a8fefb8919c6b2e7d546a6fdee1f813c0bdcbce308fd17534d95ae5",
+      "seconds": 5.76,
+      "peak": 0.4222,
+      "sha256": "87d8675bf221797ac272bdc022e012937b914716c1dbf348699078015a0d6d74"
     },
     {
       "id": "chapter_0_1",
       "speaker": "MARA",
       "text": "¿Me oyen? Me llamo Mara. Las luces se encendieron. Estoy detrás de una puerta roja. Por favor, no corten la señal.",
-      "seconds": 7.797,
-      "peak": 0.4883,
-      "sha256": "6674366026aca49a05edce8b4998209e5a107d7931c83eb7eb218df47bb1abb0"
+      "character": "mara",
+      "seed": 459027280,
+      "batch": [
+        "chapter_0_1",
+        "chapter_0_2"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "b51c8cd365656ecb2df887cf4949b2add90749d025f6b095c2d89f7138434b5a",
+      "seconds": 9.52,
+      "peak": 0.4204,
+      "sha256": "0ffe190be472d827bae206a12353f605ee10d03234f32acd2015e33aac106a82"
     },
     {
       "id": "chapter_0_2",
       "speaker": "TÚ",
       "text": "Voy a encontrarte. Dime cómo llegar.",
-      "seconds": 2.336,
+      "character": "core",
+      "seed": 459027280,
+      "batch": [
+        "chapter_0_1",
+        "chapter_0_2"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "45237f52bd5ff5079e8de9b97b64c20e52486864070104383d32dcda3fe380ab",
+      "seconds": 3.12,
       "peak": 0.4883,
-      "sha256": "b21252eea15bc478dcafdabe87b61d5dc839b763e01d17e3a2abae3a51ab5914"
+      "sha256": "1fe8e879ef39e6e5267d65e90a0fa1ad240ab529aa854fd65811cf8b5c872b32"
     },
     {
       "id": "chapter_0_3",
       "speaker": "NARA",
       "text": "Activé la sincronía. Un combo de uno y medio o cinco unidades por segundo reconstruirán la señal. Reúne mil unidades y localizaremos a Mara.",
-      "seconds": 8.803,
-      "peak": 0.4883,
-      "sha256": "bf14d760e55b8eac21aa7c7afe3b4a73c2eb7ff3c86ecb3da0ec1d9e5232d33d"
+      "character": "nara",
+      "seed": 3542595345,
+      "batch": [
+        "resume_1_0",
+        "chapter_0_3"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "15ac5f4c6a8fefb8919c6b2e7d546a6fdee1f813c0bdcbce308fd17534d95ae5",
+      "seconds": 10.0,
+      "peak": 0.4758,
+      "sha256": "168ae32223aea29f0f4fcbddcc404d6f5d4d6c5447c50824fce3dacf10090f0b"
     },
     {
       "id": "chapter_1_0",
       "speaker": "MARA",
       "text": "Te reconozco. Siempre decías: una chispa basta. ¿De verdad no te acuerdas de mí?",
-      "seconds": 5.323,
-      "peak": 0.4883,
-      "sha256": "2894125f468893eac4b213cf36a3a9474a065b34b11a921b27088b355c889fb4"
+      "character": "mara",
+      "seed": 3001486747,
+      "take": 1,
+      "batch": [
+        "chapter_1_0"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "b51c8cd365656ecb2df887cf4949b2add90749d025f6b095c2d89f7138434b5a",
+      "seconds": 8.4,
+      "peak": 0.2445,
+      "sha256": "dc165a26682eed6a16ab834dd6e2b4718547c2fd4d462e09f1430c8b52a4ae85"
     },
     {
       "id": "chapter_1_1",
       "speaker": "NARA",
       "text": "La señal viene del sector rojo. Lleva años vacío, pero el reloj de esa consola sigue contando. Hay algo que no te he contado.",
-      "seconds": 7.908,
-      "peak": 0.4883,
-      "sha256": "c77b095132b4400029888ce2ce673ee5254202f23e82250ab52dc12dbec3fe89"
+      "character": "nara",
+      "seed": 3886822533,
+      "batch": [
+        "resume_4_0",
+        "chapter_1_1"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "15ac5f4c6a8fefb8919c6b2e7d546a6fdee1f813c0bdcbce308fd17534d95ae5",
+      "seconds": 9.04,
+      "peak": 0.4252,
+      "sha256": "8f2afe7c1c355049509b8bb0540a9e69ea21be738cd4e5b00a2697cd6b22d8f3"
     },
     {
       "id": "chapter_1_2",
       "speaker": "TÚ",
       "text": "Si puede oírnos, no la voy a abandonar.",
-      "seconds": 2.349,
+      "character": "core",
+      "seed": 112134886,
+      "batch": [
+        "chapter_1_2",
+        "station_1_2"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "45237f52bd5ff5079e8de9b97b64c20e52486864070104383d32dcda3fe380ab",
+      "seconds": 3.36,
       "peak": 0.4883,
-      "sha256": "cd3121627c55e1926fa38c687d0bff23f8f6a128b0f0dd833e4dba4e7887e44b"
+      "sha256": "0448a1333f927591a8126cf0898ddd33389b8ce4ccd9f597443458fd398389b4"
     },
     {
       "id": "chapter_1_3",
       "speaker": "NARA",
       "text": "Recuperé plasma y sobrecarga. Instala una bobina y activa una sobrecarga para romper el sello. Con cinco mil unidades podremos abrir la puerta.",
-      "seconds": 8.843,
-      "peak": 0.4176,
-      "sha256": "dc2135e5d734418ff64faf0d3137d4948967bf00293c505a05347b63802f50b8"
+      "character": "nara",
+      "seed": 1376524302,
+      "batch": [
+        "chapter_1_3",
+        "resume_5_0"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "15ac5f4c6a8fefb8919c6b2e7d546a6fdee1f813c0bdcbce308fd17534d95ae5",
+      "seconds": 9.84,
+      "peak": 0.4759,
+      "sha256": "7a4209fa4be7e35f4b91224495369f59d01594e9760023e8cfeabc7d00751585"
     },
     {
       "id": "chapter_2_0",
       "speaker": "NARA",
       "text": "Cierre alimentado. Retirando el sello. Quédate detrás del campo de protección.",
-      "seconds": 5.261,
-      "peak": 0.475,
-      "sha256": "0b76d9ae7191c75fceac3ed63b1ca1ff5e827b388e17e0108a61d14b9236e1a3"
+      "character": "nara",
+      "seed": 2010283258,
+      "take": 2,
+      "batch": [
+        "chapter_2_0"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "15ac5f4c6a8fefb8919c6b2e7d546a6fdee1f813c0bdcbce308fd17534d95ae5",
+      "seconds": 6.8,
+      "peak": 0.3812,
+      "sha256": "0e41d138f78cc803117b310f80d3197ab7094d66200ff5cbc1ad320b1e50e0bb"
     },
     {
       "id": "chapter_2_1",
       "speaker": "MARA",
       "text": "Te veo. Pero la puerta de mi habitación sigue cerrada. ¿Por qué no puedo tocarte?",
-      "seconds": 4.847,
-      "peak": 0.4883,
-      "sha256": "6f7dd1ba00d4107d1f6851a34842d77109bcf646bfd33da84c58221222020f83"
+      "character": "mara",
+      "seed": 104413379,
+      "batch": [
+        "chapter_1_0",
+        "chapter_2_1"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "b51c8cd365656ecb2df887cf4949b2add90749d025f6b095c2d89f7138434b5a",
+      "seconds": 5.92,
+      "peak": 0.3876,
+      "sha256": "15d2127c42a4e5b798bc08bbabb9417eeb3c60401a91b199b605ebc5c5894bff"
     },
     {
       "id": "chapter_2_2",
       "speaker": "TÚ",
       "text": "Aquí no hay nadie. Solo una consola conectada al núcleo.",
-      "seconds": 3.559,
+      "character": "core",
+      "seed": 2375635444,
+      "batch": [
+        "ascent_0",
+        "chapter_2_2"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "45237f52bd5ff5079e8de9b97b64c20e52486864070104383d32dcda3fe380ab",
+      "seconds": 4.4,
       "peak": 0.4883,
-      "sha256": "64374732966f37c5361179f62cb727e3d6d079a971f7402217ac3259127064a1"
+      "sha256": "54417499d7f38d9fa1214973e343ceba3769c9325cccbb1caa43be8b49dc343a"
     },
     {
       "id": "chapter_2_3",
       "speaker": "NÚCLEO",
       "text": "No estamos intentando salir. Estamos intentando recordar.",
-      "seconds": 4.328,
+      "character": "memory",
+      "seed": 3723972676,
+      "batch": [
+        "chapter_2_3",
+        "overload_0"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "23dd6f3ba9aebf1b68d19ec6da27ccf808073b846c29c0935457a4a8982c5980",
+      "seconds": 4.8,
       "peak": 0.4883,
-      "sha256": "b2a5a86e37d07173d22ed65cc7b43a6f16807288728db38f99eb1e1d8c7513f1"
+      "sha256": "540213d5a081000cfc7483d35779a04d566d4fab3181d70b5f6c160cc0a8f661"
     },
     {
       "id": "chapter_2_4",
       "speaker": "NARA",
       "text": "La consola guarda una caja negra. Recuperé la turbina cuántica. Instálala y reúne veinticinco mil unidades para leer el registro.",
-      "seconds": 8.114,
+      "character": "nara",
+      "seed": 1243270734,
+      "take": 1,
+      "batch": [
+        "chapter_2_4"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "15ac5f4c6a8fefb8919c6b2e7d546a6fdee1f813c0bdcbce308fd17534d95ae5",
+      "seconds": 8.96,
       "peak": 0.4883,
-      "sha256": "b3361655f7648d8d76604dd0fa17100d9ddf6dad508cdba0c3835ea7fe16a7d5"
+      "sha256": "c7708d8783fd6429e0d9e0ba2427724e773ee08ec36d94421de57b40bbb46e4f"
     },
     {
       "id": "chapter_3_0",
       "speaker": "NARA",
       "text": "Ninguna nave salió de Orfeo. La tripulación transfirió sus recuerdos al reactor para sobrevivir al colapso.",
-      "seconds": 6.567,
-      "peak": 0.4839,
-      "sha256": "31555790a30667e185eb55ad42a34156795dfe2ae9944f746839c13543a0269a"
+      "character": "nara",
+      "seed": 15739720,
+      "take": 1,
+      "batch": [
+        "chapter_3_0"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "15ac5f4c6a8fefb8919c6b2e7d546a6fdee1f813c0bdcbce308fd17534d95ae5",
+      "seconds": 8.24,
+      "peak": 0.4883,
+      "sha256": "4ba4baa30b28537f24eab901e5555dcd07ef7e9da075bcdd39f146246cd85c97"
     },
     {
       "id": "chapter_3_1",
       "speaker": "MARA",
       "text": "Ya recuerdo la puerta. Yo la cerré desde dentro. Nos quedamos para que tú pudieras terminar la transferencia.",
-      "seconds": 6.373,
+      "character": "mara",
+      "seed": 1700457199,
+      "batch": [
+        "station_3_3",
+        "chapter_3_1"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "b51c8cd365656ecb2df887cf4949b2add90749d025f6b095c2d89f7138434b5a",
+      "seconds": 7.12,
       "peak": 0.4883,
-      "sha256": "bcdbadf0e6beb3f6c8cc41be7271f424dd8629459ed55d60390f2fcb3de32364"
+      "sha256": "6b1d3396b8302fc85b9bc98bfe14d462557a674478881eba43601bfc55955fc1"
     },
     {
       "id": "chapter_3_2",
       "speaker": "TÚ",
       "text": "No hay una habitación donde rescatarte. Pero sigues aquí. No voy a dejar que tu voz se apague.",
-      "seconds": 5.738,
+      "character": "core",
+      "seed": 2869553555,
+      "batch": [
+        "ascent_4",
+        "chapter_3_2"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "45237f52bd5ff5079e8de9b97b64c20e52486864070104383d32dcda3fe380ab",
+      "seconds": 6.56,
       "peak": 0.4883,
-      "sha256": "b58429e66b528f4a5886241f75c8127f462dcb88f12d60c37135317322f9a030"
+      "sha256": "264e886cfbd72fef50f49f07d58bf643b3b06ea0cdc7a2322dfd915a56327c7e"
     },
     {
       "id": "chapter_3_3",
       "speaker": "NARA",
       "text": "Yo dirigí la transferencia. Y después oculté el registro. Instala el núcleo auxiliar; con cien mil unidades podremos estabilizar las memorias.",
-      "seconds": 9.175,
+      "character": "nara",
+      "seed": 360353224,
+      "batch": [
+        "chapter_3_3",
+        "resume_0_0"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "15ac5f4c6a8fefb8919c6b2e7d546a6fdee1f813c0bdcbce308fd17534d95ae5",
+      "seconds": 9.28,
       "peak": 0.4883,
-      "sha256": "998f08140ce1e9a8b67102a544f6cac6382823915f27bc0a3e0449258253414b"
+      "sha256": "dede19919162d875a6186c5e0d123552d40a72ecf6a357f6af1591503a58ba99"
     },
     {
       "id": "chapter_4_0",
       "speaker": "MARA",
       "text": "Tu nombre está junto al mío. Tú también estabas dentro. El cuerpo que usas es una interfaz de mantenimiento.",
-      "seconds": 6.499,
-      "peak": 0.4883,
-      "sha256": "4f21cd64d486b5b37ba85124463552d0f396a13c41f5630649f676618283b7c5"
+      "character": "mara",
+      "seed": 3087150566,
+      "batch": [
+        "chapter_3_0",
+        "chapter_4_0"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "b51c8cd365656ecb2df887cf4949b2add90749d025f6b095c2d89f7138434b5a",
+      "seconds": 6.88,
+      "peak": 0.3189,
+      "sha256": "aa5930ae814071aef80ff5f55de0c2800875b65be449c8d08627370424141a6b"
     },
     {
       "id": "chapter_4_1",
       "speaker": "NARA",
       "text": "También preservé tu memoria. Ahora elige quién nos guiará: mi protocolo o las voces de la tripulación. Ambos caminos conservan a todos.",
-      "seconds": 8.497,
-      "peak": 0.4883,
-      "sha256": "5af18a07a5184621ac7a651095ce1be803cae26cad1cb59f3d0ef38b8a9103c4"
+      "character": "nara",
+      "seed": 3888263310,
+      "batch": [
+        "chapter_4_3",
+        "chapter_4_1"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "15ac5f4c6a8fefb8919c6b2e7d546a6fdee1f813c0bdcbce308fd17534d95ae5",
+      "seconds": 8.48,
+      "peak": 0.3008,
+      "sha256": "930c823bf8c6387129bf34e0fdf5fbe564c4a1e2ad2a9e9dc613e12ce6e12d7c"
     },
     {
       "id": "chapter_4_2",
       "speaker": "NÚCLEO",
       "text": "No necesitamos que nos salves a todos hoy. Necesitamos que nos recuerdes.",
-      "seconds": 5.293,
+      "character": "memory",
+      "seed": 2427813799,
+      "batch": [
+        "station_3_1",
+        "chapter_4_2"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "23dd6f3ba9aebf1b68d19ec6da27ccf808073b846c29c0935457a4a8982c5980",
+      "seconds": 4.48,
       "peak": 0.4883,
-      "sha256": "84582b78932bdf17c72e97a0f832ab89fa895cdd801c61505d68f7d24ed824db"
+      "sha256": "cd519380a2b4ad82b9aafcba76e4394f6afeb5f5f663343136ca3ffb466cfeb2"
     },
     {
       "id": "chapter_4_3",
       "speaker": "NARA",
       "text": "Elige la sintonía en el archivo. Luego reúne un millón de unidades y preservaremos los recuerdos antes de reconstruir el reactor.",
-      "seconds": 7.676,
-      "peak": 0.4672,
-      "sha256": "20b3536d2f910b9ddc66387b655cdb2f49258de695ae8dded7684ed25c1690d2"
+      "character": "nara",
+      "seed": 3888263310,
+      "batch": [
+        "chapter_4_3",
+        "chapter_4_1"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "15ac5f4c6a8fefb8919c6b2e7d546a6fdee1f813c0bdcbce308fd17534d95ae5",
+      "seconds": 9.68,
+      "peak": 0.4883,
+      "sha256": "6b2705cbad6dbe924fac40fb463e109ec3941e0c656cedbfaddb3a11aaa0595f"
     },
     {
       "id": "chapter_5_0",
       "speaker": "NARA",
       "text": "La copia está completa. Encontré tu mensaje: si despierto otra vez, no me ocultes la verdad. Esta vez viajará contigo.",
-      "seconds": 7.959,
-      "peak": 0.4883,
-      "sha256": "20310f2c36095ef5d53816f0ea9106d9bb754d159be37cf9e652105a75017a34"
+      "character": "nara",
+      "seed": 3756800976,
+      "batch": [
+        "chapter_5_0",
+        "buy_0"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "15ac5f4c6a8fefb8919c6b2e7d546a6fdee1f813c0bdcbce308fd17534d95ae5",
+      "seconds": 9.36,
+      "peak": 0.4698,
+      "sha256": "a34d3eaa87e05cd590d33e2c3191e08d46f5ca48bf61adfc86292326a69b6b93"
     },
     {
       "id": "chapter_5_1",
       "speaker": "MARA",
       "text": "No perderemos lo vivido. Los recuerdos y los planos están a salvo. Solo tendremos que reconstruir las máquinas.",
-      "seconds": 6.621,
-      "peak": 0.4883,
-      "sha256": "a8abdc36ba57c1c8a4b1da88d0a3e11e25d87bba333e929230b89660c1ec8bbb"
+      "character": "mara",
+      "seed": 898987262,
+      "batch": [
+        "chapter_5_1",
+        "station_0_2"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "b51c8cd365656ecb2df887cf4949b2add90749d025f6b095c2d89f7138434b5a",
+      "seconds": 8.32,
+      "peak": 0.4316,
+      "sha256": "872a21e3821e41fd6200a03be9dd341bfc5c5266854fde0b204a73c74beed38a"
     },
     {
       "id": "chapter_5_2",
       "speaker": "NARA",
       "text": "La ascensión reconstruye el reactor. Antes de decidir, revisa qué se reinicia y qué conservas en Ascender.",
-      "seconds": 6.793,
-      "peak": 0.474,
-      "sha256": "c4d5048eafc93e332b0d2d43488752a451a262359610bffebffeea5e30f755bf"
+      "character": "nara",
+      "seed": 1577774887,
+      "take": 1,
+      "batch": [
+        "chapter_5_2"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "15ac5f4c6a8fefb8919c6b2e7d546a6fdee1f813c0bdcbce308fd17534d95ae5",
+      "seconds": 7.68,
+      "peak": 0.4883,
+      "sha256": "477182f1ffcb710ccb89fd40725b9665f4973bbe4d6fe288e3e2b8b63632ce5c"
     },
     {
       "id": "chapter_5_3",
       "speaker": "TÚ",
       "text": "No voy a olvidarlos. Cuando estemos listos, encenderemos la estación una vez más.",
-      "seconds": 5.128,
+      "character": "core",
+      "seed": 2921526915,
+      "batch": [
+        "chapter_5_3",
+        "cycle_0"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "45237f52bd5ff5079e8de9b97b64c20e52486864070104383d32dcda3fe380ab",
+      "seconds": 5.84,
       "peak": 0.4883,
-      "sha256": "3735705f0e5ae3b462e0a235fc264c9fe8a57e0329fdb29de11fd6d4d058da06"
+      "sha256": "5653888ea1f2358294ef987d8d79e42dd88cf69ce5c903ee3bae089934b3df53"
     },
     {
       "id": "ascent_0",
       "speaker": "NARA",
       "text": "Memorias a salvo. Cerrando el ciclo. Tres... dos... uno.",
-      "seconds": 4.27,
+      "character": "nara",
+      "seed": 2375635444,
+      "batch": [
+        "ascent_0",
+        "chapter_2_2"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "15ac5f4c6a8fefb8919c6b2e7d546a6fdee1f813c0bdcbce308fd17534d95ae5",
+      "seconds": 6.96,
       "peak": 0.4883,
-      "sha256": "54dfbb6d0b09d2078043d12f82f0a59ad8fd8fa8eeb7a7a067a2516353bff1ba"
+      "sha256": "5144a2fc7c7fb094cc4b22cfd2a21a5468b91366fc0e1c0e7d796e5b8b4e3311"
     },
     {
       "id": "ascent_1",
       "speaker": "MARA",
       "text": "Si todo se apaga, sigue mi voz. Estoy aquí.",
-      "seconds": 2.869,
-      "peak": 0.4883,
-      "sha256": "5822aedef31ca20d8f22e1c1fcd06377f75a44ebf1e22649ce599d6a78b62198"
+      "character": "mara",
+      "seed": 300636145,
+      "batch": [
+        "ascent_1",
+        "station_0_1"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "b51c8cd365656ecb2df887cf4949b2add90749d025f6b095c2d89f7138434b5a",
+      "seconds": 6.16,
+      "peak": 0.3818,
+      "sha256": "1229fe50d309b8be931cf2e179f92cec1802772e0e38b155c88ac8faa791ab85"
     },
     {
       "id": "ascent_2",
       "speaker": "NARA",
       "text": "¿Puedes oírme? Buenos días, capitán.",
-      "seconds": 2.758,
-      "peak": 0.4658,
-      "sha256": "acd7c37dede27904bcc8535841c80151bae29f93c571917d604af953246d7ade"
+      "character": "nara",
+      "seed": 88130707,
+      "batch": [
+        "ascent_3",
+        "ascent_2"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "15ac5f4c6a8fefb8919c6b2e7d546a6fdee1f813c0bdcbce308fd17534d95ae5",
+      "seconds": 2.96,
+      "peak": 0.3751,
+      "sha256": "cb09f631322e7a27b2c48553f775b7ad4ed21f5245ff472f5fa67d9d75ab6ad2"
     },
     {
       "id": "ascent_3",
       "speaker": "TÚ",
       "text": "Esta vez sí. Y me acuerdo de ti.",
-      "seconds": 2.277,
-      "peak": 0.3776,
-      "sha256": "42eb8b6eaa0315dc30fefe8ea466e706e31b7a0167afbe4eaeeaa09c89453b01"
+      "character": "core",
+      "seed": 88130707,
+      "batch": [
+        "ascent_3",
+        "ascent_2"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "45237f52bd5ff5079e8de9b97b64c20e52486864070104383d32dcda3fe380ab",
+      "seconds": 2.48,
+      "peak": 0.4883,
+      "sha256": "3de131149c5f8b494083d0a0c844925735f0856d52a5d88490fea14b839f3daf"
     },
     {
       "id": "ascent_4",
       "speaker": "NARA",
       "text": "El archivo sobrevivió. Hay una señal fuera de Orfeo. Por primera vez, no procede del reactor.",
-      "seconds": 6.151,
+      "character": "nara",
+      "seed": 4022700326,
+      "take": 1,
+      "batch": [
+        "ascent_4"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "15ac5f4c6a8fefb8919c6b2e7d546a6fdee1f813c0bdcbce308fd17534d95ae5",
+      "seconds": 7.04,
       "peak": 0.4883,
-      "sha256": "2c372b52a849866dbfc07cc33d555a0185b9e52c389875ac761c999683201f9b"
+      "sha256": "8865a6e39054415837c529d788af78acee5e27214e9b922cbab92a85c02b7c98"
     },
     {
       "id": "cycle_0",
       "speaker": "MARA",
       "text": "Te estábamos esperando. Conservamos los recuerdos; ahora reconstruyamos las máquinas.",
-      "seconds": 5.304,
-      "peak": 0.4883,
-      "sha256": "b97dc13bdad6240cfb6f08a0e3d9d87c4c062982141eb3e0ca2791041f61dfb4"
+      "character": "mara",
+      "seed": 2921526915,
+      "batch": [
+        "chapter_5_3",
+        "cycle_0"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "b51c8cd365656ecb2df887cf4949b2add90749d025f6b095c2d89f7138434b5a",
+      "seconds": 6.16,
+      "peak": 0.2955,
+      "sha256": "83ef61b80c679f428c5642c4e66c4bd0580f07cec21f1df12811dc82885b1e70"
     },
     {
       "id": "resume_0_0",
       "speaker": "NARA",
       "text": "Primero el aire. Mejora Potencia e instala un microgenerador. Al producir cien unidades, restaura el soporte vital desde la misión del núcleo.",
-      "seconds": 8.807,
-      "peak": 0.4883,
-      "sha256": "05df53fcdbdc57cf64a2361c2941e06e2fa506a319a93a41a55bc9dd43527488"
+      "character": "nara",
+      "seed": 1202734086,
+      "take": 2,
+      "batch": [
+        "resume_0_0"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "15ac5f4c6a8fefb8919c6b2e7d546a6fdee1f813c0bdcbce308fd17534d95ae5",
+      "seconds": 10.16,
+      "peak": 0.3146,
+      "sha256": "2f70d119585d47f137bd8cbd41fb5f74de04c2e300cb2d9b7d3eb34b27ca49ec"
     },
     {
       "id": "resume_1_0",
       "speaker": "NARA",
       "text": "Mara espera una respuesta. Sincroniza un combo de uno y medio o genera cinco unidades por segundo. Con mil unidades podremos localizarla.",
-      "seconds": 8.586,
-      "peak": 0.4883,
-      "sha256": "07b055461c262d306b7c3df926530d8dd6ae1430fd9ec7575caedf231ff12c2b"
+      "character": "nara",
+      "seed": 3465685438,
+      "take": 2,
+      "batch": [
+        "resume_1_0"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "15ac5f4c6a8fefb8919c6b2e7d546a6fdee1f813c0bdcbce308fd17534d95ae5",
+      "seconds": 9.36,
+      "peak": 0.4752,
+      "sha256": "16e4a4be14b84f4593c8249426ec272c4f58e832c890350d1254bf586d8e6624"
     },
     {
       "id": "resume_2_0",
       "speaker": "NARA",
       "text": "Mara está detrás del sello rojo. Instala plasma y activa una sobrecarga. Con cinco mil unidades, abre la puerta desde la misión.",
-      "seconds": 8.282,
-      "peak": 0.4883,
-      "sha256": "29a9da5caa16d48893933976346c25ce07aeeb6f2c99faacba4d3e7f5564452c"
+      "character": "nara",
+      "seed": 2186274427,
+      "batch": [
+        "resume_2_0",
+        "chapter_2_4"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "15ac5f4c6a8fefb8919c6b2e7d546a6fdee1f813c0bdcbce308fd17534d95ae5",
+      "seconds": 9.52,
+      "peak": 0.4712,
+      "sha256": "a4c137f8ae54fde0e150d298bc2509c19d1836b4f17793d7ad8fea8ed9c50def"
     },
     {
       "id": "resume_3_0",
       "speaker": "NARA",
       "text": "La habitación estaba vacía. Instala la turbina cuántica y produce veinticinco mil unidades para leer la caja negra.",
-      "seconds": 6.836,
-      "peak": 0.4005,
-      "sha256": "9bff5bdb707a89b53738d9fb2c80ba3ccf00d782003b23e35e334350b7999649"
+      "character": "nara",
+      "seed": 2688688304,
+      "batch": [
+        "resume_3_0",
+        "station_2_3"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "15ac5f4c6a8fefb8919c6b2e7d546a6fdee1f813c0bdcbce308fd17534d95ae5",
+      "seconds": 7.52,
+      "peak": 0.4883,
+      "sha256": "3c8083ffe6ba7ae21c421cd40fad8905b8527258b2828e1dc1bd977543019941"
     },
     {
       "id": "resume_4_0",
       "speaker": "NARA",
       "text": "La tripulación vive en el núcleo. Instala el núcleo auxiliar y produce cien mil unidades para estabilizar sus memorias.",
-      "seconds": 7.19,
-      "peak": 0.4883,
-      "sha256": "9e2ef5fab0f88fbfc44e4d2206bd78b7a1c1d80d19e7e337dcd38a7be460f258"
+      "character": "nara",
+      "seed": 3886822533,
+      "batch": [
+        "resume_4_0",
+        "chapter_1_1"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "15ac5f4c6a8fefb8919c6b2e7d546a6fdee1f813c0bdcbce308fd17534d95ae5",
+      "seconds": 6.88,
+      "peak": 0.4675,
+      "sha256": "0291b9aff0dace5f519dcc092fb6c19abb786a6f6707ccaeb26ef81c73191872"
     },
     {
       "id": "resume_5_0",
       "speaker": "NARA",
       "text": "Elige quién guiará el enlace. Después, al producir un millón de unidades, preserva los recuerdos. Esa copia nos permitirá ascender sin olvidar.",
-      "seconds": 9.329,
-      "peak": 0.4832,
-      "sha256": "1dc9939d0a790728f9dc9772652a03860b4d44d5bf2a3c37541ae0bbd9902eb0"
+      "character": "nara",
+      "seed": 1376524302,
+      "batch": [
+        "chapter_1_3",
+        "resume_5_0"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "15ac5f4c6a8fefb8919c6b2e7d546a6fdee1f813c0bdcbce308fd17534d95ae5",
+      "seconds": 11.36,
+      "peak": 0.4581,
+      "sha256": "58035d4b57affc0a8127645ba50dd785f561aae9a38cd0cccdebc87e60b4eadf"
     },
     {
       "id": "resume_6_0",
       "speaker": "NARA",
       "text": "El archivo permanece. Puedes seguir desarrollando Orfeo y revisar la ascensión cuando estés listo.",
-      "seconds": 5.942,
-      "peak": 0.3639,
-      "sha256": "c8db975763debb04c6896c21d9ef297f1b9357c47654205e0e32d241b238e849"
+      "character": "nara",
+      "seed": 889032555,
+      "batch": [
+        "resume_6_0",
+        "station_0_0"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "15ac5f4c6a8fefb8919c6b2e7d546a6fdee1f813c0bdcbce308fd17534d95ae5",
+      "seconds": 5.76,
+      "peak": 0.426,
+      "sha256": "48001f0778239139d4738c874b7962c45ed20e1a2b89f32b56ed0a83a1aa4f9d"
     },
     {
       "id": "buy_0",
       "speaker": "NARA",
       "text": "Microgenerador conectado. Produce sin que mantengas pulsado el núcleo. Esa energía alimentará la recuperación de Orfeo.",
-      "seconds": 7.701,
+      "character": "nara",
+      "seed": 3756800976,
+      "batch": [
+        "chapter_5_0",
+        "buy_0"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "15ac5f4c6a8fefb8919c6b2e7d546a6fdee1f813c0bdcbce308fd17534d95ae5",
+      "seconds": 7.92,
       "peak": 0.4883,
-      "sha256": "bea4d855762f7f2dfcc6c421021de8fa4adec24c8be036586c303a219b77567a"
+      "sha256": "c4bc761d70b0d76a705ac4e5ad694726620ae81569f7eead5b1b90a0e0913721"
     },
     {
       "id": "overload_0",
       "speaker": "MARA",
       "text": "¡Lo sentí! La señal es más clara cuando intensificas el núcleo.",
-      "seconds": 3.908,
-      "peak": 0.4836,
-      "sha256": "11b5b3e0ac77efe217d924b2cbea26468920c330f6de433d9a42d63615a16072"
+      "character": "mara",
+      "seed": 3723972676,
+      "batch": [
+        "chapter_2_3",
+        "overload_0"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "b51c8cd365656ecb2df887cf4949b2add90749d025f6b095c2d89f7138434b5a",
+      "seconds": 6.16,
+      "peak": 0.3679,
+      "sha256": "5c48bad85da4fdcddd146478cf71d80d486e5e890b248e7e057e180343250c4c"
     },
     {
       "id": "combo_0",
       "speaker": "NARA",
       "text": "El núcleo reconoce tu ritmo. Puedes descansar; el enlace no depende de tocar sin parar.",
-      "seconds": 5.788,
-      "peak": 0.4628,
-      "sha256": "331b2af20a2d26f811e859f87924231caf35ac2cafcb6d2f88dd6136e9fcd02d"
+      "character": "nara",
+      "seed": 2187877455,
+      "batch": [
+        "combo_0",
+        "station_2_0"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "15ac5f4c6a8fefb8919c6b2e7d546a6fdee1f813c0bdcbce308fd17534d95ae5",
+      "seconds": 6.64,
+      "peak": 0.4307,
+      "sha256": "720279519fbbd99b60638ae4db94f195ab42c66534be772a9a8dc31939a310cd"
     },
     {
       "id": "station_0_0",
       "speaker": "MARA",
       "text": "Yo cuidaba este invernadero. Decía que una estación también necesitaba algo que no fuera una máquina.",
-      "seconds": 5.799,
-      "peak": 0.4883,
-      "sha256": "92879147dba8e2a26b514a027271b9e30a568a46b550836af9e934b1b9e0ace6"
+      "character": "mara",
+      "seed": 889032555,
+      "batch": [
+        "resume_6_0",
+        "station_0_0"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "b51c8cd365656ecb2df887cf4949b2add90749d025f6b095c2d89f7138434b5a",
+      "seconds": 6.8,
+      "peak": 0.4529,
+      "sha256": "63c0e1f1fb347d09327fbcf70cf846198d6888910ed6d7f58770f3014df2a9c0"
     },
     {
       "id": "station_0_1",
       "speaker": "TÚ",
       "text": "Las luces ya funcionan. Pero las bandejas están vacías.",
-      "seconds": 3.677,
-      "peak": 0.4364,
-      "sha256": "95c590a1a2cc307f04cd0cda1693348fc6ec6960396edfa2c82c8b71d63f58d3"
+      "character": "core",
+      "seed": 300636145,
+      "batch": [
+        "ascent_1",
+        "station_0_1"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "45237f52bd5ff5079e8de9b97b64c20e52486864070104383d32dcda3fe380ab",
+      "seconds": 4.96,
+      "peak": 0.4883,
+      "sha256": "e52eea66a9f8e567935b75c183a7bf0c404b5fd98b14fa11f88461383e15aed7"
     },
     {
       "id": "station_0_2",
       "speaker": "MARA",
       "text": "Guardé una cápsula en el jardín exterior. Una flor que se abre hacia las estrellas. ¿Podemos traerla de vuelta?",
-      "seconds": 6.6,
+      "character": "mara",
+      "seed": 898987262,
+      "batch": [
+        "chapter_5_1",
+        "station_0_2"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "b51c8cd365656ecb2df887cf4949b2add90749d025f6b095c2d89f7138434b5a",
+      "seconds": 6.96,
       "peak": 0.4883,
-      "sha256": "d8d76163e4771350edfb03c1edf5096e502a6a6b9b4da33bfb3b8cc5c3744aae"
+      "sha256": "86fac0acfefc50d85b2d527fa71036ba35bdd8695a950a8b28932128044600ca"
     },
     {
       "id": "station_0_3",
       "speaker": "NARA",
       "text": "La baliza responde. Envía el dron desde Orfeo. Tardará tres minutos; puedes seguir con el reactor mientras viaja.",
-      "seconds": 7.464,
-      "peak": 0.4341,
-      "sha256": "c7d9469fab6fd61cc31af993a94ab33bfcf83ad5ec5f636802a594d2909892ec"
+      "character": "nara",
+      "seed": 703872136,
+      "take": 1,
+      "batch": [
+        "station_0_3"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "15ac5f4c6a8fefb8919c6b2e7d546a6fdee1f813c0bdcbce308fd17534d95ae5",
+      "seconds": 9.04,
+      "peak": 0.4159,
+      "sha256": "2733164e5d2b74ce3f94e049a219e6b41c7458122cf1a94ed54e796b27514b29"
     },
     {
       "id": "station_1_0",
       "speaker": "NARA",
       "text": "El dron regresó. La cápsula sigue sellada. En la etiqueta hay un nombre: Mara.",
-      "seconds": 5.222,
-      "peak": 0.4675,
-      "sha256": "132978d5a4c727d47d6b0aa09736599c6fb65081c2c84c9ff8f8cea0b317b2c8"
+      "character": "nara",
+      "seed": 1601637981,
+      "batch": [
+        "station_1_0",
+        "station_1_1"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "15ac5f4c6a8fefb8919c6b2e7d546a6fdee1f813c0bdcbce308fd17534d95ae5",
+      "seconds": 6.56,
+      "peak": 0.4475,
+      "sha256": "327448c08b69bf2b93c9006484b03e548164a9a09ebeb5d8f6c26e7126b4081c"
     },
     {
       "id": "station_1_1",
       "speaker": "MARA",
       "text": "Pensé que ya no quedaría nada mío ahí fuera. Es pequeña, pero sigue esperando.",
-      "seconds": 4.515,
-      "peak": 0.4883,
-      "sha256": "e7ba80e4974543427d2835cfbcec68bda85ee61157a15c2b433599fab38f1e48"
+      "character": "mara",
+      "seed": 1601637981,
+      "batch": [
+        "station_1_0",
+        "station_1_1"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "b51c8cd365656ecb2df887cf4949b2add90749d025f6b095c2d89f7138434b5a",
+      "seconds": 5.84,
+      "peak": 0.2369,
+      "sha256": "29a062a89ca0ab07ccd9c042f81d03382aa6b872b3915890fb89c1c739576d2e"
     },
     {
       "id": "station_1_2",
       "speaker": "TÚ",
       "text": "Entonces le vamos a encontrar un lugar.",
-      "seconds": 2.217,
-      "peak": 0.4274,
-      "sha256": "ff09a1b4618f526534b71837fe0a32a90b21660ea93305581d5a3eb400951f7c"
+      "character": "core",
+      "seed": 112134886,
+      "batch": [
+        "chapter_1_2",
+        "station_1_2"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "45237f52bd5ff5079e8de9b97b64c20e52486864070104383d32dcda3fe380ab",
+      "seconds": 2.4,
+      "peak": 0.4883,
+      "sha256": "cd07613ff0086253ef872081471dbf22c1cd7da0ff0130956efa1fd97938ff98"
     },
     {
       "id": "station_1_3",
       "speaker": "NARA",
       "text": "La enfermería del sector rojo tiene un equipo de conservación. Restaura esa sala para reparar la cubierta.",
-      "seconds": 6.416,
+      "character": "nara",
+      "seed": 1600256687,
+      "batch": [
+        "chapter_5_2",
+        "station_1_3"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "15ac5f4c6a8fefb8919c6b2e7d546a6fdee1f813c0bdcbce308fd17534d95ae5",
+      "seconds": 7.36,
       "peak": 0.4883,
-      "sha256": "40373e6c795101647d8a10587dde55078ed9f8ea5f7e5512f632d8ef771cc465"
+      "sha256": "e9a1e05a3e6bfa15f34a8b1322ddaf62a6c78b3dd3229628cfeeb1651ff92bab"
     },
     {
       "id": "station_2_0",
       "speaker": "NARA",
       "text": "La enfermería está en línea. La semilla conserva actividad; la cápsula vuelve a protegerla.",
-      "seconds": 5.752,
-      "peak": 0.4841,
-      "sha256": "def0127558078763d828a6723fc4874f16309ff042e6f187698b1538dd8268dc"
+      "character": "nara",
+      "seed": 2187877455,
+      "batch": [
+        "combo_0",
+        "station_2_0"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "15ac5f4c6a8fefb8919c6b2e7d546a6fdee1f813c0bdcbce308fd17534d95ae5",
+      "seconds": 6.24,
+      "peak": 0.4883,
+      "sha256": "ca9bb30f78c2260047dc4e9ca66df9f5d7b1aec26f891cc495c322d2c00f9569"
     },
     {
       "id": "station_2_1",
       "speaker": "MARA",
       "text": "No la plantes todavía. Le prometí un cielo, no otra lámpara. El observatorio podía seguir la estrella de mi casa.",
-      "seconds": 6.715,
+      "character": "mara",
+      "seed": 1172884888,
+      "batch": [
+        "station_0_3",
+        "station_2_1"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "b51c8cd365656ecb2df887cf4949b2add90749d025f6b095c2d89f7138434b5a",
+      "seconds": 7.52,
       "peak": 0.4883,
-      "sha256": "633a89e5caa92abb37815eb338d9d8f0f9d674f596d4bef5ef6a1a6598890626"
+      "sha256": "3c91a25410e75d19d8b16b9a06d398d0d590454cb7bde13eb934d41364ade1ce"
     },
     {
       "id": "station_2_2",
       "speaker": "TÚ",
       "text": "Voy a encenderlo. Esta vez no estamos reparando algo solo para sobrevivir.",
-      "seconds": 4.46,
+      "character": "core",
+      "seed": 3242321381,
+      "batch": [
+        "station_2_2",
+        "chapter_2_0"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "45237f52bd5ff5079e8de9b97b64c20e52486864070104383d32dcda3fe380ab",
+      "seconds": 4.88,
       "peak": 0.4883,
-      "sha256": "27a494b2d47f17c534252b8b95efc24f661d96b7681c29856b57577b4957d83f"
+      "sha256": "33852c810aeab925585864f4121d68f5ebb1d64235e1aed34f5f6d56a61ce0e0"
     },
     {
       "id": "station_2_3",
       "speaker": "NARA",
       "text": "Necesitamos las coordenadas de la caja negra y el observatorio restaurado para orientar los espejos hacia el jardín.",
-      "seconds": 6.665,
-      "peak": 0.4883,
-      "sha256": "1a02e7ee83c2045eb80067f4825b81fba18046a64010d9586af3699fd304120e"
+      "character": "nara",
+      "seed": 2688688304,
+      "batch": [
+        "resume_3_0",
+        "station_2_3"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "15ac5f4c6a8fefb8919c6b2e7d546a6fdee1f813c0bdcbce308fd17534d95ae5",
+      "seconds": 12.16,
+      "peak": 0.3617,
+      "sha256": "8e7aeef19415d9826bd3bd4ce7e977e64143b9e5e92fb400511a9b2a76d52d14"
     },
     {
       "id": "station_3_0",
       "speaker": "NARA",
       "text": "Espejos alineados. La luz de tu estrella llega al invernadero, Mara.",
-      "seconds": 4.298,
-      "peak": 0.3956,
-      "sha256": "3c97231abc157c7028a1fb6ea8be88c5c3c03e1d645a73d102b08bb8b997ecf5"
+      "character": "nara",
+      "seed": 807823129,
+      "batch": [
+        "station_3_2",
+        "station_3_0"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "15ac5f4c6a8fefb8919c6b2e7d546a6fdee1f813c0bdcbce308fd17534d95ae5",
+      "seconds": 6.16,
+      "peak": 0.3017,
+      "sha256": "8bc4c56d67cb982b7626a1ded33c95e464bdc2ac239d61e3c7403ede3fcff4bb"
     },
     {
       "id": "station_3_1",
       "speaker": "MARA",
       "text": "Se abrió. Después de todo este tiempo... todavía sabía cómo hacerlo.",
-      "seconds": 4.221,
-      "peak": 0.4883,
-      "sha256": "ac8a2ec0d00d14b14220bc449f177b9f278f1564cdae5ce974e0b33f13721a88"
+      "character": "mara",
+      "seed": 2427813799,
+      "batch": [
+        "station_3_1",
+        "chapter_4_2"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "b51c8cd365656ecb2df887cf4949b2add90749d025f6b095c2d89f7138434b5a",
+      "seconds": 6.96,
+      "peak": 0.354,
+      "sha256": "a664c67f21b23263488ca8b079931e05b2d17552417a0136dffa53c8b82a9d1f"
     },
     {
       "id": "station_3_2",
       "speaker": "TÚ",
       "text": "La cuidaremos. Aunque tengamos que reconstruir el reactor otra vez.",
-      "seconds": 4.095,
+      "character": "core",
+      "seed": 807823129,
+      "batch": [
+        "station_3_2",
+        "station_3_0"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "45237f52bd5ff5079e8de9b97b64c20e52486864070104383d32dcda3fe380ab",
+      "seconds": 4.96,
       "peak": 0.4883,
-      "sha256": "4458ca9ee39ce4a819827bdfb8ca9136ac275d1e8847c36c1564eddd9c20c7f1"
+      "sha256": "02394abc323bb05af1a0ca15086ec238fa6535ed0412866878f1ad4ce2f1fbb3"
     },
     {
       "id": "station_3_3",
       "speaker": "MARA",
       "text": "Entonces ya tengo un lugar al que volver. Gracias por no tratar mis recuerdos como otra pieza de la máquina.",
-      "seconds": 6.051,
-      "peak": 0.4883,
-      "sha256": "6d2a89d2e8a34261bacd79030dd611f1e023171a87c5eb0bdec0159db580c522"
+      "character": "mara",
+      "seed": 1700457199,
+      "batch": [
+        "station_3_3",
+        "chapter_3_1"
+      ],
+      "models": {
+        "design": [
+          "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+          "5ecdb67327fd37bb2e042aab12ff7391903235d3"
+        ],
+        "base": [
+          "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+          "5d83992436eae1d760afd27aff78a71d676296fc"
+        ]
+      },
+      "directionSha256": "1153a46f9b6cd66625319268f376f3e60c988fa47028c16049f79781f6f19ce8",
+      "referenceSha256": "b51c8cd365656ecb2df887cf4949b2add90749d025f6b095c2d89f7138434b5a",
+      "seconds": 6.8,
+      "peak": 0.416,
+      "sha256": "178ebf1d6958fa0af4a9e3346c65b836b636fc8350db2230b8f59d13bd15b249"
     }
   ]
 }

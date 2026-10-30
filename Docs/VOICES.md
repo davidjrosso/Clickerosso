@@ -5,6 +5,8 @@ sintéticas originales y **Qwen3-TTS Base 0.6B** para mantener cada identidad en
 los 62 diálogos. La dirección pide español latinoamericano con pronunciación
 mexicana y actuación cinematográfica contenida. El cumplimiento del acento y
 la interpretación requieren escuchar las muestras; no se deducen de un prompt.
+El usuario aprobó la muestra de NARA con este estilo; queda pendiente escuchar
+el catálogo completo dentro del juego.
 
 `Tools/voice-direction.json` define NARA (serena, urgente), Mara (cálida,
 vulnerable), protagonista (desorientado, decidido) y memoria (grave, compasiva).
@@ -40,8 +42,10 @@ Instalación y descarga requieren red;
 las otras fases fuerzan modo offline. Los modelos se fijan por revisión y quedan
 fuera de Assets y Git. `render --only intro_0` permite preparar una muestra.
 El render se puede reanudar: comprueba texto, dirección, referencia y hash antes
-de reutilizar clips. Para repetir una toma, borrar su WAV de `rendered/`.
-La opción `--batch-size 1` reduce la memoria necesaria; el valor predeterminado es 4.
+de reutilizar clips. Para repetir una toma, usar `render --only chapter_1_0 --take 1`
+(además de `--work-dir`); incrementar el número para otra interpretación.
+Las tomas cercanas al límite de generación se rechazan para evitar audio truncado.
+La opción `--batch-size 1` reduce la memoria necesaria; el valor predeterminado es 2.
 Las semillas se guardan por lote; cambiar los lotes puede cambiar la toma resultante.
 La instalación exige que estén todas las líneas del catálogo y que sus textos,
 dirección y referencias coincidan. Cerrar Unity durante la instalación de WAVs.
@@ -89,6 +93,11 @@ la aplicación. El audio representa los textos originales del proyecto.
   https://help.elevenlabs.io/hc/en-us/articles/13313274666769-Do-I-use-quota-on-every-generation
 
 ## Escucha y validación nativa pendientes
+
+Los 62 WAV entregados suman 7 min 19 s y pasan la auditoría de formato y manifiesto.
+La transcripción local señala `chapter_2_0`, `resume_0_0` y `resume_1_0` para revisar
+dicción y números; su coincidencia automática es menor a 0,85. Las otras 59 superan
+ese umbral. Esto no equivale a una aprobación auditiva de cada toma.
 
 En Unity 6000.0.85f1, abrir Main y reproducir despertar, escenas de Mara y memoria.
 Comprobar pronunciación de NARA/Orfeo, balance con música, avance automático al final,

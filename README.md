@@ -22,8 +22,10 @@ Guía completa y recorrido de prueba: [Docs/CAMPAIGN.md](Docs/CAMPAIGN.md).
 **167 pruebas .NET aprobadas**, compilación de seis ensamblados contra las API de Unity,
 tres campañas, dos recorridos de la estación con regreso y 54 ciclos económicos simulados.
 La ejecución nativa del Editor sigue bloqueada por falta de licencia; no se afirma
-validación visual, sonora o Android. Se prepara un flujo de voces cinematográficas latinoamericanas con Qwen3-TTS
-local, sin consumir créditos; la escucha en Unity/Android sigue pendiente.
+validación visual, sonora o Android. Los 62 diálogos incluyen voces neuronales con
+dirección cinematográfica latinoamericana, generadas localmente con Qwen3-TTS sin
+consumir créditos. El estilo de la muestra de NARA fue aprobado; la escucha completa
+y la mezcla en Unity/Android siguen pendientes.
 [Generación, atribución y límites de ElevenLabs](Docs/VOICES.md).
 
 ## Abrir y jugar

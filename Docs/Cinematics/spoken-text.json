@@ -1,0 +1,439 @@
+{
+  "method": "Whisper base local CPU; heuristic text screening, not an accent or acting evaluation",
+  "clips": [
+    {
+      "id": "intro_0",
+      "expected": "¿Puedes oírme? Soy Nara. Estás en Orfeo. El soporte vital se está apagando. Necesito que me ayudes a recuperar la estación.",
+      "transcribed": "Puedes oírme, soy Nara, estás en orfeo, el suported vital se está apacando, necesito que me ayudes a recuperar la estación.",
+      "wordSequenceSimilarity": 0.905,
+      "review": false
+    },
+    {
+      "id": "intro_1",
+      "expected": "No recuerdo cómo llegué. ¿Dónde están los demás?",
+      "transcribed": "No recuerdo cómo llegué, donde están los demás.",
+      "wordSequenceSimilarity": 1.0,
+      "review": false
+    },
+    {
+      "id": "intro_2",
+      "expected": "Primero, la luz. Frente a ti hay un reactor. Toca su núcleo; yo estabilizaré el encendido.",
+      "transcribed": "Primero, la luz, frente a ti hay un reactor, toca su núcleo, yo estabilizaré el encendido.",
+      "wordSequenceSimilarity": 1.0,
+      "review": false
+    },
+    {
+      "id": "intro_3",
+      "expected": "Una chispa. Ahora instala Potencia y un microgenerador en Mejoras. Reuniremos cien unidades para devolver el aire a la estación.",
+      "transcribed": "Una chispa. Ahora insta la potencia y un micrógenerador en mejoras. Reuniremos 100 unidades para devolver el aire a la estación.",
+      "wordSequenceSimilarity": 0.878,
+      "review": false
+    },
+    {
+      "id": "intro_4",
+      "expected": "Hay una transmisión muy débil entre los conductos. Si alguien sigue aquí, necesita que restauremos primero el soporte vital.",
+      "transcribed": "Hay una transmisión muy débil entre los conductos, si alguien sigue aquí, necesite que restauremos primero el soporte vital.",
+      "wordSequenceSimilarity": 0.947,
+      "review": false
+    },
+    {
+      "id": "chapter_0_0",
+      "expected": "El aire vuelve a circular. Ya no dependemos de la reserva. Buen trabajo.",
+      "transcribed": "El aire vuelve a circular, ya no dependemos de la reserva, buen trabajo.",
+      "wordSequenceSimilarity": 1.0,
+      "review": false
+    },
+    {
+      "id": "chapter_0_1",
+      "expected": "¿Me oyen? Me llamo Mara. Las luces se encendieron. Estoy detrás de una puerta roja. Por favor, no corten la señal.",
+      "transcribed": "Me oyen, me llamo Mara, las luces se encendieron. Estoy detrás de una puerta roja. Por favor, no cortan la señal.",
+      "wordSequenceSimilarity": 0.952,
+      "review": false
+    },
+    {
+      "id": "chapter_0_2",
+      "expected": "Voy a encontrarte. Dime cómo llegar.",
+      "transcribed": "Voy a encontrarte. Dime cómo llegar.",
+      "wordSequenceSimilarity": 1.0,
+      "review": false
+    },
+    {
+      "id": "chapter_0_3",
+      "expected": "Activé la sincronía. Un combo de uno y medio o cinco unidades por segundo reconstruirán la señal. Reúne mil unidades y localizaremos a Mara.",
+      "transcribed": "Activé la sincronía, un combo de uno y medio o cinco unidades por segundo reconstruirán la señal, re une mil unidades y localizaremos a Mara.",
+      "wordSequenceSimilarity": 0.939,
+      "review": false
+    },
+    {
+      "id": "chapter_1_0",
+      "expected": "Te reconozco. Siempre decías: una chispa basta. ¿De verdad no te acuerdas de mí?",
+      "transcribed": "Te reconozco, siempre decías una chispa vasta. ¿De verdad no te acuerdas de mí?",
+      "wordSequenceSimilarity": 0.929,
+      "review": false
+    },
+    {
+      "id": "chapter_1_1",
+      "expected": "La señal viene del sector rojo. Lleva años vacío, pero el reloj de esa consola sigue contando. Hay algo que no te he contado.",
+      "transcribed": "La señal viene del sector rojo, lleva años vacío, pero el reloj de esa consola sigue contando. Hay algo que no te he contado.",
+      "wordSequenceSimilarity": 1.0,
+      "review": false
+    },
+    {
+      "id": "chapter_1_2",
+      "expected": "Si puede oírnos, no la voy a abandonar.",
+      "transcribed": "Si puede oírnos, no la voy a abandonar.",
+      "wordSequenceSimilarity": 1.0,
+      "review": false
+    },
+    {
+      "id": "chapter_1_3",
+      "expected": "Recuperé plasma y sobrecarga. Instala una bobina y activa una sobrecarga para romper el sello. Con cinco mil unidades podremos abrir la puerta.",
+      "transcribed": "Recuperé plasma y sobrecarga, instaba una bobina y activa una sobrecarga para romper el sello. Con 5.000 unidades podremos abrir la puerta.",
+      "wordSequenceSimilarity": 0.87,
+      "review": false
+    },
+    {
+      "id": "chapter_2_0",
+      "expected": "Cierre alimentado. Retirando el sello. Quédate detrás del campo de protección.",
+      "transcribed": "Cierra el alimentado, retirando el selo, quédate detrás del campo de protección.",
+      "wordSequenceSimilarity": 0.783,
+      "review": true
+    },
+    {
+      "id": "chapter_2_1",
+      "expected": "Te veo. Pero la puerta de mi habitación sigue cerrada. ¿Por qué no puedo tocarte?",
+      "transcribed": "Te veo. Pero la puerta de mi habitación sigue cerrada. ¿Por qué no puedo tocarse?",
+      "wordSequenceSimilarity": 0.933,
+      "review": false
+    },
+    {
+      "id": "chapter_2_2",
+      "expected": "Aquí no hay nadie. Solo una consola conectada al núcleo.",
+      "transcribed": "Aquí no hay nadie, solo una consola conectada al núcleo.",
+      "wordSequenceSimilarity": 1.0,
+      "review": false
+    },
+    {
+      "id": "chapter_2_3",
+      "expected": "No estamos intentando salir. Estamos intentando recordar.",
+      "transcribed": "No estamos intentando salir, estamos intentando recordar.",
+      "wordSequenceSimilarity": 1.0,
+      "review": false
+    },
+    {
+      "id": "chapter_2_4",
+      "expected": "La consola guarda una caja negra. Recuperé la turbina cuántica. Instálala y reúne veinticinco mil unidades para leer el registro.",
+      "transcribed": "La consola guarda una caja negra, recupera la turbina cuántica, instalala y reúne 25 mil unidades para leer el registro.",
+      "wordSequenceSimilarity": 0.9,
+      "review": false
+    },
+    {
+      "id": "chapter_3_0",
+      "expected": "Ninguna nave salió de Orfeo. La tripulación transfirió sus recuerdos al reactor para sobrevivir al colapso.",
+      "transcribed": "Ninguna nave salió de orfeo. La tripulación transferió sus recuerdos al reactor para sobrevivir al colapso.",
+      "wordSequenceSimilarity": 0.938,
+      "review": false
+    },
+    {
+      "id": "chapter_3_1",
+      "expected": "Ya recuerdo la puerta. Yo la cerré desde dentro. Nos quedamos para que tú pudieras terminar la transferencia.",
+      "transcribed": "Y ahora recuerda la puerta. Yo la cerré desde dentro. Nos quedamos para que tú pudieras terminar la transferencia.",
+      "wordSequenceSimilarity": 0.865,
+      "review": false
+    },
+    {
+      "id": "chapter_3_2",
+      "expected": "No hay una habitación donde rescatarte. Pero sigues aquí. No voy a dejar que tu voz se apague.",
+      "transcribed": "No hay una habitación donde rescatarte, pero sigues aquí. No voy a dejar que tu voz se apague.",
+      "wordSequenceSimilarity": 1.0,
+      "review": false
+    },
+    {
+      "id": "chapter_3_3",
+      "expected": "Yo dirigí la transferencia. Y después oculté el registro. Instala el núcleo auxiliar; con cien mil unidades podremos estabilizar las memorias.",
+      "transcribed": "Yo dirigí la transferencia y después oculté el registro. Instala el núcleo auxiliar, con 100.000 unidades podremos estabilizar las memorias.",
+      "wordSequenceSimilarity": 0.905,
+      "review": false
+    },
+    {
+      "id": "chapter_4_0",
+      "expected": "Tu nombre está junto al mío. Tú también estabas dentro. El cuerpo que usas es una interfaz de mantenimiento.",
+      "transcribed": "Tu nombre está junto al mío, tu también estabas dentro, el cuerpo que usas es una interfaz de mantenimiento.",
+      "wordSequenceSimilarity": 1.0,
+      "review": false
+    },
+    {
+      "id": "chapter_4_1",
+      "expected": "También preservé tu memoria. Ahora elige quién nos guiará: mi protocolo o las voces de la tripulación. Ambos caminos conservan a todos.",
+      "transcribed": "También preservé tu memoria, ahora elige quien nos guiera y protocolo o las voces de la tripulación. Ambos caminos conservan a todos.",
+      "wordSequenceSimilarity": 0.909,
+      "review": false
+    },
+    {
+      "id": "chapter_4_2",
+      "expected": "No necesitamos que nos salves a todos hoy. Necesitamos que nos recuerdes.",
+      "transcribed": "No necesitamos que nos salves a todos hoy, necesitamos que nos recuerdes.",
+      "wordSequenceSimilarity": 1.0,
+      "review": false
+    },
+    {
+      "id": "chapter_4_3",
+      "expected": "Elige la sintonía en el archivo. Luego reúne un millón de unidades y preservaremos los recuerdos antes de reconstruir el reactor.",
+      "transcribed": "Elige la cintonía en el archivo, luego reúne un millón de unidades y preservaremos los recuerdos antes de reconstruir el reactor.",
+      "wordSequenceSimilarity": 0.952,
+      "review": false
+    },
+    {
+      "id": "chapter_5_0",
+      "expected": "La copia está completa. Encontré tu mensaje: si despierto otra vez, no me ocultes la verdad. Esta vez viajará contigo.",
+      "transcribed": "La copia está completa. Encontré tu mensaje. Si despierto otra vez, no me ocultes la verdad. Esta vez viajará contigo.",
+      "wordSequenceSimilarity": 1.0,
+      "review": false
+    },
+    {
+      "id": "chapter_5_1",
+      "expected": "No perderemos lo vivido. Los recuerdos y los planos están a salvo. Solo tendremos que reconstruir las máquinas.",
+      "transcribed": "No perderemos lo vivido. Los recuerdos y los planos están a salvo. Sólo tendremos que reconstruir las máquinas.",
+      "wordSequenceSimilarity": 1.0,
+      "review": false
+    },
+    {
+      "id": "chapter_5_2",
+      "expected": "La ascensión reconstruye el reactor. Antes de decidir, revisa qué se reinicia y qué conservas en Ascender.",
+      "transcribed": "La ascensión reconstruye el reactor. Antes de decidir, revisa que esa reinicia y que conservas en ascender.",
+      "wordSequenceSimilarity": 0.941,
+      "review": false
+    },
+    {
+      "id": "chapter_5_3",
+      "expected": "No voy a olvidarlos. Cuando estemos listos, encenderemos la estación una vez más.",
+      "transcribed": "No voy a olvidarlos. Cuando estemos listos, encenderemos la estación una vez más.",
+      "wordSequenceSimilarity": 1.0,
+      "review": false
+    },
+    {
+      "id": "ascent_0",
+      "expected": "Memorias a salvo. Cerrando el ciclo. Tres... dos... uno.",
+      "transcribed": "Memorías a salvo, cerrando el ciclo, tres, dos, uno.",
+      "wordSequenceSimilarity": 1.0,
+      "review": false
+    },
+    {
+      "id": "ascent_1",
+      "expected": "Si todo se apaga, sigue mi voz. Estoy aquí.",
+      "transcribed": "Si todo se apaga, sigue en mi voz, estoy aquí.",
+      "wordSequenceSimilarity": 0.947,
+      "review": false
+    },
+    {
+      "id": "ascent_2",
+      "expected": "¿Puedes oírme? Buenos días, capitán.",
+      "transcribed": "¿Puedes oírme? Buenos días, Capitan.",
+      "wordSequenceSimilarity": 1.0,
+      "review": false
+    },
+    {
+      "id": "ascent_3",
+      "expected": "Esta vez sí. Y me acuerdo de ti.",
+      "transcribed": "Esta vez sí, y me acuerdo de ti.",
+      "wordSequenceSimilarity": 1.0,
+      "review": false
+    },
+    {
+      "id": "ascent_4",
+      "expected": "El archivo sobrevivió. Hay una señal fuera de Orfeo. Por primera vez, no procede del reactor.",
+      "transcribed": "El archivo sobrevivió. Hay una señal fuera de orfeo. Por primera vez no procede del rector.",
+      "wordSequenceSimilarity": 0.938,
+      "review": false
+    },
+    {
+      "id": "cycle_0",
+      "expected": "Te estábamos esperando. Conservamos los recuerdos; ahora reconstruyamos las máquinas.",
+      "transcribed": "Te estábamos esperando, conservamos los recuerdos, ahora reconstruyamos las máquinas.",
+      "wordSequenceSimilarity": 1.0,
+      "review": false
+    },
+    {
+      "id": "resume_0_0",
+      "expected": "Primero el aire. Mejora Potencia e instala un microgenerador. Al producir cien unidades, restaura el soporte vital desde la misión del núcleo.",
+      "transcribed": "Primero el aire, mejora potencia e instala un micro generador, a producir 100 unidades, restaura el suporte vital desde la misión del núcleo.",
+      "wordSequenceSimilarity": 0.8,
+      "review": true
+    },
+    {
+      "id": "resume_1_0",
+      "expected": "Mara espera una respuesta. Sincroniza un combo de uno y medio o genera cinco unidades por segundo. Con mil unidades podremos localizarla.",
+      "transcribed": "Mara espera una respuesta. Sin croniza un combo de 1,5 o genera 5 unidades por segundo. Con 1.000 unidades podremos localizarla.",
+      "wordSequenceSimilarity": 0.711,
+      "review": true
+    },
+    {
+      "id": "resume_2_0",
+      "expected": "Mara está detrás del sello rojo. Instala plasma y activa una sobrecarga. Con cinco mil unidades, abre la puerta desde la misión.",
+      "transcribed": "Mar está detrás del sello rojo, instala plasma y activa una sobrecarga, con 5.000 unidades, abre la puerta desde la misión.",
+      "wordSequenceSimilarity": 0.864,
+      "review": false
+    },
+    {
+      "id": "resume_3_0",
+      "expected": "La habitación estaba vacía. Instala la turbina cuántica y produce veinticinco mil unidades para leer la caja negra.",
+      "transcribed": "La habitación estaba vacía, instala la turbina cuántica y produce 25.000 unidades para leer la caja negra.",
+      "wordSequenceSimilarity": 0.889,
+      "review": false
+    },
+    {
+      "id": "resume_4_0",
+      "expected": "La tripulación vive en el núcleo. Instala el núcleo auxiliar y produce cien mil unidades para estabilizar sus memorias.",
+      "transcribed": "La tripulación vive en el núcleo. Instala el núcleo auxiliar y produce 100.000 unidades para estabilizar sus memorias.",
+      "wordSequenceSimilarity": 0.895,
+      "review": false
+    },
+    {
+      "id": "resume_5_0",
+      "expected": "Elige quién guiará el enlace. Después, al producir un millón de unidades, preserva los recuerdos. Esa copia nos permitirá ascender sin olvidar.",
+      "transcribed": "Elige quien guiará el enlace, después al producir un millón de unidades, preserva los recuerdos. Esa copie nos permitirá ascender sin olvidar.",
+      "wordSequenceSimilarity": 0.955,
+      "review": false
+    },
+    {
+      "id": "resume_6_0",
+      "expected": "El archivo permanece. Puedes seguir desarrollando Orfeo y revisar la ascensión cuando estés listo.",
+      "transcribed": "El archivo permanece, puede seguir desarrollando orfeo y revisar la ascensión cuando estés listo.",
+      "wordSequenceSimilarity": 0.929,
+      "review": false
+    },
+    {
+      "id": "buy_0",
+      "expected": "Microgenerador conectado. Produce sin que mantengas pulsado el núcleo. Esa energía alimentará la recuperación de Orfeo.",
+      "transcribed": "Microgenerador conectado, produce sin que mantengas pulsado el núcleo. Esa energía alimentará la recuperación de orfeo.",
+      "wordSequenceSimilarity": 1.0,
+      "review": false
+    },
+    {
+      "id": "overload_0",
+      "expected": "¡Lo sentí! La señal es más clara cuando intensificas el núcleo.",
+      "transcribed": "Lo sentí, la señal es más clara cuando intensificas el núcleo.",
+      "wordSequenceSimilarity": 1.0,
+      "review": false
+    },
+    {
+      "id": "combo_0",
+      "expected": "El núcleo reconoce tu ritmo. Puedes descansar; el enlace no depende de tocar sin parar.",
+      "transcribed": "El núcleo reconoce tu ritmo. Puedes descansar y el enlace no depende de tocar sin parar.",
+      "wordSequenceSimilarity": 0.968,
+      "review": false
+    },
+    {
+      "id": "station_0_0",
+      "expected": "Yo cuidaba este invernadero. Decía que una estación también necesitaba algo que no fuera una máquina.",
+      "transcribed": "Yo cuidaba este invernadero, decía que una estación también necesitaba algo que no fuera una máquina.",
+      "wordSequenceSimilarity": 1.0,
+      "review": false
+    },
+    {
+      "id": "station_0_1",
+      "expected": "Las luces ya funcionan. Pero las bandejas están vacías.",
+      "transcribed": "Las luces ya funcionan, pero las bandejas están vacías.",
+      "wordSequenceSimilarity": 1.0,
+      "review": false
+    },
+    {
+      "id": "station_0_2",
+      "expected": "Guardé una cápsula en el jardín exterior. Una flor que se abre hacia las estrellas. ¿Podemos traerla de vuelta?",
+      "transcribed": "Guardé una cápsula en el jardín exterior, una flor que se abre hacia las estrellas. Podemos traerla de vuelta...",
+      "wordSequenceSimilarity": 1.0,
+      "review": false
+    },
+    {
+      "id": "station_0_3",
+      "expected": "La baliza responde. Envía el dron desde Orfeo. Tardará tres minutos; puedes seguir con el reactor mientras viaja.",
+      "transcribed": "La baliza responde en vía el dron desde orfeo, tardará tres minutos, puede seguir con el reactor mientras viaja.",
+      "wordSequenceSimilarity": 0.865,
+      "review": false
+    },
+    {
+      "id": "station_1_0",
+      "expected": "El dron regresó. La cápsula sigue sellada. En la etiqueta hay un nombre: Mara.",
+      "transcribed": "El drone regresó. La cápsula sigue sellada. En la etiqueta hay un nombre, Mara.",
+      "wordSequenceSimilarity": 0.929,
+      "review": false
+    },
+    {
+      "id": "station_1_1",
+      "expected": "Pensé que ya no quedaría nada mío ahí fuera. Es pequeña, pero sigue esperando.",
+      "transcribed": "Pensé que ya no quedaría nada a mí o ahí fuera. Es pequeña, pero sigue esperando.",
+      "wordSequenceSimilarity": 0.867,
+      "review": false
+    },
+    {
+      "id": "station_1_2",
+      "expected": "Entonces le vamos a encontrar un lugar.",
+      "transcribed": "Entonces, le vamos a encontrar un lugar.",
+      "wordSequenceSimilarity": 1.0,
+      "review": false
+    },
+    {
+      "id": "station_1_3",
+      "expected": "La enfermería del sector rojo tiene un equipo de conservación. Restaura esa sala para reparar la cubierta.",
+      "transcribed": "La enfermería del sector rojo tiene un equipo de conservación. Ristauda es esa sala para reparar la cubierta.",
+      "wordSequenceSimilarity": 0.914,
+      "review": false
+    },
+    {
+      "id": "station_2_0",
+      "expected": "La enfermería está en línea. La semilla conserva actividad; la cápsula vuelve a protegerla.",
+      "transcribed": "La enfermería está en línea, la semilla conserva actividad, la cápsula vuelve a protegerla.",
+      "wordSequenceSimilarity": 1.0,
+      "review": false
+    },
+    {
+      "id": "station_2_1",
+      "expected": "No la plantes todavía. Le prometí un cielo, no otra lámpara. El observatorio podía seguir la estrella de mi casa.",
+      "transcribed": "No la plantes todavía. Le prometí un cielo, no otra lámpara. El observatorio podía seguir la estrella de mi casa.",
+      "wordSequenceSimilarity": 1.0,
+      "review": false
+    },
+    {
+      "id": "station_2_2",
+      "expected": "Voy a encenderlo. Esta vez no estamos reparando algo solo para sobrevivir.",
+      "transcribed": "Voy a encenderlo, esta vez no estamos reparando algo solo para sobrevivir.",
+      "wordSequenceSimilarity": 1.0,
+      "review": false
+    },
+    {
+      "id": "station_2_3",
+      "expected": "Necesitamos las coordenadas de la caja negra y el observatorio restaurado para orientar los espejos hacia el jardín.",
+      "transcribed": "Necesitamos las coordenadas de la caja negra y el observatorio restaurado para orientar los espejos hacia el jardín.",
+      "wordSequenceSimilarity": 1.0,
+      "review": false
+    },
+    {
+      "id": "station_3_0",
+      "expected": "Espejos alineados. La luz de tu estrella llega al invernadero, Mara.",
+      "transcribed": "Espejos alineados, la luz de tu estrella llega al invernadero, Mara.",
+      "wordSequenceSimilarity": 1.0,
+      "review": false
+    },
+    {
+      "id": "station_3_1",
+      "expected": "Se abrió. Después de todo este tiempo... todavía sabía cómo hacerlo.",
+      "transcribed": "Se abrió, después de todo este tiempo, todavía sabía cómo hacerlo.",
+      "wordSequenceSimilarity": 1.0,
+      "review": false
+    },
+    {
+      "id": "station_3_2",
+      "expected": "La cuidaremos. Aunque tengamos que reconstruir el reactor otra vez.",
+      "transcribed": "La cuidaremos, aunque tengamos que reconstruir el reactor otra vez.",
+      "wordSequenceSimilarity": 1.0,
+      "review": false
+    },
+    {
+      "id": "station_3_3",
+      "expected": "Entonces ya tengo un lugar al que volver. Gracias por no tratar mis recuerdos como otra pieza de la máquina.",
+      "transcribed": "Entonces, ya tengo un lugar al que volver. Gracias por no tratar mis recuerdos como otra pieza de la máquina.",
+      "wordSequenceSimilarity": 1.0,
+      "review": false
+    }
+  ]
+}

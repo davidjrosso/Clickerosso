@@ -41,8 +41,11 @@ def main():
     parser.add_argument("phase", choices=["download", "design", "render", "install"])
     parser.add_argument("--work-dir", required=True, type=Path)
     parser.add_argument("--only", help="Render one voice ID for audition; install requires every catalog ID")
-    parser.add_argument("--batch-size", type=int, choices=[1, 2, 3, 4], default=4)
+    parser.add_argument("--take", type=int, help="New deterministic take for --only; bypass its cache")
+    parser.add_argument("--batch-size", type=int, choices=[1, 2, 3, 4], default=2)
     args = parser.parse_args()
+    if args.take is not None and (args.phase != "render" or not args.only or args.take < 0):
+        parser.error("--take requires render --only and a nonnegative number")
     work = args.work_dir.resolve()
     if work.is_relative_to(ROOT / "Assets"):
         parser.error("Working files must be outside Unity Assets")
@@ -128,7 +131,7 @@ def main():
         character = beat["portrait"]
         profile = direction["characters"][character]
         path = stage / (beat["voice"] + ".wav")
-        if path.exists() and path.with_suffix(".json").exists():
+        if args.take is None and path.exists() and path.with_suffix(".json").exists():
             previous = load_json(path.with_suffix(".json"))
             if (previous["text"] == beat["text"] and previous["speaker"] == beat["speaker"]
                     and previous.get("models") == MODELS
@@ -141,27 +144,33 @@ def main():
             prompts[character] = model.create_voice_clone_prompt(
                 ref_audio=str(refs / (character + ".wav")), ref_text=profile["referenceText"])
         pending.append(beat)
+    # Similar text lengths reduce padding work without changing dialogue order in Unity.
+    pending.sort(key=lambda beat: (len(beat["text"]), beat["voice"]))
     for start in range(0, len(pending), args.batch_size):
         batch = pending[start:start + args.batch_size]
         keys = [beat["voice"] for beat in batch]
-        seed = int(hashlib.sha256("|".join(keys).encode()).hexdigest()[:8], 16)
+        seed_key = "|".join(keys)
+        if args.take is not None:
+            seed_key += f"|take:{args.take}"
+        seed = int(hashlib.sha256(seed_key.encode()).hexdigest()[:8], 16)
         torch.manual_seed(seed)
         started = time.monotonic()
         wavs, rate = model.generate_voice_clone(text=[beat["text"] for beat in batch], language="Spanish",
-            voice_clone_prompt=[prompts[beat["portrait"]][0] for beat in batch], max_new_tokens=1500)
+            voice_clone_prompt=[prompts[beat["portrait"]][0] for beat in batch], max_new_tokens=480)
         if len(wavs) != len(batch):
             raise ValueError("Incomplete generated batch")
         for beat, wav in zip(batch, wavs):
             character = beat["portrait"]
             path = stage / (beat["voice"] + ".wav")
             signal = np.asarray(wav)
-            if not np.isfinite(signal).all() or not .1 < len(signal) / rate < 40:
+            if not np.isfinite(signal).all() or not .1 < len(signal) / rate < 38:
                 raise ValueError(f"Invalid speech duration/samples: {beat['voice']}")
             divisor = gcd(rate, 22050)
             signal = resample_poly(signal, 22050 // divisor, rate // divisor)
             sf.write(str(path), signal, 22050, subtype="PCM_16")
             save_json(path.with_suffix(".json"), {"id": beat["voice"], "speaker": beat["speaker"],
-                "text": beat["text"], "character": character, "seed": seed, "batch": keys, "models": MODELS,
+                "text": beat["text"], "character": character, "seed": seed, "take": args.take,
+                "batch": keys, "models": MODELS,
                 "directionSha256": direction_hash, "referenceSha256": pcm.digest(refs / (character + ".wav")),
                 **pcm.finish_pcm(path)})
             print(f"Rendered {beat['voice']}", flush=True)

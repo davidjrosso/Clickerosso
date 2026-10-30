@@ -3,8 +3,18 @@
 ## Voces latinoamericanas — 2026-10-29
 
 - Identificados 62 WAV de eSpeak NG, cargados por NarrativeDirector desde Resources.
-- Preparado flujo local Qwen3-TTS: cuatro identidades sintéticas, dirección de actuación,
-  modelos fijados por revisión, generación offline, instalación separada y manifiesto.
+- Sustituidos los 62 WAV de eSpeak por Qwen3-TTS: cuatro identidades sintéticas,
+  dirección cinematográfica latinoamericana, modelos fijados por revisión,
+  generación offline, instalación separada y manifiesto. Duración total: 438,64 s.
+- `Tools/audit-cinematics.py`: **62 audios y 23 escenas verificados**, manifiesto
+  coincidente, GUIDs únicos, mono PCM16 a 22050 Hz, señal no silenciosa, pico menor
+  que 0,5 y extremos suavizados. Ningún `.meta`, subtítulo o código de juego cambió.
+  Evidencia: `Docs/Cinematics/neural-media.json` y `voice.json`.
+- Transcripción offline de las 62 tomas con Whisper base: 59 alcanzan similitud de
+  palabras >= 0,85. Quedan para escucha `chapter_2_0`, `resume_0_0` y `resume_1_0`;
+  hay diferencias de dicción y representación de números, no diagnósticos automáticos.
+  Se repitieron tomas para corregir una repetición de Mara y mejorar cinco frases de
+  NARA. El informe completo está en `Docs/Cinematics/spoken-text.json`.
 - `Tools/test-neural-voices.py`: **4 pruebas aprobadas**. Incluyen IDs inseguros/duplicados,
   silencio, límites de pico y rechazo de textos, hashes, dirección o referencias obsoletas
   antes de reemplazar cualquier audio del catálogo.
@@ -17,7 +27,8 @@
   frases, con pequeñas diferencias de reconocimiento en nombres/palabras. No es
   una certificación del acento ni de la interpretación.
 - Verificados los pesos oficiales por SHA-256; generación sin acceso a servicios de voz.
-- La revisión humana de acento e interpretación permanece pendiente.
+- El usuario aprobó el acento y estilo de la muestra de NARA («Me sirve este estilo»).
+  La escucha completa de las tomas y la mezcla dentro del juego permanece pendiente.
   Ver [VOICES.md](VOICES.md) para reproducción, limitaciones y fuentes.
 
 ## Estado actual: fase 2, progresión y economía
