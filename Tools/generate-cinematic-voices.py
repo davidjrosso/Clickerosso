@@ -10,12 +10,18 @@ import hashlib
 import importlib.util
 import json
 import os
+import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 MODELS = {
-    "design": ("Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign", "5ecdb67327fd37bb2e042aab12ff7391903235d3"),
-    "base": ("Qwen/Qwen3-TTS-12Hz-0.6B-Base", "5d83992436eae1d760afd27aff78a71d676296fc"),
+    "design": ["Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign", "5ecdb67327fd37bb2e042aab12ff7391903235d3"],
+    "base": ["Qwen/Qwen3-TTS-12Hz-0.6B-Base", "5d83992436eae1d760afd27aff78a71d676296fc"],
+}
+WEIGHT_HASHES = {
+    "design": "391e8db219f292c515297cdceeb43e4eae67cdde35fa57e79a6a8a532fca0522",
+    "base": "180b3b10eb1c9f1b4db7806d5475bae3071c0243c299d49926bab1da3b6946f6",
+    "tokenizer": "836b7b357f5ea43e889936a3709af68dfe3751881acefe4ecf0dbd30ba571258",
 }
 spec = importlib.util.spec_from_file_location("pcm", Path(__file__).with_name("voice-pcm.py"))
 pcm = importlib.util.module_from_spec(spec)
@@ -35,6 +41,7 @@ def main():
     parser.add_argument("phase", choices=["download", "design", "render", "install"])
     parser.add_argument("--work-dir", required=True, type=Path)
     parser.add_argument("--only", help="Render one voice ID for audition; install requires every catalog ID")
+    parser.add_argument("--batch-size", type=int, choices=[1, 2, 3, 4], default=4)
     args = parser.parse_args()
     work = args.work_dir.resolve()
     if work.is_relative_to(ROOT / "Assets"):
@@ -64,6 +71,10 @@ def main():
         for beat in beats:
             path = stage / (beat["voice"] + ".wav")
             row = load_json(path.with_suffix(".json"))
+            if row.get("id") != beat["voice"]:
+                raise ValueError(f"Mismatched voice ID: {beat['voice']}")
+            if row.get("models") != MODELS:
+                raise ValueError(f"Stale model versions: {beat['voice']}")
             if any(row[key] != beat[key] for key in ("text", "speaker")):
                 raise ValueError(f"Stale dialogue: {beat['voice']}")
             if row["sha256"] != pcm.digest(path) or row["directionSha256"] != direction_hash:
@@ -87,8 +98,13 @@ def main():
     from qwen_tts import Qwen3TTSModel
     from scipy.signal import resample_poly
     from math import gcd
-    torch.set_num_threads(4)
+    torch.set_num_threads(1)
     name = "design" if args.phase == "design" else "base"
+    for relative, expected in [("model.safetensors", WEIGHT_HASHES[name]),
+                               ("speech_tokenizer/model.safetensors", WEIGHT_HASHES["tokenizer"])]:
+        with (work / name / relative).open("rb") as stream:
+            if hashlib.file_digest(stream, "sha256").hexdigest() != expected:
+                raise ValueError(f"Model weight checksum mismatch: {name}/{relative}")
     model = Qwen3TTSModel.from_pretrained(str(work / name), device_map="cuda:0",
                                           dtype=torch.bfloat16, attn_implementation="sdpa")
     if args.phase == "design":
@@ -96,6 +112,8 @@ def main():
             torch.manual_seed(profile["seed"])
             wavs, rate = model.generate_voice_design(text=profile["referenceText"], language="Spanish",
                 instruct=profile["direction"], max_new_tokens=1500)
+            if not np.isfinite(wavs[0]).all() or not .1 < len(wavs[0]) / rate < 40:
+                raise ValueError(f"Invalid reference audio: {character}")
             sf.write(str(refs / (character + ".wav")), wavs[0], rate, subtype="PCM_16")
             print(f"Designed {character}", flush=True)
         save_json(refs / "direction.json", direction)
@@ -103,6 +121,7 @@ def main():
     if load_json(refs / "direction.json") != direction:
         raise ValueError("Reference voices do not match current direction; rerun design")
     prompts = {}
+    pending = []
     for beat in beats:
         if args.only and args.only != beat["voice"]:
             continue
@@ -112,6 +131,7 @@ def main():
         if path.exists() and path.with_suffix(".json").exists():
             previous = load_json(path.with_suffix(".json"))
             if (previous["text"] == beat["text"] and previous["speaker"] == beat["speaker"]
+                    and previous.get("models") == MODELS
                     and previous["directionSha256"] == direction_hash
                     and previous["referenceSha256"] == pcm.digest(refs / (character + ".wav"))
                     and previous["sha256"] == pcm.digest(path)):
@@ -120,21 +140,32 @@ def main():
         if character not in prompts:
             prompts[character] = model.create_voice_clone_prompt(
                 ref_audio=str(refs / (character + ".wav")), ref_text=profile["referenceText"])
-        seed = int(hashlib.sha256(beat["voice"].encode()).hexdigest()[:8], 16)
+        pending.append(beat)
+    for start in range(0, len(pending), args.batch_size):
+        batch = pending[start:start + args.batch_size]
+        keys = [beat["voice"] for beat in batch]
+        seed = int(hashlib.sha256("|".join(keys).encode()).hexdigest()[:8], 16)
         torch.manual_seed(seed)
-        wavs, rate = model.generate_voice_clone(text=beat["text"], language="Spanish",
-            voice_clone_prompt=prompts[character], max_new_tokens=1500)
-        signal = np.asarray(wavs[0])
-        if not np.isfinite(signal).all() or not .1 < len(signal) / rate < 40:
-            raise ValueError(f"Invalid speech duration/samples: {beat['voice']}")
-        divisor = gcd(rate, 22050)
-        signal = resample_poly(signal, 22050 // divisor, rate // divisor)
-        sf.write(str(path), signal, 22050, subtype="PCM_16")
-        save_json(path.with_suffix(".json"), {"id": beat["voice"], "speaker": beat["speaker"],
-            "text": beat["text"], "character": character, "seed": seed,
-            "directionSha256": direction_hash, "referenceSha256": pcm.digest(refs / (character + ".wav")),
-            **pcm.finish_pcm(path)})
-        print(f"Rendered {beat['voice']}", flush=True)
+        started = time.monotonic()
+        wavs, rate = model.generate_voice_clone(text=[beat["text"] for beat in batch], language="Spanish",
+            voice_clone_prompt=[prompts[beat["portrait"]][0] for beat in batch], max_new_tokens=1500)
+        if len(wavs) != len(batch):
+            raise ValueError("Incomplete generated batch")
+        for beat, wav in zip(batch, wavs):
+            character = beat["portrait"]
+            path = stage / (beat["voice"] + ".wav")
+            signal = np.asarray(wav)
+            if not np.isfinite(signal).all() or not .1 < len(signal) / rate < 40:
+                raise ValueError(f"Invalid speech duration/samples: {beat['voice']}")
+            divisor = gcd(rate, 22050)
+            signal = resample_poly(signal, 22050 // divisor, rate // divisor)
+            sf.write(str(path), signal, 22050, subtype="PCM_16")
+            save_json(path.with_suffix(".json"), {"id": beat["voice"], "speaker": beat["speaker"],
+                "text": beat["text"], "character": character, "seed": seed, "batch": keys, "models": MODELS,
+                "directionSha256": direction_hash, "referenceSha256": pcm.digest(refs / (character + ".wav")),
+                **pcm.finish_pcm(path)})
+            print(f"Rendered {beat['voice']}", flush=True)
+        print(f"Batch completed in {time.monotonic() - started:.1f}s", flush=True)
 
 
 if __name__ == "__main__":

@@ -25,18 +25,24 @@ python -m venv .voice-env
 .voice-env/Scripts/python -m pip install torch==2.8.0 torchaudio==2.8.0 --index-url https://download.pytorch.org/whl/cu129
 .voice-env/Scripts/python -m pip install -r Tools/requirements-cinematic-voices.txt
 .voice-env/Scripts/python Tools/generate-cinematic-voices.py download --work-dir .voice-models
-.voice-env/Scripts/python Tools/generate-cinematic-voices.py design --work-dir .voice-models
+Copy-Item -Recurse Tools/VoiceReferences .voice-models/references
 .voice-env/Scripts/python Tools/generate-cinematic-voices.py render --work-dir .voice-models
 # Escuchar references/ y rendered/ antes de instalar.
 .voice-env/Scripts/python Tools/generate-cinematic-voices.py install --work-dir .voice-models
 .voice-env/Scripts/python Tools/test-neural-voices.py
 ```
 
-En Linux usar `.voice-env/bin/python`. Instalación y descarga requieren red;
+En Linux usar `.voice-env/bin/python` y `cp -r Tools/VoiceReferences .voice-models/references`.
+Las referencias incluidas conservan los cuatro timbres sintéticos de esta entrega.
+Para diseñar un elenco nuevo, editar `voice-direction.json` y ejecutar la fase `design`
+en lugar de copiar las referencias. Nunca usar grabaciones de personas sin autorización.
+Instalación y descarga requieren red;
 las otras fases fuerzan modo offline. Los modelos se fijan por revisión y quedan
 fuera de Assets y Git. `render --only intro_0` permite preparar una muestra.
 El render se puede reanudar: comprueba texto, dirección, referencia y hash antes
 de reutilizar clips. Para repetir una toma, borrar su WAV de `rendered/`.
+La opción `--batch-size 1` reduce la memoria necesaria; el valor predeterminado es 4.
+Las semillas se guardan por lote; cambiar los lotes puede cambiar la toma resultante.
 La instalación exige que estén todas las líneas del catálogo y que sus textos,
 dirección y referencias coincidan. Cerrar Unity durante la instalación de WAVs.
 
@@ -50,6 +56,11 @@ Auditoría completa: instalar Pillow y ejecutar `python Tools/audit-cinematics.p
 Comprueba catálogo, hashes, formato, señal no silenciosa y extremos suavizados;
 no escucha ni valida la actuación. El generador eSpeak histórico exige ahora
 `--allow-placeholder` para evitar que reemplace voces neuronales por accidente.
+
+Comprobación opcional del guion: instalar `faster-whisper==1.2.1`, descargar el
+modelo `Systran/faster-whisper-base` y ejecutar `Tools/audit-spoken-text.py` con
+`--model-dir`, `--audio-dir` y `--report`. La transcripción se hace offline en CPU;
+las diferencias son pistas para escuchar, no errores confirmados de pronunciación.
 
 ## Procedencia
 

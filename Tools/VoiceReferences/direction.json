@@ -1,0 +1,26 @@
+{
+  "language": "Spanish",
+  "accent": "Latin American Spanish, neutral Mexican pronunciation, seseo, no Castilian accent",
+  "characters": {
+    "nara": {
+      "seed": 128,
+      "referenceText": "¿Puedes oírme? Soy Nara. Estás en Orfeo. El soporte vital se está apagando. Necesito que me ayudes a recuperar la estación.",
+      "direction": "A mature female voice, smooth low mezzo register, precise diction, intimate and reassuring but carrying restrained urgency. A cinematic science-fiction performance: thoughtful pauses, subtle emotional shifts, controlled breathing. Speak natural neutral Latin American Spanish with Mexican pronunciation and seseo, never Castilian Spanish. Human warmth underneath a calm station intelligence. Dry studio dialogue, no music, no sound effects, no announcer delivery."
+    },
+    "mara": {
+      "seed": 256,
+      "referenceText": "¿Me oyen? Me llamo Mara. Las luces se encendieron. Estoy detrás de una puerta roja. Por favor, no corten la señal.",
+      "direction": "A young adult female voice, warm mid-high register, lightly breathy and textured, clearly different from a smooth low female voice. A cinematic dramatic performance with vulnerability, fragile hope and emotional subtext, small hesitations and natural breathing. Speak natural neutral Latin American Spanish with Mexican pronunciation and seseo, never Castilian Spanish. Intimate speech to someone she trusts, restrained fear, no shouting. Dry studio dialogue, no music, no sound effects, no announcer delivery."
+    },
+    "core": {
+      "seed": 512,
+      "referenceText": "No recuerdo cómo llegué. ¿Dónde están los demás? Voy a encontrarte. Dime cómo llegar.",
+      "direction": "An adult male voice, natural midrange baritone, slightly rough, close and grounded. Cinematic dramatic acting: disorientation turning into quiet determination, meaningful pauses and restrained emotion, conversational pacing. Speak natural neutral Latin American Spanish with Mexican pronunciation and seseo, never Castilian Spanish. Dry studio dialogue, no music, no sound effects, no theatrical announcer delivery."
+    },
+    "memory": {
+      "seed": 1024,
+      "referenceText": "No estamos intentando salir. Estamos intentando recordar. No necesitamos que nos salves a todos hoy. Necesitamos que nos recuerdes.",
+      "direction": "An older male voice, deep resonant bass, soft weathered texture, unhurried and intimate. Cinematic science-fiction drama: a haunting recollection, sorrow with dignity and quiet compassion, deliberate meaningful pauses, never booming. Speak natural neutral Latin American Spanish with Mexican pronunciation and seseo, never Castilian Spanish. Dry studio dialogue, no music, no sound effects, no announcer delivery."
+    }
+  }
+}

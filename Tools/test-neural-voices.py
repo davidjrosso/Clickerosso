@@ -75,13 +75,14 @@ class VoiceTests(unittest.TestCase):
                 path = work / "rendered" / (beat["voice"] + ".wav")
                 path.write_bytes(b"generated")
                 row = dict(id=beat["voice"], text=beat["text"], speaker=beat["speaker"],
+                           models=cinema.MODELS,
                            sha256=neural.digest(path), directionSha256=neural.digest(direction),
                            referenceSha256=neural.digest(reference))
                 path.with_suffix(".json").write_text(json.dumps(row), encoding="utf-8")
             second = work / "rendered/second.json"
             valid = second.read_text(encoding="utf-8")
             with patch.object(cinema, "ROOT", root), patch.object(sys, "argv", ["generator", "install", "--work-dir", str(work)]):
-                for field in ("text", "sha256", "directionSha256", "referenceSha256"):
+                for field in ("text", "sha256", "directionSha256", "referenceSha256", "models"):
                     row = json.loads(valid)
                     row[field] = "stale"
                     second.write_text(json.dumps(row), encoding="utf-8")

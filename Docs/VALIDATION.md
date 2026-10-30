@@ -12,7 +12,12 @@
 - No se generó audio con ElevenLabs ni se consultaron claves o saldo privado.
 - No hay SDK .NET instalado en este entorno. Los Editores disponibles no corresponden
   a la versión fijada 6000.0.85f1; no se ejecutaron Unity, PlayMode ni Android.
-- La revisión sonora de acento e interpretación permanece pendiente hasta disponer de tomas.
+- Generadas cuatro referencias originales con Qwen3-TTS VoiceDesign en RTX 4060;
+  guardadas en `Tools/VoiceReferences`. La transcripción local recupera las cuatro
+  frases, con pequeñas diferencias de reconocimiento en nombres/palabras. No es
+  una certificación del acento ni de la interpretación.
+- Verificados los pesos oficiales por SHA-256; generación sin acceso a servicios de voz.
+- La revisión humana de acento e interpretación permanece pendiente.
   Ver [VOICES.md](VOICES.md) para reproducción, limitaciones y fuentes.
 
 ## Estado actual: fase 2, progresión y economía
