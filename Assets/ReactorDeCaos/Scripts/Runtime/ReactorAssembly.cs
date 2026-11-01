@@ -76,6 +76,20 @@ namespace ReactorDeCaos
             var label = hud.Label("ModuleLevel", button.transform, "", 30, Color.white, .01f, -.10f, .99f, .28f);
             modules.Add(new Module { id = id, generator = generator, button = button, icon = icon, frame = frame, label = label, link = link });
         }
+        private static string ModuleName(string id)
+        {
+            switch (id)
+            {
+                case "tap": return "Toque";
+                case "combo": return "Combo";
+                case "overload": return "Carga";
+                case "coil": return "Micro";
+                case "plasma": return "Plasma";
+                case "quantum": return "Cuánt.";
+                case "auxiliary": return "Aux.";
+                default: return id;
+            }
+        }
         public void Install(string id)
         {
             foreach (var module in modules) if (module.id == id) module.installation = 1;
@@ -105,7 +119,7 @@ namespace ReactorDeCaos
                 if (level != module.level || unlocked != module.unlocked)
                 {
                     module.level = level; module.unlocked = unlocked;
-                    module.label.text = !unlocked ? "BLOQUEADO" : level == 0 ? "INSTALAR" : "NV. " + level;
+                    module.label.text = ModuleName(module.id);
                 }
                 module.installation = Mathf.MoveTowards(module.installation, 0, dt * 1.6f);
                 bool running = module.generator ? level > 0 : module.id == "tap" ? level > 0 && tapPulse > 0

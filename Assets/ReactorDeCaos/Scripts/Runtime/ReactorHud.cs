@@ -258,7 +258,7 @@ namespace ReactorDeCaos
                 NavigationButtons[i] = button;
                 var text = Label("NavigationLabel", button.transform, tabNames[i], 24, Color.white, .01f, .06f, .99f, .94f);
                 tabIndicators[i] = Image("SelectedTab", button.transform, Cyan, .08f, .96f, .92f, 1);
-                button.onClick.AddListener(() => SelectTab(tab == 4 && owner.Game.CampaignTabAvailable(5) ? 5 : tab));
+                button.onClick.AddListener(() => SelectTab(tab));
                 if (i == 2) achievementsLabel = text;
                 if (i == 4) storyLabel = text;
                 if (i == 3) { ProgressionButton = button; progressionLabel = text; }
@@ -412,24 +412,11 @@ namespace ReactorDeCaos
             OverloadButton.interactable = game.OverloadAvailable && game.Overload.Ready;
             OverloadButton.gameObject.SetActive(game.OverloadAvailable);
             combo.gameObject.SetActive(game.ComboAvailable);
-            int tabCount = 0;
-            for (int i = 0; i < NavigationButtons.Length; i++) if (game.CampaignTabAvailable(i)) tabCount++;
-            int column = 0;
-            // Stable order, with wider touch targets while the opening has fewer systems.
-            for (int n = 0; n < NavigationButtons.Length; n++)
+            // Slots never move as the campaign unlocks systems.
+            for (int i = 0; i < NavigationButtons.Length; i++)
             {
-                int i = n < 2 ? n : n == 2 ? 4 : n - 1;
-                bool available = game.CampaignTabAvailable(i);
-                NavigationButtons[i].gameObject.SetActive(available);
-                NavigationButtons[i].interactable = available;
-                if (available)
-                {
-                    var rect = (RectTransform)NavigationButtons[i].transform;
-                    float width = .93f / tabCount;
-                    rect.anchorMin = new Vector2(.035f + column * width, .015f);
-                    rect.anchorMax = new Vector2(.035f + (column + 1) * width - .01f, .105f);
-                    column++;
-                }
+                NavigationButtons[i].gameObject.SetActive(true);
+                NavigationButtons[i].interactable = game.CampaignTabAvailable(i);
             }
             for (int i = 0; i < shopRows.Length; i++)
                 shopRows[i].gameObject.SetActive(!game.CampaignActive || game.Unlocked(game.Shop[i].Id));
@@ -446,18 +433,17 @@ namespace ReactorDeCaos
                 lastStage = game.Stage;
                 stage.text = shortStages[Mathf.Clamp(game.Stage, 0, shortStages.Length - 1)];
             }
-            progressionLabel.text = game.CanRebirth ? "Ciclo\nListo" : "Ciclo";
-            achievementsLabel.text = "Logros" + (game.AvailableAchievements > 0 ? "\n" + game.AvailableAchievements : "");
-            storyLabel.text = game.CampaignTabAvailable(5) ? "Orfeo" + (game.ExpeditionReady || game.PendingOfflineEnergy > 0 || game.PendingStationMemory >= 0 ? "\nListo" : "")
-                : "Archivo" + (game.UnreadStory > 0 ? "\nNuevo" : "");
+            progressionLabel.text = !game.CampaignTabAvailable(3) ? "Ciclo\nLuego" : game.CanRebirth ? "Ciclo\nListo" : "Ciclo";
+            achievementsLabel.text = (game.CampaignTabAvailable(2) ? "Logros" : "Logros\nLuego") + (game.AvailableAchievements > 0 ? "\n" + game.AvailableAchievements : "");
+            storyLabel.text = "Archivo" + (game.UnreadStory > 0 ? "\nNuevo" : "");
             ModulePanel.Refresh(); Progression.Refresh(); Achievements.Refresh(); Story.Refresh(); Station.Refresh();
             tapHint.text = game.UnreadStory > 0 ? "NARA · NUEVA TRANSMISIÓN" : "MISIÓN · " + NarrativeMission(game.StoryCompleted);
             milestone.text = game.StoryCompleted == StoryCatalog.Count ? "Archivo recuperado · " + game.StoryRead + " / 6 leídos"
                 : NumberFormat.Compact(game.AllTimeEnergy) + " E · " + (game.StoryProgressFraction(game.CurrentStoryChapter) * 100).ToString("0") + "% · VER OBJETIVO";
             if (game.CampaignActive)
             {
-                tapHint.text = (game.CampaignRequirementsMet ? "LISTO · " : "MISIÓN · ") + game.CampaignAction;
-                milestone.text = game.CampaignHint;
+                tapHint.text = "OBJETIVO · " + game.CampaignAction;
+                milestone.text = game.CampaignHint + "\n→ " + game.CampaignNextAction;
                 StoryButton.image.color = game.CampaignRequirementsMet ? new Color(.035f, .19f, .21f, .97f) : new Color(.035f, .08f, .12f, .94f);
             }
             if (transmission != null) milestone.text = transmission;

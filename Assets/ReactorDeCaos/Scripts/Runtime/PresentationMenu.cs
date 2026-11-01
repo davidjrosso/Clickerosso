@@ -37,10 +37,14 @@ namespace ReactorDeCaos
             viewport.gameObject.AddComponent<RectMask2D>();
             var hit = viewport.gameObject.AddComponent<Image>(); hit.color = new Color(0, 0, 0, .01f);
             var content = ReactorHud.Rect("SettingsContent", viewport, 0, 1, 1, 1);
-            content.pivot = new Vector2(.5f, 1); content.sizeDelta = new Vector2(0, 1978);
+            content.pivot = new Vector2(.5f, 1); content.sizeDelta = new Vector2(0, 2270);
             var scroll = viewport.gameObject.AddComponent<ScrollRect>();
             scroll.viewport = viewport; scroll.content = content; scroll.horizontal = false;
             scroll.movementType = ScrollRect.MovementType.Clamped; scroll.scrollSensitivity = 35;
+            Section(hud, content, "SONIDO", 0);
+            Section(hud, content, "LECTURA", 1198);
+            Section(hud, content, "ACCESIBILIDAD", 1466);
+            float[] optionTops = { 90, 1556, 1732, 1908, 2084, 456, 822, 1288 };
             for (int i = 0; i < Options.Length; i++)
             {
                 int option = i;
@@ -49,15 +53,15 @@ namespace ReactorDeCaos
                     new Color(.06f, .09f, .16f), 0, 1, 1, 1);
                 var rect = (RectTransform)button.transform;
                 rect.pivot = new Vector2(.5f, 1); rect.sizeDelta = new Vector2(0, 164);
-                rect.anchoredPosition = new Vector2(0, -i * 176);
+                rect.anchoredPosition = new Vector2(0, -optionTops[i]);
                 button.navigation = new Navigation { mode = Navigation.Mode.Automatic };
                 button.onClick.AddListener(() => Toggle(option));
                 Options[i] = button;
                 labels[i] = hud.Label("SettingValue", button.transform, "", 29, Color.white, .04f, .05f, .96f, .95f);
             }
-            EffectsVolume = VolumeSlider(hud, content, "EffectsVolume", 1408, out effectsValue);
-            MusicVolume = VolumeSlider(hud, content, "MusicVolume", 1598, out musicValue);
-            VoiceVolume = VolumeSlider(hud, content, "VoiceVolume", 1788, out voiceValue);
+            EffectsVolume = VolumeSlider(hud, content, "EffectsVolume", 266, out effectsValue);
+            MusicVolume = VolumeSlider(hud, content, "MusicVolume", 632, out musicValue);
+            VoiceVolume = VolumeSlider(hud, content, "VoiceVolume", 998, out voiceValue);
             VoiceVolume.onValueChanged.AddListener(value => { settings.voiceVolume = value; settings.PreviewChanges(); Refresh(); });
             EffectsVolume.onValueChanged.AddListener(value => { settings.effectsVolume = value; settings.PreviewChanges(); Refresh(); });
             MusicVolume.onValueChanged.AddListener(value => { settings.musicVolume = value; settings.PreviewChanges(); Refresh(); });
@@ -78,6 +82,14 @@ namespace ReactorDeCaos
             Refresh();
             if (EventSystem.current != null)
                 EventSystem.current.SetSelectedGameObject(value ? close.gameObject : opener.gameObject);
+        }
+
+        private static void Section(ReactorHud hud, Transform parent, string title, float top)
+        {
+            var label = hud.Label("SettingsSection", parent, title, 48, ReactorHud.Cyan, 0, 1, 1, 1);
+            label.rectTransform.pivot = new Vector2(.5f, 1);
+            label.rectTransform.sizeDelta = new Vector2(0, 80);
+            label.rectTransform.anchoredPosition = new Vector2(0, -top);
         }
 
         private static Slider VolumeSlider(ReactorHud hud, Transform parent, string name, float top, out TextMeshProUGUI label)

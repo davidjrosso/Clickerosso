@@ -159,3 +159,11 @@ realmente dieciséis WAV españoles con eSpeak NG local; los 46 WAV anteriores s
 conservaron. Se mantienen las mismas condiciones y limitaciones del sintetizador ya
 documentadas. Manifiesto actualizado: Docs/Cinematics/voice.json. No son voces neurales
 ni se considera final su mezcla. La validación audiovisual en Unity sigue pendiente.
+
+
+## Application icon — 2026-10-31
+- Asset: Assets/ReactorDeCaos/Editor/AppIcon.png.
+- Original image generated with the built-in OpenAI image generation tool for Reactor de Caos. No external image reference or third-party logo used.
+- Prompt: Create a polished square Android launcher app icon for a sci-fi reactor incremental game called Reactor de Caos. No text, letters, numbers, border, or mockup. A single striking circular cyan energy reactor core inside a dark graphite mechanical ring, with restrained violet secondary energy arcs and three bold radial metal braces. Frontal symmetric silhouette, luminous central cyan orb, premium painted game asset with clean strong shapes, readable at 48 pixels. Deep navy background covering entire square, opaque, corners filled. Main recognizable symbol stays within central 65 percent safe area for circular cropping. Dramatic but controlled glow, high contrast, no tiny clutter. 1024 by 1024.
+- The delivered image is used unchanged. Actual Android launcher cropping is still to be checked.
+- Unity default icon API: https://docs.unity.com/en-us/engine/6000.0/manual/unity-editor/editor-settings-reference/comp-manager-group/class-player-settings

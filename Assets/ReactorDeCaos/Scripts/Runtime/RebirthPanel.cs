@@ -10,7 +10,7 @@ namespace ReactorDeCaos
         private readonly GameObject root;
         private readonly GameObject[] pages = new GameObject[3];
         private readonly RectTransform[] pageContents = new RectTransform[3];
-        private readonly TextMeshProUGUI summary, cycle, currentBranch, armLabel, message, confirmationText;
+        private readonly TextMeshProUGUI summary, cycle, currentBranch, armLabel, message, confirmationText, confirmationReward;
         private readonly TextMeshProUGUI[] branchLabels = new TextMeshProUGUI[3], masteryLabels = new TextMeshProUGUI[3], skinLabels = new TextMeshProUGUI[4];
         private readonly Button[] branches = new Button[3], skins = new Button[4];
         private readonly GameObject confirmation;
@@ -93,7 +93,7 @@ namespace ReactorDeCaos
             // Confirmation is a separate blocker; changing tabs cannot accidentally confirm a reset.
             var confirmPanel = ReactorHud.Button("ConfirmRebirthPanel", panel.transform, new Color(.035f, .025f, .065f, 1), .02f, 0, .98f, 1);
             confirmation = confirmPanel.gameObject; confirmPanel.transition = Selectable.Transition.None;
-            var confirmViewport = ReactorHud.Rect("ConfirmationViewport", confirmPanel.transform, .06f, .34f, .94f, .96f);
+            var confirmViewport = ReactorHud.Rect("ConfirmationViewport", confirmPanel.transform, .06f, .50f, .94f, .96f);
             confirmViewport.gameObject.AddComponent<RectMask2D>();
             var confirmHit = confirmViewport.gameObject.AddComponent<Image>(); confirmHit.color = new Color(0, 0, 0, .01f);
             var confirmContent = ReactorHud.Rect("ConfirmationContent", confirmViewport, 0, 1, 1, 1);
@@ -107,6 +107,8 @@ namespace ReactorDeCaos
             confirmContent.gameObject.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
             confirmationText = hud.Label("ConfirmRebirthDescription", confirmContent, "", 36, Color.white, 0, 0, 1, 1, TextAlignmentOptions.TopLeft);
             confirmationText.enableAutoSizing = false;
+            confirmationReward = hud.Label("ConfirmationReward", confirmPanel.transform, "", 48, ReactorHud.Warm,
+                .06f, .32f, .94f, .49f);
             ConfirmButton = ReactorHud.Button("ConfirmRebirth", confirmPanel.transform, new Color(.28f, .06f, .18f), .06f, .17f, .94f, .31f);
             hud.Label("ConfirmRebirthText", ConfirmButton.transform, "CONFIRMAR ASCENSIÓN", 29, ReactorHud.Warm, .02f, 0, .98f, 1);
             ConfirmButton.onClick.AddListener(() =>
@@ -144,12 +146,13 @@ namespace ReactorDeCaos
             if (!app.Game.CanRebirth) return;
             GameEngine game = app.Game;
             quotedReward = game.RebirthReward; quotedCycle = game.RebirthCount;
-            confirmationText.text = "ASCENDER AL SIGUIENTE CICLO\nDesliza para revisar todos los cambios.\n\nRecibirás " + quotedReward + " ESENCIAS\nEspecialización: " + RebirthCatalog.BranchName(selected)
+            confirmationText.text = "GANÁS\nRecibirás " + quotedReward + " ESENCIAS\nEspecialización: " + RebirthCatalog.BranchName(selected)
                 + "\nPotencia permanente: ×" + NumberFormat.Stat(game.PermanentMultiplier) + " a ×" + NumberFormat.Stat(game.ProjectedPermanentMultiplier)
                 + (game.RebirthSkinUnlock >= 0 ? "\nDesbloqueas y equipas: " + RebirthCatalog.SkinName(game.RebirthSkinUnlock) : "")
-                + "\n\nSe reinician energía, compras, hitos del ciclo, combo y sobrecarga."
-                + "\n\nConservas historia, salas restauradas, recuerdos de Mara, dron en ruta, producción pendiente, planos, sintonía, logros, esencia, maestrías, skins y ajustes."
+                + "\n\nREINICIÁS\nEnergía, compras, hitos del ciclo, combo y sobrecarga."
+                + "\n\nCONSERVÁS\nHistoria, salas restauradas, recuerdos de Mara, dron en ruta, producción pendiente, planos, sintonía, logros, esencia, maestrías, skins y ajustes."
                 + "\n\nComienzas con " + game.StarterCoils + " microgenerador y potencia NV. " + game.StarterTapLevel + ".";
+            confirmationReward.text = "+" + quotedReward + " ESENCIAS\n" + RebirthCatalog.BranchName(selected);
             confirmation.SetActive(true);
             Canvas.ForceUpdateCanvases(); confirmationScroll.verticalNormalizedPosition = 1;
         }

@@ -535,3 +535,29 @@ PlayMode, accesibilidad en dispositivo o rendimiento por estas pruebas .NET.
 5. En Orfeo, desplazarse arriba/abajo y reclamar producción/enviar dron. Ver la
    respuesta fija y el nuevo estado; volver de una escena de Mara y verificar
    que no se haya reemplazado la respuesta por el texto introductorio.
+
+
+## 2026-10-31 — P2 usability and application icon
+
+Implemented on `fix/ui-p2-icon`, based on merged P1 main:
+- Five navigation slots retain their initial positions. Locked Logros/Ciclo say Luego and remain disabled. Archivo always opens the archive; its Orfeo button opens the station when available. Campaign gates remain intact.
+- Mission card separates final objective, unmet requirement and immediate action. Missing hardware opens its module details without purchasing; energy/combo/overload requirements return to the reactor; ready missions and choices keep their existing flows.
+- Reactor modules show short names in a single line (Micro, Plasma, Cuánt., Aux., Toque, Combo, Carga). Tapping shows the full name, current level and explicit purchase control. Single-line labels preserve the compact module footprint.
+- Settings group Sound (each toggle followed by its volume), Reading and Accessibility, retaining preference IDs and save behavior.
+- Ascension details use Ganás / Reiniciás / Conservás; quoted essence and selected specialization remain outside the scroll next to confirmation. Confirmation still uses the quoted cycle/reward and persists before resetting.
+- Original cyan/violet reactor icon in Editor/AppIcon.png, stable importer metadata, automatic default PlayerSettings assignment on editor preparation and build preparation. This uses Unity's default application icon fallback. No adaptive layered icon or themed monochrome variant is claimed. The image is editor-only source, not a runtime Resources texture.
+
+Validation actually run:
+- .NET core/persistence suite: 172 passed, 0 failed, 0 skipped (five new campaign-guidance cases).
+- Supplemental C# compilation of six assemblies against installed Unity 6000.6.6f1 APIs passed, including PlayMode tests. This is not the pinned-editor import or test execution.
+- Static mobile geometry audit: 52 controls, five profiles, minimum target 48.33 logical pixels; confirmation summary/scroll/buttons and Archive heading/station access do not overlap by anchor arithmetic.
+- Added PlayMode coverage for the mission shortcut opening the needed module without spending, updated early locked-tab visibility and station entry assertions. PlayMode execution remains pending.
+- Generated icon inspected as an image. Actual launcher rendering/cropping remains pending on Android.
+
+Required visual follow-up with pinned Unity 6000.0.85f1 (not installed here):
+1. Open Main and complete ignition; verify five fixed slots, disabled gates, then unlock Logros/Ciclo without moving Archivo.
+2. Tap mission before buying Potencia, after Potencia and after Micro; verify matching module details, no automatic spending, then mission continuation.
+3. Check named module labels on 320x568 and portrait tablet, then open each module for its full name/level.
+4. Scroll settings through all sections and verify independent mute/volume and saved preferences.
+5. Prepare ascension, scroll all three consequence groups, verify reward/branch stay visible, cancel, then exercise an actual saved ascension.
+6. Prepare Project, check Player > Default Icon, build/install Android and inspect launcher icon. This checkout has no generated APK.

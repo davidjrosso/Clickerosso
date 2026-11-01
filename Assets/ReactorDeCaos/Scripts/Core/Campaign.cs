@@ -83,6 +83,29 @@ namespace ReactorDeCaos
                 }
             }
         }
+        // Navigation guidance only; purchases and rewards still require explicit actions.
+        public string CampaignNextModule
+        {
+            get
+            {
+                if (!NarrativeIntroSeen || CampaignMissionReady) return null;
+                switch (StoryCompleted)
+                {
+                    case 0: return Level("tap") == 0 ? "tap" : Level("coil") == 0 ? "coil" : null;
+                    case 2: return Level("plasma") == 0 ? "plasma" : null;
+                    case 3: return Level("quantum") == 0 ? "quantum" : null;
+                    case 4: return Level("auxiliary") == 0 ? "auxiliary" : null;
+                    default: return null;
+                }
+            }
+        }
+        public string CampaignNextAction => CampaignMissionReady ? "CONTINUAR TRANSMISIÓN"
+            : CampaignNeedsChoice ? "ELEGIR A QUIÉN ESCUCHAR"
+            : StoryCompleted == StoryCatalog.Count ? "REVISAR ASCENSIÓN"
+            : CampaignRequirementsMet ? CampaignAction
+            : CampaignNextModule != null ? "VER MEJORA NECESARIA"
+            : "IR AL NÚCLEO";
+
         public string CampaignHint
         {
             get

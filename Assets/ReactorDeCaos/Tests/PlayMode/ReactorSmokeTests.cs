@@ -835,8 +835,10 @@ namespace ReactorDeCaos.Tests
             app.Hud.Refresh(app.Game, true);
             Assert.That(app.Hud.OverloadButton.gameObject.activeSelf, Is.False);
             Assert.That(Label(app, "Combo").gameObject.activeSelf, Is.False);
-            Assert.That(app.Hud.NavigationButtons[2].gameObject.activeSelf, Is.False);
-            Assert.That(app.Hud.NavigationButtons[3].gameObject.activeSelf, Is.False);
+            Assert.That(app.Hud.NavigationButtons[2].gameObject.activeSelf, Is.True);
+            Assert.That(app.Hud.NavigationButtons[2].interactable, Is.False);
+            Assert.That(app.Hud.NavigationButtons[3].gameObject.activeSelf, Is.True);
+            Assert.That(app.Hud.NavigationButtons[3].interactable, Is.False);
             Assert.That(app.Hud.ShopButtons[0].gameObject.activeSelf, Is.True);
             Assert.That(app.Hud.ShopButtons[3].gameObject.activeSelf, Is.True);
             Assert.That(app.Hud.ShopButtons[4].gameObject.activeSelf, Is.False);
@@ -885,6 +887,20 @@ namespace ReactorDeCaos.Tests
         }
 
         [UnityTest]
+        public IEnumerator MissionShortcutOpensRequiredModuleWithoutSpending()
+        {
+            yield return FreshCampaign();
+            var app = Object.FindFirstObjectByType<ReactorApp>();
+            double energy = app.Game.Energy;
+            app.CampaignAction();
+            Assert.That(app.Hud.ModulePanel.IsOpen, Is.True);
+            Assert.That(app.Hud.ModulePanel.SelectedId, Is.EqualTo("tap"));
+            Assert.That(app.Game.Energy, Is.EqualTo(energy));
+            Assert.That(app.Game.Level("tap"), Is.Zero);
+            yield return null;
+        }
+
+        [UnityTest]
         public IEnumerator MissionsAutomaticallyOpenScenesAndProductionContinuesUnderThem()
         {
             yield return FreshCampaign();
@@ -916,6 +932,9 @@ namespace ReactorDeCaos.Tests
             yield return SceneManager.LoadSceneAsync("Main", LoadSceneMode.Single); yield return null;
             var app = Object.FindFirstObjectByType<ReactorApp>();
             app.Hud.NavigationButtons[4].onClick.Invoke();
+            Assert.That(app.Hud.SelectedTab, Is.EqualTo(4));
+            foreach (var entry in app.GetComponentsInChildren<Button>(true))
+                if (entry.name == "ArchiveStation") entry.onClick.Invoke();
             Assert.That(app.Hud.SelectedTab, Is.EqualTo(5));
             Canvas.ForceUpdateCanvases();
             var archive = app.Hud.Station.ArchiveButton;

@@ -35,6 +35,7 @@ namespace ReactorDeCaos.Editor
                 EditorApplication.delayCall += AutomaticPrepare;
                 return;
             }
+            EnsureAppIcon();
             if (!HasTmpResources() || AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FontPath) == null)
                 Prepare();
         }
@@ -151,7 +152,8 @@ namespace ReactorDeCaos.Editor
             }
             try
             {
-                if (!HasTmpResources())
+                EnsureAppIcon();
+            if (!HasTmpResources())
                     throw new InvalidOperationException("TMP Settings or the Distance Field shader is still missing. Import TMP Essential Resources and run Prepare Project.");
                 PrepareAssets();
                 Action next = afterPreparation;
@@ -180,6 +182,24 @@ namespace ReactorDeCaos.Editor
             if (exitWhenFinished) EditorApplication.Exit(1);
         }
 
+        private static void EnsureAppIcon()
+        {
+            const string path = "Assets/ReactorDeCaos/Editor/AppIcon.png";
+            var importer = AssetImporter.GetAtPath(path) as TextureImporter;
+            if (importer == null) throw new System.InvalidOperationException("Missing application icon: " + path);
+            if (importer.textureType != TextureImporterType.Default || importer.mipmapEnabled || importer.maxTextureSize != 2048)
+            {
+                importer.textureType = TextureImporterType.Default;
+                importer.mipmapEnabled = false;
+                importer.maxTextureSize = 2048;
+                importer.SaveAndReimport();
+            }
+            var icon = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+            var current = PlayerSettings.GetIconsForTargetGroup(BuildTargetGroup.Unknown);
+            if (current.Length != 1 || current[0] != icon)
+                PlayerSettings.SetIconsForTargetGroup(BuildTargetGroup.Unknown, new[] { icon });
+        }
+
         private static void PrepareAssets()
         {
             if (AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FontPath) == null)
@@ -197,6 +217,7 @@ namespace ReactorDeCaos.Editor
                 var settings = ScriptableObject.CreateInstance<EconomySettings>();
                 AssetDatabase.CreateAsset(settings, SettingsPath);
             }
+            EnsureAppIcon();
             PlayerSettings.companyName = "Clickerosso";
             PlayerSettings.productName = "Reactor de Caos";
             PlayerSettings.bundleVersion = "0.1.0";

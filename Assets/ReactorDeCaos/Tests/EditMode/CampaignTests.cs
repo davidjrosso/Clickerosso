@@ -28,6 +28,43 @@ namespace ReactorDeCaos.Tests
             return new GameEngine(state);
         }
         [Test]
+        public void NextStepTracksMissingRepairsWithoutPerformingThem()
+        {
+            var game = Checkpoint(0, 200);
+            Assert.That(game.CampaignNextModule, Is.EqualTo("tap"));
+            Assert.That(game.CampaignNextAction, Is.EqualTo("VER MEJORA NECESARIA"));
+            Assert.That(game.Level("tap"), Is.Zero);
+            Assert.That(game.Buy("tap"), Is.True);
+            Assert.That(game.CampaignNextModule, Is.EqualTo("coil"));
+            Assert.That(game.Buy("coil"), Is.True);
+            Assert.That(game.CampaignNextModule, Is.Null);
+            Assert.That(game.CampaignNextAction, Is.EqualTo(game.CampaignAction));
+            Assert.That(game.TryBeginCampaignMission(_ => true), Is.True);
+            Assert.That(game.CampaignNextAction, Is.EqualTo("CONTINUAR TRANSMISIÓN"));
+        }
+        [TestCase(2, "plasma")]
+        [TestCase(3, "quantum")]
+        [TestCase(4, "auxiliary")]
+        public void NextStepPointsToUnlockedMissionTechnology(int chapter, string module)
+        {
+            var game = Checkpoint(chapter);
+            Assert.That(game.CampaignNextModule, Is.EqualTo(module));
+            Assert.That(game.Unlocked(module), Is.True);
+            Assert.That(game.Buy(module), Is.True);
+            Assert.That(game.CampaignNextModule, Is.Null);
+        }
+        [Test]
+        public void NextStepPreservesChoiceAndEnergyGates()
+        {
+            var choice = Checkpoint(5);
+            Assert.That(choice.CampaignNextAction, Is.EqualTo("ELEGIR A QUIÉN ESCUCHAR"));
+            var production = Checkpoint(1, 0);
+            Assert.That(production.CampaignNextAction, Is.EqualTo("IR AL NÚCLEO"));
+            Assert.That(production.CampaignRequirementsMet, Is.False);
+            Assert.That(Checkpoint(6).CampaignNextAction, Is.EqualTo("REVISAR ASCENSIÓN"));
+        }
+
+        [Test]
         public void OpeningRequiresARealIgnitionAndOnlyAwardsItOnce()
         {
             var game = Fresh();

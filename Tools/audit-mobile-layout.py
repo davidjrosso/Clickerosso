@@ -126,6 +126,13 @@ for name,w,h,top,bottom in profiles:
     for i,a in enumerate(core):
         for b in core[i+1:]:assert not overlap(a,b),(name,'reactor hit targets overlap')
     assert not overlap(controls['confirm'],controls['cancel'])
+    confirmViewport=rect(prog,anchors('RebirthPanel.cs','ConfirmationViewport'))
+    confirmReward=rect(prog,anchors('RebirthPanel.cs','ConfirmationReward'))
+    assert not overlap(confirmViewport,confirmReward)
+    assert not overlap(confirmReward,controls['confirm'])
+    assert not overlap(controls['archiveStation'],rect(story,anchors('StoryPanel.cs','StoryHeading')))
+    assert not overlap(controls['archiveStation'],rect(story,anchors('StoryPanel.cs','StoryStatus')))
+
     assert not overlap(controls['moduleBuy'],controls['moduleClose'])
     results.append({'profile':name,'logicalWidth':w,'logicalHeight':h,'safeInsets':[top,bottom],
                     'minimumControlDimension':round(min(min(b[2:]) for b in controls.values()),2),

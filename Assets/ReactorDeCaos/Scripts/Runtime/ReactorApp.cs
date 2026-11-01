@@ -179,7 +179,12 @@ namespace ReactorDeCaos
                 saveTimer = 0;
                 Narrative.PresentMission();
             }
-            else { Hud.SelectTab(4); Hud.Story.ShowChapter(Game.CurrentStoryChapter); }
+            else
+            {
+                Hud.SelectTab(0);
+                if (Game.CampaignNextModule != null) Hud.OpenModule(Game.CampaignNextModule);
+                else Hud.ShowNotice(Game.CampaignHint);
+            }
         }
 
         public void Buy(Purchase item) { Buy(EconomyConfig.ItemId(item)); }
