@@ -561,3 +561,18 @@ Required visual follow-up with pinned Unity 6000.0.85f1 (not installed here):
 4. Scroll settings through all sections and verify independent mute/volume and saved preferences.
 5. Prepare ascension, scroll all three consequence groups, verify reward/branch stay visible, cancel, then exercise an actual saved ascension.
 6. Prepare Project, check Player > Default Icon, build/install Android and inspect launcher icon. This checkout has no generated APK.
+
+
+## 2026-11-01 — S23 Ultra screenshot corrections
+
+Evidence: user supplied two actual 1080x2316 Android screenshots, Galaxy S23 Ultra with default font/display scaling. They show the P1 interface: Ajustes split before the last letter, Instalar split under modules, and a multi-line notice clipped above navigation. The minimum font increase had not been matched by adequate label geometry.
+
+Changes on top of P2:
+- Widened Settings from 178.2 to 243 reference units and increased its label height; adjusted energy/unit bounds to preserve header separation.
+- Widened fixed navigation slots slightly: bundled DejaVu Sans at 48 measures Mejoras at 187.84 units, exceeding the old 186.28-unit text area. New available width is 190.51 units. Ajustes measures 175 units within the new 233.28-unit label width.
+- Replaced the narrow scrollable notice with an opaque, non-interactive toast that grows upward to its preferred text height. Its bottom remains above navigation, and it does not intercept touches. A long transient message may overlay the bottom of gameplay while visible; it no longer hides its own second line or requires scrolling.
+- P2 already replaces module Instalar labels with short names; explicit install and level information remain in module details. Normal wrapping between words in mission descriptions is intentional.
+
+Validation: static geometry audit passed all six profiles, including a 360x772 proportion proxy for the supplied 1080x2316 capture (not a claim about the device's actual dp). Supplemental compilation of all six assemblies with installed 6000.6.6f1 API references passed. Added a PlayMode regression checking short label preferred widths and long notice height/position; compiled, not executed. Font advance measurements use the bundled TTF and are supporting evidence, not TMP rendering validation. No economy/persistence changes; previous 172-test run remains the latest core run.
+
+Pinned Unity 6000.0.85f1 is still unavailable. No new APK or on-device result is claimed. Follow-up: build with the pinned editor, reproduce the two provided scenes on S23 Ultra, inspect Settings and every navigation/module name, trigger the long combo notice, and confirm its complete text stays above navigation. Check the compact and tablet profiles too.

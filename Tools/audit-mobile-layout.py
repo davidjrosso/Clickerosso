@@ -34,7 +34,7 @@ def rect(parent, a):
 def overlap(a,b):
     return min(a[0]+a[2],b[0]+b[2])-max(a[0],b[0]) > .01 and min(a[1]+a[3],b[1]+b[3])-max(a[1],b[1]) > .01
 
-profiles = [('compact',320,568,0,0),('standard',360,640,0,0),('tall_notch',390,844,47,34),
+profiles = [('s23_ultra_ratio',360,772,0,0),('compact',320,568,0,0),('standard',360,640,0,0),('tall_notch',390,844,47,34),
             ('android_tall',412,915,32,24),('tablet_portrait',768,1024,24,20)]
 results=[]
 for name,w,h,top,bottom in profiles:

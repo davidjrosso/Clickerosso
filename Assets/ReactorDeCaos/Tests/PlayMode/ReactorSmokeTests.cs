@@ -887,6 +887,40 @@ namespace ReactorDeCaos.Tests
         }
 
         [UnityTest]
+        public IEnumerator CompactLabelsFitAndLongNoticeGrowsAboveNavigation()
+        {
+            var app = Object.FindFirstObjectByType<ReactorApp>();
+            app.enabled = false;
+            Canvas.ForceUpdateCanvases();
+            var settings = Label(app, "SettingsLabel");
+            Assert.That(settings.GetPreferredValues("Ajustes", float.PositiveInfinity, float.PositiveInfinity).x,
+                Is.LessThanOrEqualTo(settings.rectTransform.rect.width));
+            foreach (var nav in app.Hud.NavigationButtons)
+            {
+                var label = nav.GetComponentInChildren<TextMeshProUGUI>();
+                string title = label.text.Split('\n')[0];
+                Assert.That(label.GetPreferredValues(title, float.PositiveInfinity, float.PositiveInfinity).x,
+                    Is.LessThanOrEqualTo(label.rectTransform.rect.width), title);
+            }
+            app.Hud.ShowNotice("Combo descansado. Retómalo a tu ritmo para recuperar la potencia del reactor.");
+            yield return null;
+            Canvas.ForceUpdateCanvases();
+            var notice = Label(app, "Notice");
+            notice.ForceMeshUpdate();
+            Assert.That(notice.textInfo.lineCount, Is.GreaterThan(1));
+            Assert.That(notice.rectTransform.rect.height + 1, Is.GreaterThanOrEqualTo(notice.preferredHeight));
+            Assert.That(notice.GetComponentInParent<ScrollRect>(), Is.Null);
+            var corners = new Vector3[4];
+            ((RectTransform)notice.transform.parent).GetWorldCorners(corners);
+            float bottom = corners[0].y;
+            foreach (var nav in app.Hud.NavigationButtons)
+            {
+                ((RectTransform)nav.transform).GetWorldCorners(corners);
+                Assert.That(bottom, Is.GreaterThan(corners[1].y));
+            }
+        }
+
+        [UnityTest]
         public IEnumerator MissionShortcutOpensRequiredModuleWithoutSpending()
         {
             yield return FreshCampaign();

@@ -126,8 +126,8 @@ namespace ReactorDeCaos
             Image("Header", safe, new Color(.025f, .045f, .075f, .85f), .035f, .825f, .965f, .98f);
             Image("HeaderRule", safe, new Color(.18f, .92f, 1, .4f), .065f, .824f, .935f, .826f);
             Label("Brand", safe, "Reactor de Caos", 26, Muted, .065f, .955f, .60f, .98f, TextAlignmentOptions.Left);
-            energy = Label("Energy", safe, "0", 78, Color.white, .06f, .895f, .78f, .95f, TextAlignmentOptions.Left);
-            Label("Unit", safe, "E", 22, Cyan, .62f, .955f, .77f, .98f);
+            energy = Label("Energy", safe, "0", 78, Color.white, .06f, .895f, .72f, .95f, TextAlignmentOptions.Left);
+            Label("Unit", safe, "E", 22, Cyan, .62f, .955f, .70f, .98f);
             rate = Label("Rate", safe, "0 / s", 32, Cyan, .065f, .827f, .66f, .890f, TextAlignmentOptions.Left);
             stage = Label("Stage", safe, "", 32, Warm, .68f, .827f, .955f, .887f, TextAlignmentOptions.Right);
             reactorPage = Rect("ReactorPage", safe, 0, .145f, 1, .815f);
@@ -247,14 +247,25 @@ namespace ReactorDeCaos
                 shopPrices[i] = Label("PurchasePrice", button.transform, "", 36, Warm, .03f, .08f, .97f, .92f);
 
             }
-            notice = ScrollableLabel("Notice", safe, "", 20, Warm, .045f, .108f, .955f, .14f);
+            // A non-interactive toast grows upward; no clipped second line or tiny scrollbar.
+            var noticeBox = Rect("NoticeBox", safe, .045f, .108f, .955f, .108f);
+            noticeBox.pivot = new Vector2(.5f, 0);
+            noticeBox.gameObject.AddComponent<Image>().color = new Color(.025f, .045f, .075f, .98f);
+            noticeBox.gameObject.AddComponent<CanvasGroup>().blocksRaycasts = false;
+            var noticeLayout = noticeBox.gameObject.AddComponent<VerticalLayoutGroup>();
+            noticeLayout.padding = new RectOffset(12, 12, 8, 8);
+            noticeLayout.childControlWidth = noticeLayout.childControlHeight = true;
+            noticeLayout.childForceExpandHeight = false;
+            noticeBox.gameObject.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            notice = Label("Notice", noticeBox, "", 48, Warm, 0, 0, 1, 1, TextAlignmentOptions.TopLeft);
+            notice.enableAutoSizing = false;
             NavigationButtons = new Button[5]; tabIndicators = new Image[5];
             string[] tabNames = { "Núcleo", "Mejoras", "Logros", "Ciclo", "Archivo" };
             for (int i = 0; i < 5; i++)
             {
                 int tab = i;
                 int column = i < 2 ? i : i == 4 ? 2 : i + 1;
-                var button = Button("Navigation" + i, safe, new Color(.025f, .045f, .075f, .98f), .035f + column * .186f, .015f, .211f + column * .186f, .105f);
+                var button = Button("Navigation" + i, safe, new Color(.025f, .045f, .075f, .98f), .035f + column * .186f, .015f, .215f + column * .186f, .105f);
                 NavigationButtons[i] = button;
                 var text = Label("NavigationLabel", button.transform, tabNames[i], 24, Color.white, .01f, .06f, .99f, .94f);
                 tabIndicators[i] = Image("SelectedTab", button.transform, Cyan, .08f, .96f, .92f, 1);
@@ -270,10 +281,10 @@ namespace ReactorDeCaos
             rewardIcon.sprite = sprites.Icon("reward"); rewardIcon.preserveAspect = true;
             rewardText = Label("RewardText", card.transform, "", 26, Warm, .16f, .03f, .98f, .97f, TextAlignmentOptions.Left);
             rewardCard.gameObject.SetActive(false);
-            SettingsButton = Button("Settings", safe, Panel, .79f, .89f, .955f, .98f);
-            Image settingsIcon = Image("SettingsIcon", SettingsButton.transform, Color.white, .27f, .4f, .73f, .94f);
+            SettingsButton = Button("Settings", safe, Panel, .73f, .89f, .955f, .98f);
+            Image settingsIcon = Image("SettingsIcon", SettingsButton.transform, Color.white, .27f, .50f, .73f, .98f);
             settingsIcon.sprite = sprites.Icon("settings"); settingsIcon.preserveAspect = true;
-            Label("SettingsLabel", SettingsButton.transform, "Ajustes", 24, Cyan, .02f, .03f, .98f, .36f);
+            Label("SettingsLabel", SettingsButton.transform, "Ajustes", 24, Cyan, .02f, .02f, .98f, .48f);
             Menu = new PresentationMenu(this, safe, SettingsButton, Preferences);
             ModulePanel = new ReactorModulePanel(this, safe, app);
             Progression = new RebirthPanel(this, safe, app);
