@@ -33,7 +33,7 @@ namespace ReactorDeCaos
             var panel = ReactorHud.Button("ProgressionPanel", blocker.transform, new Color(.025f, .045f, .075f), 0, 0, 1, 1);
             panel.transition = Selectable.Transition.None;
             hud.Label("ProgressionTitle", panel.transform, "ASCENSIÓN", 36, Color.white, .04f, .925f, .96f, .98f);
-            summary = hud.Label("PermanentSummary", panel.transform, "", 26, ReactorHud.Warm, .04f, .84f, .96f, .925f);
+            summary = hud.ScrollableLabel("PermanentSummary", panel.transform, "", 26, ReactorHud.Warm, .04f, .84f, .96f, .925f);
             string[] names = { "ASCENDER", "MAESTRÍAS", "SKINS" };
             for (int i = 0; i < 3; i++)
             {
@@ -53,10 +53,10 @@ namespace ReactorDeCaos
                 pages[i] = viewport.gameObject;
                 pageContents[i] = content;
             }
-            cycle = hud.Label("CyclePreview", pageContents[0], "", 29, Color.white, .02f, .71f, .98f, 1);
+            cycle = hud.ScrollableLabel("CyclePreview", pageContents[0], "", 29, Color.white, .02f, .71f, .98f, 1);
             var track = ReactorHud.Image("AscensionRequirementTrack", pageContents[0], new Color(.08f, .13f, .19f), .04f, .68f, .96f, .695f);
             requirementFill = ReactorHud.Image("AscensionRequirementProgress", track.transform, ReactorHud.Warm, 0, 0, 0, 1).rectTransform;
-            currentBranch = hud.Label("BranchExplanation", pageContents[0], "", 25, ReactorHud.Cyan, .02f, .51f, .98f, .68f);
+            currentBranch = hud.ScrollableLabel("BranchExplanation", pageContents[0], "", 25, ReactorHud.Cyan, .02f, .51f, .98f, .68f);
             for (int i = 0; i < branches.Length; i++)
             {
                 var branch = (Specialization)(i + 1);
@@ -86,7 +86,7 @@ namespace ReactorDeCaos
                 skinLabels[i] = hud.Label("SkinDescription", skins[i].transform, "", 28, Color.white, .22f, .04f, .97f, .96f);
                 skins[i].onClick.AddListener(() => { app.SelectSkin(skin); Refresh(); });
             }
-            message = hud.Label("ProgressionMessage", panel.transform, "", 25, ReactorHud.Warm, .04f, .16f, .96f, .24f);
+            message = hud.ScrollableLabel("ProgressionMessage", panel.transform, "", 25, ReactorHud.Warm, .04f, .16f, .96f, .24f);
             var close = ReactorHud.Button("CloseProgression", panel.transform, new Color(.06f, .09f, .16f), .2f, .02f, .8f, .15f);
             hud.Label("CloseProgressionText", close.transform, "VOLVER AL REACTOR", 28, Color.white, .02f, 0, .98f, 1);
             close.onClick.AddListener(() => hud.SelectTab(0));
@@ -101,7 +101,12 @@ namespace ReactorDeCaos
             confirmationScroll = confirmViewport.gameObject.AddComponent<ScrollRect>();
             confirmationScroll.viewport = confirmViewport; confirmationScroll.content = confirmContent; confirmationScroll.horizontal = false;
             confirmationScroll.movementType = ScrollRect.MovementType.Clamped;
-            confirmationText = hud.Label("ConfirmRebirthDescription", confirmContent, "", 31, Color.white, 0, 0, 1, 1);
+            var confirmLayout = confirmContent.gameObject.AddComponent<VerticalLayoutGroup>();
+            confirmLayout.childControlWidth = confirmLayout.childControlHeight = true;
+            confirmLayout.childForceExpandHeight = false;
+            confirmContent.gameObject.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            confirmationText = hud.Label("ConfirmRebirthDescription", confirmContent, "", 36, Color.white, 0, 0, 1, 1, TextAlignmentOptions.TopLeft);
+            confirmationText.enableAutoSizing = false;
             ConfirmButton = ReactorHud.Button("ConfirmRebirth", confirmPanel.transform, new Color(.28f, .06f, .18f), .06f, .17f, .94f, .31f);
             hud.Label("ConfirmRebirthText", ConfirmButton.transform, "CONFIRMAR ASCENSIÓN", 29, ReactorHud.Warm, .02f, 0, .98f, 1);
             ConfirmButton.onClick.AddListener(() =>

@@ -464,3 +464,74 @@ El intento nativo continúa bloqueado por licencia: Editor 6000.0.85f1, salida 1
 `No valid Unity Editor license found. Please activate your license.` No se declara
 PlayMode, escucha, renderizado ni Android ejecutados. Arte procedural y voces siguen
 provisionales. Se archivaron fuera del checkout los ajustes incidentales del Editor.
+
+
+## Correcciones P1 de interfaz — 2026-10-31
+
+Base: `0d3f8e7e39b34e14fc8baa44571f77abea10a3c2`. Rama local: `fix/ui-p1`.
+
+- Legibilidad: mínimo de 48 unidades TMP en el lienzo de referencia de 1080
+  (16 píxeles geométricos a 360 de ancho; 14,22 a 320). El autoajuste no puede
+  reducir el texto por debajo de ese suelo. Se retiraron reducciones de texto
+  enriquecido al 80% y el truncado general con puntos suspensivos. La cabecera
+  separa producción/toque en dos líneas; la pestaña de ascensión se llama Ciclo
+  para que la etiqueta no requiera reducirse. Su página sigue siendo Ascensión.
+- Textos largos: objetivos de misión y confirmación crecen dentro de sus
+  contenedores desplazables. Descripciones, subtítulos, requisitos y avisos
+  acotados tienen contenido de altura natural y, donde corresponde, indicador
+  de desplazamiento. Diálogo y ficha de módulo vuelven al principio al cambiar.
+  Las filas de Mejoras y Logros crecen con el texto real; las medidas de la
+  tienda se recalculan al cambiar contenido o ancho, no cada fotograma.
+- Compras: las tarjetas de Mejoras abren una ficha sin gastar energía. Solo el
+  botón COMPRAR ejecuta la compra. La lista conserva el desplazamiento y la
+  comprobación de disponibilidad; la ficha permite volver o comprar explícitamente.
+- Guardado: todos los intentos de escritura de ReactorApp actualizan una franja
+  persistente de error, incluyendo transacciones y regreso de ausencia. Otros
+  avisos y cambios de pantalla no la eliminan. Reintentar respeta la reserva de
+  ausencia; solo una escritura exitosa elimina el estado de error. El mensaje
+  neutro de funcionamiento offline ya no afirma que el progreso esté guardado.
+- Orfeo: la respuesta queda en una franja fija fuera de StationContent y no
+  desaparece al volver de una escena de Mara. La lista no pasa por detrás de
+  esa franja. Los estados de botones y recompensas siguen viniendo del motor.
+
+Archivos: ReactorHud, ReactorApp, StationPanel, ReactorModulePanel,
+NarrativeDirector, RebirthPanel, AchievementPanel, StoryPanel, ReactorSmokeTests
+y Tools/audit-mobile-layout.py. No se modificaron fórmulas, recompensas ni el
+formato de persistencia. No se creó un diseño en Figma.
+
+### Validación ejecutada
+
+- 167 pruebas .NET aprobadas, 0 fallidas, 0 omitidas. SDK local disponible
+  8.0.318; dependencias restauradas con packages.lock.json y --locked-mode.
+  El ejecutor quedó esperando dentro del aislamiento y se completó fuera de él.
+- Auditoría geométrica actualizada: 52 controles en cinco perfiles (320×568,
+  360×640, 390×844 con recortes, 412×915 con recortes, 768×1024).
+  Dimensión mínima registrada: 48,33 unidades del perfil compacto. Sin
+  intersecciones en los controles comprobados, incluida la franja de Orfeo.
+- Seis ensamblados compilados contra las bibliotecas oficiales instaladas de
+  Unity 6000.6.6f1. Advertencias de APIs antiguas del código previo; sin errores.
+  Esta comprobación suplementaria NO sustituye la versión fijada 6000.0.85f1.
+- Cuatro pruebas PlayMode nuevas: raycast sobre descripción frente a compra;
+  error de guardado real inducido y recuperación; feedback fuera de la lista
+  al desplazarse y volver; texto largo completo con tamaño mínimo.
+  Las cuatro están compiladas, NO ejecutadas.
+
+### Pendiente en el Editor fijado / Android
+
+El Editor 6000.0.85f1 no está instalado en este equipo. No se cambió la versión
+del proyecto ni se abrió con otra versión. No se afirma validación de render,
+PlayMode, accesibilidad en dispositivo o rendimiento por estas pruebas .NET.
+
+1. Abrir Main con 6000.0.85f1 y ejecutar ReactorSmokeTests, incluidos los cuatro
+   casos nuevos. Revisar 320×568 y 360×640, luego pantallas altas con safe area.
+2. En Mejoras, tocar nombre/icono: abre ficha, saldo intacto. Volver y tocar
+   COMPRAR: descontar una sola compra. Deslizar la lista sin comprar.
+3. Revisar misiones, subtítulos, fichas, logros y advertencia completa de
+   ascensión con textos largos; alcanzar la última línea mediante scroll.
+4. Inducir fallo de escritura únicamente en un guardado de prueba: esperar más
+   de cuatro segundos, abrir Ajustes y cambiar pestaña. La franja debe seguir;
+   al recuperar la escritura y reintentar debe desaparecer. Verificar también
+   el fallo al regresar de una ausencia, sin duplicar ingresos.
+5. En Orfeo, desplazarse arriba/abajo y reclamar producción/enviar dron. Ver la
+   respuesta fija y el nuevo estado; volver de una escena de Mara y verificar
+   que no se haya reemplazado la respuesta por el texto introductorio.

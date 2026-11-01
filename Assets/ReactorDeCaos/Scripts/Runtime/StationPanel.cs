@@ -24,11 +24,11 @@ namespace ReactorDeCaos
             var surface = ReactorHud.Image("StationPage", parent, new Color(.018f, .03f, .05f, .98f), .035f, .145f, .965f, .815f);
             surface.raycastTarget = true; root = surface.gameObject;
             hud.Label("StationHeading", surface.transform, "ORFEO · UN HOGAR", 32, Color.white, .04f, .92f, .65f, .99f, TextAlignmentOptions.Left);
-            summary = hud.Label("StationSummary", surface.transform, "", 24, ReactorHud.Cyan, .04f, .85f, .65f, .925f, TextAlignmentOptions.Left);
+            summary = hud.ScrollableLabel("StationSummary", surface.transform, "", 24, ReactorHud.Cyan, .04f, .85f, .65f, .925f);
             ArchiveButton = ReactorHud.Button("StationArchive", surface.transform, new Color(.035f, .14f, .19f), .68f, .845f, .97f, .99f);
             hud.Label("StationArchiveLabel", ArchiveButton.transform, "ARCHIVO", 26, Color.white, .025f, .05f, .975f, .95f);
             ArchiveButton.onClick.AddListener(() => hud.SelectTab(4));
-            var viewport = ReactorHud.Rect("StationViewport", surface.transform, .025f, .025f, .975f, .83f);
+            var viewport = ReactorHud.Rect("StationViewport", surface.transform, .025f, .20f, .975f, .83f);
             viewport.gameObject.AddComponent<RectMask2D>();
             viewport.gameObject.AddComponent<Image>().color = new Color(0, 0, 0, .01f);
             var content = ReactorHud.Rect("StationContent", viewport, 0, 1, 1, 1); content.pivot = new Vector2(.5f, 1);
@@ -65,7 +65,9 @@ namespace ReactorDeCaos
                 int index = i;
                 memories[i] = Action(hud, "StationReplay" + i, content, "REPETIR · " + StationCatalog.Memory(i), () => app.Narrative.PresentStationMemory(index, true));
             }
-            message = Text(hud, "StationMessage", content, ReactorHud.Warm);
+            var feedback = ReactorHud.Image("StationFeedback", surface.transform, new Color(.035f, .075f, .11f), .025f, .02f, .975f, .185f);
+            message = hud.ScrollableLabel("StationMessage", feedback.transform,
+                "Las salas y los recuerdos permanecen al ascender. Nada caduca.", 36, ReactorHud.Warm, .025f, .06f, .975f, .94f);
             root.SetActive(false);
         }
         private static TextMeshProUGUI Text(ReactorHud hud, string name, Transform parent, Color color)
@@ -81,9 +83,14 @@ namespace ReactorDeCaos
             hud.Label(name + "Label", button.transform, label, 28, Color.white, .025f, .05f, .975f, .95f);
             button.onClick.AddListener(action); return button;
         }
-        public void Open() { root.SetActive(true); message.text = "Las salas y los recuerdos permanecen al ascender. Nada caduca."; Refresh(); }
+        public void Open() { root.SetActive(true); Refresh(); }
         public void Close() { root.SetActive(false); }
-        public void ShowMessage(string text) { message.text = text; }
+        public void ShowMessage(string text)
+        {
+            message.text = text;
+            Canvas.ForceUpdateCanvases();
+            message.GetComponentInParent<ScrollRect>().verticalNormalizedPosition = 1;
+        }
         public static string Duration(double seconds)
         {
             int total = Mathf.CeilToInt((float)System.Math.Min(seconds, 2147480000));

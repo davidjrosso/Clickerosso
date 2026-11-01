@@ -17,7 +17,7 @@ def expression(value, i=0):
     return eval(compile(node, '<anchor>', 'eval'), {'__builtins__': {}}, {'i': i, 'column': i if i < 2 else 2 if i == 4 else i + 1})
 
 def anchors(file, name, i=0):
-    text = (runtime / file).read_text()
+    text = (runtime / file).read_text(encoding="utf-8")
     start = text.index('("' + name + '"')
     # Parent expressions may contain nested calls; the final four args are anchors.
     end = text.index(';', start)
@@ -50,7 +50,7 @@ for name,w,h,top,bottom in profiles:
     view=rect(reactor,anchors('ReactorHud.cs','ReactorViewport'))
     controls['tap']=rect(view,anchors('ReactorHud.cs','TapReactor'))
     # Assembly module bounds are dynamic Vector2 positions; verify source constants.
-    assembly=(runtime/'ReactorAssembly.cs').read_text()
+    assembly=(runtime/'ReactorAssembly.cs').read_text(encoding="utf-8")
     assert '.115f, .125f' in assembly and '.09f, .10f' in assembly
     for i,(x,y) in enumerate([(.14,.77),(.86,.77),(.14,.39),(.86,.39)]):
         controls['generator'+str(i)]=rect(view,[x-.115,y-.125,x+.115,y+.125])
@@ -59,7 +59,7 @@ for name,w,h,top,bottom in profiles:
     for i in range(3): controls['ascensionTab'+str(i)]=rect(prog,anchors('RebirthPanel.cs','ProgressionTab',i))
     viewport=rect(prog,anchors('RebirthPanel.cs','ProgressionViewport'))
     content=(viewport[0],viewport[1],viewport[2],1800*scale)
-    assert 'new Vector2(0, 1800)' in (runtime/'RebirthPanel.cs').read_text()
+    assert 'new Vector2(0, 1800)' in (runtime/'RebirthPanel.cs').read_text(encoding="utf-8")
     for i in range(3): controls['branch'+str(i)]=rect(content,anchors('RebirthPanel.cs','ChooseBranch',i))
     controls['ascend']=rect(content,anchors('RebirthPanel.cs','PrepareRebirth'))
     controls['confirm']=rect(prog,anchors('RebirthPanel.cs','ConfirmRebirth'))
@@ -73,7 +73,8 @@ for name,w,h,top,bottom in profiles:
     controls['settingsOption']=(0,0,menu[2]*.9,164*scale)
     controls['volumeSlider']=(0,0,menu[2]*.9,180*scale)
     shop=rect(safe,anchors('ReactorHud.cs','EngineeringPage'))
-    controls['shopRow']=(0,0,shop[2]*.95,218*scale)
+    controls['shopPurchase']=(0,0,shop[2]*.95*.81,164*scale)
+    assert 'new Vector2(0, 164)' in (runtime/'ReactorHud.cs').read_text(encoding='utf-8')
     achievements=rect(safe,anchors('AchievementPanel.cs','AchievementsPage'))
     card=(0,0,achievements[2]*.95,222*scale)
     controls['claim']=rect(card,anchors('AchievementPanel.cs','Claim_'))
@@ -98,12 +99,16 @@ for name,w,h,top,bottom in profiles:
     controls['replayChapter']=rect(banner,anchors('StoryPanel.cs','ReplayChapter'))
     controls['replayIntro']=(0,0,story[2]*.95,180*scale)
     station=rect(safe,anchors('StationPanel.cs','StationPage'))
+    warning=rect(safe,anchors('ReactorHud.cs','SaveWarning'))
+    controls['retrySave']=rect(warning,anchors('ReactorHud.cs','RetrySave'))
+    feedback=rect(station,anchors('StationPanel.cs','StationFeedback'))
     controls['stationArchive']=rect(station,anchors('StationPanel.cs','StationArchive'))
     controls['archiveStation']=rect(story,anchors('StoryPanel.cs','ArchiveStation'))
     stationview=rect(station,anchors('StationPanel.cs','StationViewport'))
     assert not overlap(controls['stationArchive'],stationview)
+    assert not overlap(feedback,stationview)
     assert not overlap(controls['archiveStation'],rect(story,anchors('StoryPanel.cs','StoryViewport')))
-    assert 'preferredHeight = 180' in (runtime/'StationPanel.cs').read_text()
+    assert 'preferredHeight = 180' in (runtime/'StationPanel.cs').read_text(encoding="utf-8")
     for key in ['offlineClaim','expeditionAction','restoreRoom','memoryContinue','memoryReplay']:
         controls[key]=(0,0,stationview[2]-40*scale,180*scale)
     for button in nav: assert not overlap(button,stationview)

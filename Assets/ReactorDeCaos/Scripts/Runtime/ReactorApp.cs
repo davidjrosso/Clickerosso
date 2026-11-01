@@ -14,6 +14,7 @@ namespace ReactorDeCaos
         private SaveStore saves;
         private EconomyConfig economySettings;
         private bool arrivalPending, showArrival;
+        private bool saveFailed;
         private long suspensionUtc;
         private float arrivalRetry;
         private int stationActionFrame = -1;
@@ -54,6 +55,7 @@ namespace ReactorDeCaos
             try
             {
                 Hud.Build(this);
+                Hud.SetSaveFailed(saveFailed);
                 feedback = gameObject.AddComponent<ReactorFeedback>();
                 feedback.Initialize(Hud);
                 initialized = true;
@@ -331,7 +333,27 @@ namespace ReactorDeCaos
             long stamp = paused && suspensionUtc > 0 ? suspensionUtc : UtcNow;
             candidate.station.lastUtcSeconds = Math.Max(candidate.station.lastUtcSeconds, stamp);
             candidate.station.offlineRate = Math.Min(EconomyConfig.MaxEnergy, new GameEngine(candidate, economySettings).BaseProduction);
-            return saves.Save(candidate);
+            bool saved = saves.Save(candidate);
+            bool recovered = saveFailed && saved;
+            saveFailed = !saved;
+            if (Hud != null) Hud.SetSaveFailed(saveFailed);
+            if (recovered && Hud != null) Hud.ShowNotice("Guardado recuperado. Tu progreso está a salvo.");
+            return saved;
+        }
+
+        public void RetrySave()
+        {
+            if (!initialized || paused) return;
+            if (arrivalPending)
+            {
+                arrivalPending = !Game.TryResumeStation(UtcNow, Persist, suspensionUtc);
+                if (!arrivalPending)
+                {
+                    suspensionUtc = 0;
+                    showArrival = (Game.PendingOfflineEnergy > 0 && Game.PendingOfflineSeconds >= 60) || Game.ExpeditionReady;
+                }
+            }
+            else Save();
         }
 
         // Visual normalization only: the engine remains the sole source of rewards.
