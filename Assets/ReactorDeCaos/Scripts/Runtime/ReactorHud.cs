@@ -38,6 +38,13 @@ namespace ReactorDeCaos
         public Button[] NavigationButtons { get; private set; }
         public int SelectedTab { get; private set; }
         private RectTransform reactorPage, shopPage;
+        private RectTransform[] shopRows;
+        public const float MinimumFontSize = 48;
+        private bool shopLayoutDirty = true;
+        private float shopLayoutWidth = -1;
+        private GameObject saveWarning;
+        public Button RetrySaveButton { get; private set; }
+        public bool SaveFailed { get; private set; }
         private TextMeshProUGUI[] shopPrices;
         private Image[] tabIndicators;
         public Sprite Icon(string id) { return sprites.Icon(id); }
@@ -64,7 +71,7 @@ namespace ReactorDeCaos
         private Rect lastSafeArea;
         private Vector2Int lastScreenSize;
         private int lastStage = -1;
-        private static readonly string[] shortStages = { "SEMILLA", "PLASMA", "CUÁNTICO", "ESTRELLA", "SINGULARIDAD" };
+        private static readonly string[] shortStages = { "Semilla", "Plasma", "Cuántico", "Estrella", "Singularidad" };
         private double[] lastCosts;
         private int[] lastLevels;
         private bool[] lastAffordable, lastUnlocked;
@@ -118,11 +125,11 @@ namespace ReactorDeCaos
             ApplySafeArea();
             Image("Header", safe, new Color(.025f, .045f, .075f, .85f), .035f, .825f, .965f, .98f);
             Image("HeaderRule", safe, new Color(.18f, .92f, 1, .4f), .065f, .824f, .935f, .826f);
-            Label("Brand", safe, "REACTOR / DE CAOS", 26, Muted, .065f, .945f, .60f, .97f, TextAlignmentOptions.Left);
-            energy = Label("Energy", safe, "0", 78, Color.white, .06f, .871f, .78f, .941f, TextAlignmentOptions.Left);
-            Label("Unit", safe, "ENERGÍA", 22, Cyan, .62f, .945f, .77f, .97f);
-            rate = Label("Rate", safe, "0 / s", 32, Cyan, .065f, .836f, .66f, .867f, TextAlignmentOptions.Left);
-            stage = Label("Stage", safe, "", 32, Warm, .69f, .836f, .94f, .867f, TextAlignmentOptions.Right);
+            Label("Brand", safe, "Reactor de Caos", 26, Muted, .065f, .955f, .60f, .98f, TextAlignmentOptions.Left);
+            energy = Label("Energy", safe, "0", 78, Color.white, .06f, .895f, .78f, .95f, TextAlignmentOptions.Left);
+            Label("Unit", safe, "E", 22, Cyan, .62f, .955f, .77f, .98f);
+            rate = Label("Rate", safe, "0 / s", 32, Cyan, .065f, .827f, .66f, .890f, TextAlignmentOptions.Left);
+            stage = Label("Stage", safe, "", 32, Warm, .68f, .827f, .955f, .887f, TextAlignmentOptions.Right);
             reactorPage = Rect("ReactorPage", safe, 0, .145f, 1, .815f);
             shopPage = Rect("EngineeringPage", safe, .035f, .145f, .965f, .815f);
             Image("EngineeringSurface", shopPage, new Color(.02f, .035f, .06f, .96f), 0, 0, 1, 1);
@@ -168,13 +175,29 @@ namespace ReactorDeCaos
             Image("StoryAccent", StoryButton.transform, Cyan, 0, 0, .006f, 1);
             tapHint = Label("TapHint", StoryButton.transform, "NARA · VER HISTORIA", 26, Cyan, .035f, .48f, .965f, .95f);
             milestone = Label("Milestone", StoryButton.transform, "", 24, Color.white, .035f, .05f, .965f, .48f);
+            var missionViewport = Rect("MissionViewport", StoryButton.transform, .025f, .04f, .975f, .96f);
+            missionViewport.gameObject.AddComponent<RectMask2D>();
+            missionViewport.gameObject.AddComponent<Image>().color = new Color(0, 0, 0, .01f);
+            var missionContent = Rect("MissionContent", missionViewport, 0, 1, 1, 1);
+            missionContent.pivot = new Vector2(.5f, 1);
+            var missionLayout = missionContent.gameObject.AddComponent<VerticalLayoutGroup>();
+            missionLayout.spacing = 12;
+            missionLayout.childControlWidth = missionLayout.childControlHeight = true;
+            missionLayout.childForceExpandHeight = false;
+            missionContent.gameObject.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            tapHint.transform.SetParent(missionContent, false); milestone.transform.SetParent(missionContent, false);
+            tapHint.enableAutoSizing = milestone.enableAutoSizing = false;
+            tapHint.alignment = milestone.alignment = TextAlignmentOptions.TopLeft;
+            var missionScroll = missionViewport.gameObject.AddComponent<ScrollRect>();
+            missionScroll.viewport = missionViewport; missionScroll.content = missionContent;
+            missionScroll.horizontal = false; missionScroll.movementType = ScrollRect.MovementType.Clamped;
             OverloadButton = Button("ActivateOverload", reactorPage, new Color(.13f, .07f, .23f, .98f), .055f, .02f, .945f, .16f);
             OverloadButton.onClick.AddListener(app.ActivateOverload);
             overloadLabel = Label("OverloadLabel", OverloadButton.transform, "", 29, Color.white, .02f, .1f, .98f, .94f);
             Image track = Image("ChargeTrack", reactorPage, new Color(.12f, .12f, .2f), .055f, .006f, .945f, .014f);
             chargeFill = Image("Charge", track.transform, Violet, 0, 0, 0, 1).rectTransform;
             Label("ShopTitle", shopPage, "MEJORAS", 38, Color.white, .04f, .925f, .96f, .985f, TextAlignmentOptions.Left);
-            Label("ShopHelp", shopPage, "Mejora tus toques o genera energía automáticamente.\nDesliza para explorar los módulos.", 26, Muted, .04f, .84f, .96f, .925f, TextAlignmentOptions.Left);
+            ScrollableLabel("ShopHelp", shopPage, "Toca una tarjeta para ver detalles.\nSolo COMPRAR gasta energía. Desliza para explorar.", 26, Muted, .04f, .84f, .96f, .925f);
             RectTransform viewport = Rect("ShopViewport", shopPage, .025f, .025f, .975f, .825f);
             viewport.gameObject.AddComponent<RectMask2D>();
             Image viewportImage = viewport.gameObject.AddComponent<Image>();
@@ -190,7 +213,7 @@ namespace ReactorDeCaos
             scroll.vertical = true;
             scroll.movementType = ScrollRect.MovementType.Clamped;
             scroll.scrollSensitivity = 35;
-            ShopButtons = new Button[itemCount];
+            ShopButtons = new Button[itemCount]; shopRows = new RectTransform[itemCount];
             shopText = new TextMeshProUGUI[itemCount];
             shopPrices = new TextMeshProUGUI[itemCount];
             lastCosts = new double[itemCount]; lastLevels = new int[itemCount];
@@ -199,24 +222,34 @@ namespace ReactorDeCaos
             {
                 lastLevels[i] = -1;
                 ShopEntry entry = app.Game.Shop[i];
-                Button button = Button("Buy" + entry.Id, content, Panel, 0, 1, 1, 1);
+                var row = Image("ShopRow_" + entry.Id, content, Panel, 0, 1, 1, 1).rectTransform;
+                shopRows[i] = row; row.pivot = new Vector2(.5f, 1);
+                row.sizeDelta = new Vector2(0, 440);
+                var details = Button("Details_" + entry.Id, row, Color.clear, 0, 0, 1, 1);
+                details.onClick.AddListener(() => { SelectTab(0); OpenModule(entry.Id); });
+                Image("Accent", row, entry.IsGenerator ? Violet : Cyan, 0, 0, .006f, 1);
+                Image icon = Image("Icon", row, Color.white, .015f, 1, .145f, 1);
+                icon.rectTransform.pivot = new Vector2(.5f, 1);
+                icon.rectTransform.sizeDelta = new Vector2(0, 140);
+                icon.rectTransform.anchoredPosition = new Vector2(0, -24);
+                icon.sprite = sprites.Icon(entry.Id); icon.preserveAspect = true;
+                shopText[i] = Label("Description", row, "", 36, Color.white, .16f, 1, .97f, 1, TextAlignmentOptions.TopLeft);
+                shopText[i].enableAutoSizing = false;
+                shopText[i].rectTransform.pivot = new Vector2(.5f, 1);
+                shopText[i].rectTransform.anchoredPosition = new Vector2(0, -24);
+                Button button = Button("Buy" + entry.Id, row, new Color(.08f, .15f, .20f), .16f, 0, .97f, 0);
                 var buttonRect = (RectTransform)button.transform;
-                buttonRect.pivot = new Vector2(.5f, 1);
-                buttonRect.sizeDelta = new Vector2(0, 218);
-                buttonRect.anchoredPosition = new Vector2(0, -i * 234);
+                buttonRect.pivot = new Vector2(.5f, 0);
+                buttonRect.sizeDelta = new Vector2(0, 164);
+                buttonRect.anchoredPosition = new Vector2(0, 20);
                 button.onClick.AddListener(() => app.Buy(entry.Id));
                 ShopButtons[i] = button;
-                Image("PurchaseSurface", button.transform, new Color(.08f, .15f, .20f), .73f, .10f, .98f, .90f);
-                shopPrices[i] = Label("PurchasePrice", button.transform, "", 28, Warm, .74f, .12f, .97f, .88f);
-                Image("Accent", button.transform, entry.IsGenerator ? Violet : Cyan, 0, 0, .006f, 1);
-                Image icon = Image("Icon", button.transform, Color.white, .015f, .17f, .145f, .83f);
-                icon.sprite = sprites.Icon(entry.Id);
-                icon.preserveAspect = true;
-                shopText[i] = Label("Description", button.transform, "", 30, Color.white, .16f, .07f, .71f, .93f, TextAlignmentOptions.Left);
+                shopPrices[i] = Label("PurchasePrice", button.transform, "", 36, Warm, .03f, .08f, .97f, .92f);
+
             }
-            notice = Label("Notice", safe, "", 20, Warm, .045f, .108f, .955f, .14f);
+            notice = ScrollableLabel("Notice", safe, "", 20, Warm, .045f, .108f, .955f, .14f);
             NavigationButtons = new Button[5]; tabIndicators = new Image[5];
-            string[] tabNames = { "NÚCLEO", "MEJORAS", "LOGROS", "ASCENDER", "HISTORIA" };
+            string[] tabNames = { "Núcleo", "Mejoras", "Logros", "Ciclo", "Archivo" };
             for (int i = 0; i < 5; i++)
             {
                 int tab = i;
@@ -240,13 +273,22 @@ namespace ReactorDeCaos
             SettingsButton = Button("Settings", safe, Panel, .79f, .89f, .955f, .98f);
             Image settingsIcon = Image("SettingsIcon", SettingsButton.transform, Color.white, .27f, .4f, .73f, .94f);
             settingsIcon.sprite = sprites.Icon("settings"); settingsIcon.preserveAspect = true;
-            Label("SettingsLabel", SettingsButton.transform, "AJUSTES", 24, Cyan, .02f, .03f, .98f, .36f);
+            Label("SettingsLabel", SettingsButton.transform, "Ajustes", 24, Cyan, .02f, .03f, .98f, .36f);
             Menu = new PresentationMenu(this, safe, SettingsButton, Preferences);
             ModulePanel = new ReactorModulePanel(this, safe, app);
             Progression = new RebirthPanel(this, safe, app);
             Achievements = new AchievementPanel(this, safe, app);
             Story = new StoryPanel(this, safe, app);
             Station = new StationPanel(this, safe, app);
+            var warning = Image("SaveWarning", safe, new Color(.18f, .045f, .025f, 1), .025f, .82f, .975f, .99f);
+            saveWarning = warning.gameObject; warning.raycastTarget = true;
+            ScrollableLabel("SaveWarningText", warning.transform,
+                "Cambios sin guardar. Revisa el espacio disponible. Se reintentará automáticamente.",
+                36, Color.white, .03f, .06f, .67f, .94f);
+            RetrySaveButton = Button("RetrySave", warning.transform, new Color(.35f, .12f, .04f), .70f, .10f, .97f, .90f);
+            Label("RetrySaveLabel", RetrySaveButton.transform, "REINTENTAR", 32, Color.white, .02f, .05f, .98f, .95f);
+            RetrySaveButton.onClick.AddListener(app.RetrySave);
+            saveWarning.SetActive(false);
             SelectTab(0);
             Refresh(app.Game, true);
         }
@@ -267,6 +309,7 @@ namespace ReactorDeCaos
             if (tab < 0 || tab > 5 || !owner.Game.CampaignTabAvailable(tab) || (owner.Narrative?.IsBlocking ?? false)) return;
             ClosePanels();
             SelectedTab = tab;
+            shopLayoutDirty = true;
             reactorPage.gameObject.SetActive(tab == 0);
             shopPage.gameObject.SetActive(tab == 1);
             for (int i = 0; i < tabIndicators.Length; i++)
@@ -302,6 +345,20 @@ namespace ReactorDeCaos
             StoryButton.gameObject.SetActive(true);
         }
 
+        public void SetSaveFailed(bool failed)
+        {
+            SaveFailed = failed;
+            if (saveWarning == null) return;
+            saveWarning.SetActive(failed);
+            if (failed) saveWarning.transform.SetAsLastSibling();
+        }
+
+        private void LateUpdate()
+        {
+            if (SaveFailed && saveWarning != null) saveWarning.transform.SetAsLastSibling();
+            if (shopRows != null && shopPage.gameObject.activeInHierarchy) LayoutShop();
+        }
+
         public void ShowNotice(string text)
         {
             if (notice == null) return;
@@ -318,7 +375,7 @@ namespace ReactorDeCaos
                 return;
             }
             if (transmission != null) { ShowNotice("HITO · " + reward.title); return; }
-            rewardText.text = "HITO · " + reward.title + "\n<size=80%>" + reward.rewardDescription + "</size>";
+            rewardText.text = "HITO · " + reward.title + "\n" + reward.rewardDescription + "";
             rewardUntil = Time.unscaledTime + 3.5f;
             rewardCard.gameObject.SetActive(true);
             rewardCard.alpha = 1;
@@ -374,19 +431,13 @@ namespace ReactorDeCaos
                     column++;
                 }
             }
-            int visibleRows = 0;
-            for (int i = 0; i < ShopButtons.Length; i++)
-            {
-                bool visible = !game.CampaignActive || game.Unlocked(game.Shop[i].Id);
-                ShopButtons[i].gameObject.SetActive(visible);
-                if (visible) ((RectTransform)ShopButtons[i].transform).anchoredPosition = new Vector2(0, -visibleRows++ * 234);
-            }
-            ((RectTransform)ShopButtons[0].transform.parent).sizeDelta = new Vector2(0, visibleRows * 234);
+            for (int i = 0; i < shopRows.Length; i++)
+                shopRows[i].gameObject.SetActive(!game.CampaignActive || game.Unlocked(game.Shop[i].Id));
             for (int i = 0; i < ShopButtons.Length; i++) ShopButtons[i].interactable = game.CanBuy(game.Shop[i].Id);
             if (!force && Time.unscaledTime < nextTextUpdate) return;
             nextTextUpdate = Time.unscaledTime + .08f;
             energy.text = game.EnergyLimitReached ? "LÍMITE · " + NumberFormat.Compact(game.Energy) : NumberFormat.Compact(game.Energy);
-            rate.text = NumberFormat.Stat(game.Production) + " / s   ·   " + NumberFormat.Stat(game.CurrentTapGain) + " / toque";
+            rate.text = NumberFormat.Stat(game.Production) + " / s\n" + NumberFormat.Stat(game.CurrentTapGain) + " / toque";
             combo.text = "COMBO ×" + NumberFormat.Stat(game.ComboMultiplier)
                 + (game.Combo.Decaying ? " · BAJANDO" : game.ComboMultiplier >= game.ComboCap ? " · MÁXIMO" : " · " + game.Combo.Count + " TOQUES");
             combo.color = game.Combo.Decaying ? Muted : Cyan;
@@ -395,10 +446,10 @@ namespace ReactorDeCaos
                 lastStage = game.Stage;
                 stage.text = shortStages[Mathf.Clamp(game.Stage, 0, shortStages.Length - 1)];
             }
-            progressionLabel.text = game.CanRebirth ? "ASCENDER\nLISTO" : "ASCENDER";
-            achievementsLabel.text = "LOGROS" + (game.AvailableAchievements > 0 ? "\n" + game.AvailableAchievements + " LISTOS" : "");
-            storyLabel.text = game.CampaignTabAvailable(5) ? "ORFEO" + (game.ExpeditionReady || game.PendingOfflineEnergy > 0 || game.PendingStationMemory >= 0 ? "\nLISTO" : "")
-                : "ARCHIVO" + (game.UnreadStory > 0 ? "\nNUEVO" : "");
+            progressionLabel.text = game.CanRebirth ? "Ciclo\nListo" : "Ciclo";
+            achievementsLabel.text = "Logros" + (game.AvailableAchievements > 0 ? "\n" + game.AvailableAchievements : "");
+            storyLabel.text = game.CampaignTabAvailable(5) ? "Orfeo" + (game.ExpeditionReady || game.PendingOfflineEnergy > 0 || game.PendingStationMemory >= 0 ? "\nListo" : "")
+                : "Archivo" + (game.UnreadStory > 0 ? "\nNuevo" : "");
             ModulePanel.Refresh(); Progression.Refresh(); Achievements.Refresh(); Story.Refresh(); Station.Refresh();
             tapHint.text = game.UnreadStory > 0 ? "NARA · NUEVA TRANSMISIÓN" : "MISIÓN · " + NarrativeMission(game.StoryCompleted);
             milestone.text = game.StoryCompleted == StoryCatalog.Count ? "Archivo recuperado · " + game.StoryRead + " / 6 leídos"
@@ -424,6 +475,7 @@ namespace ReactorDeCaos
                 bool unlocked = game.Unlocked(item);
                 if (lastLevels[i] == level && lastCosts[i] == cost
                     && lastAffordable[i] == affordable && lastUnlocked[i] == unlocked) continue;
+                shopLayoutDirty = true;
                 lastLevels[i] = level; lastCosts[i] = cost;
                 lastAffordable[i] = affordable; lastUnlocked[i] = unlocked;
                 string price = level >= EconomyConfig.MaxLevel ? "MÁX."
@@ -435,12 +487,32 @@ namespace ReactorDeCaos
                 if (level >= EconomyConfig.MaxLevel) effect = NumberFormat.Stat(current) + " " + entry.Unit + " · MÁXIMO";
                 string description = unlocked ? entry.Description : "Requiere " + game.UnlockDescription(item);
                 shopText[i].text = entry.Name + " <color=#74E6F2>· NV. " + level + "</color>"
-                    + "\n<size=80%><color=#BBCADD>" + description + "\n" + effect + "</color></size>";
+                    + "\n<color=#BBCADD>" + description + "\n" + effect + "</color>";
                 shopPrices[i].text = !unlocked ? price : level >= EconomyConfig.MaxLevel ? "MÁXIMO"
                     : (affordable ? "COMPRAR" : "NECESITAS") + "\n" + price;
 
             }
-            if (Time.unscaledTime > noticeUntil) notice.text = "GUARDADO LOCAL  ·  SIN CONEXIÓN";
+            if (Time.unscaledTime > noticeUntil) notice.text = SaveFailed ? "GUARDADO PENDIENTE" : "JUEGO SIN CONEXIÓN";
+        }
+
+        private void LayoutShop()
+        {
+            float width = shopPage.rect.width;
+            if (!shopLayoutDirty && Mathf.Approximately(width, shopLayoutWidth)) return;
+            shopLayoutDirty = false; shopLayoutWidth = width;
+            float top = 0;
+            for (int i = 0; i < shopRows.Length; i++)
+            {
+                var row = shopRows[i];
+                if (!row.gameObject.activeSelf) continue;
+                float height = Mathf.Max(180, shopText[i].GetPreferredValues(shopText[i].text,
+                    Mathf.Max(1, shopText[i].rectTransform.rect.width), Mathf.Infinity).y);
+                shopText[i].rectTransform.sizeDelta = new Vector2(0, height);
+                row.sizeDelta = new Vector2(0, height + 224);
+                row.anchoredPosition = new Vector2(0, -top);
+                top += row.sizeDelta.y + 24;
+            }
+            if (shopRows.Length > 0) ((RectTransform)shopRows[0].parent).sizeDelta = new Vector2(0, top);
         }
 
         private static readonly string[] missionNames = { "SOPORTE VITAL", "COMUNICACIONES", "SECTOR ROJO", "CAJA NEGRA", "ENLACE DE MEMORIA", "NUEVO ENCENDIDO", "ORFEO RECUERDA" };
@@ -450,8 +522,6 @@ namespace ReactorDeCaos
             transmission = "<color=#74E6F2>" + name + " · </color>" + text;
             rewardCard.gameObject.SetActive(false); StoryButton.gameObject.SetActive(true);
             tapHint.gameObject.SetActive(false);
-            milestone.rectTransform.anchorMin = new Vector2(.025f, .03f);
-            milestone.rectTransform.anchorMax = new Vector2(.975f, .97f);
             milestone.text = transmission;
         }
         public void ClearTransmission()
@@ -459,8 +529,6 @@ namespace ReactorDeCaos
             transmission = null;
             if (tapHint == null) return;
             tapHint.gameObject.SetActive(true);
-            milestone.rectTransform.anchorMin = new Vector2(.035f, .05f);
-            milestone.rectTransform.anchorMax = new Vector2(.965f, .48f);
             nextTextUpdate = 0;
         }
 
@@ -514,14 +582,43 @@ namespace ReactorDeCaos
             label.font = Font;
             label.text = text;
             if (size <= 42) size *= 1.35f;
+            size = Mathf.Max(MinimumFontSize, size);
             label.fontSize = size;
             label.color = color;
             label.alignment = alignment;
             label.raycastTarget = false;
             label.enableAutoSizing = true;
-            label.fontSizeMin = size * .80f;
+            label.fontSizeMin = MinimumFontSize;
             label.fontSizeMax = size;
-            label.overflowMode = TextOverflowModes.Ellipsis;
+            label.overflowMode = TextOverflowModes.Overflow;
+            return label;
+        }
+
+        // Long text grows inside its own bounded viewport instead of shrinking or hiding words.
+        public TextMeshProUGUI ScrollableLabel(string name, Transform parent, string text, float size, Color color,
+            float x0, float y0, float x1, float y1)
+        {
+            var viewport = Rect(name + "Viewport", parent, x0, y0, x1, y1);
+            viewport.gameObject.AddComponent<RectMask2D>();
+            viewport.gameObject.AddComponent<Image>().color = new Color(0, 0, 0, .01f);
+            var label = Label(name, viewport, text, size, color, 0, 1, 1, 1, TextAlignmentOptions.TopLeft);
+            label.enableAutoSizing = false;
+            label.rectTransform.pivot = new Vector2(.5f, 1);
+            label.gameObject.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            var scroll = viewport.gameObject.AddComponent<ScrollRect>();
+            scroll.viewport = viewport; scroll.content = label.rectTransform;
+            scroll.horizontal = false; scroll.movementType = ScrollRect.MovementType.Clamped;
+            scroll.scrollSensitivity = 40;
+            label.rectTransform.offsetMax = new Vector2(-28, label.rectTransform.offsetMax.y);
+            var track = Image(name + "ScrollTrack", viewport, new Color(.08f, .13f, .19f), 1, 0, 1, 1);
+            track.rectTransform.pivot = new Vector2(1, .5f);
+            track.rectTransform.sizeDelta = new Vector2(18, 0);
+            var bar = track.gameObject.AddComponent<Scrollbar>();
+            var handle = Image("Handle", track.transform, Cyan, 0, 0, 1, 1);
+            bar.handleRect = handle.rectTransform; bar.targetGraphic = handle;
+            bar.direction = Scrollbar.Direction.BottomToTop;
+            scroll.verticalScrollbar = bar;
+            scroll.verticalScrollbarVisibility = ScrollRect.ScrollbarVisibility.AutoHide;
             return label;
         }
 

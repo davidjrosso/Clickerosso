@@ -24,7 +24,7 @@ namespace ReactorDeCaos
             icon = ReactorHud.Image("ModulePortrait", panel.transform, Color.white, .36f, .72f, .64f, .94f);
             icon.preserveAspect = true;
             title = hud.Label("ModuleTitle", panel.transform, "", 38, Color.white, .05f, .62f, .95f, .72f);
-            detail = hud.Label("ModuleDetailsText", panel.transform, "", 31, ReactorHud.Cyan, .07f, .35f, .93f, .62f);
+            detail = hud.ScrollableLabel("ModuleDetailsText", panel.transform, "", 36, ReactorHud.Cyan, .07f, .35f, .93f, .62f);
             BuyButton = ReactorHud.Button("BuyModule", panel.transform, new Color(.11f, .08f, .25f), .08f, .185f, .92f, .335f);
             buyLabel = hud.Label("BuyModuleText", BuyButton.transform, "", 30, Color.white, .02f, 0, .98f, 1);
             BuyButton.onClick.AddListener(() => { app.Buy(SelectedId); Refresh(); });
@@ -38,6 +38,8 @@ namespace ReactorDeCaos
             app.Hud.ClosePanels(); SelectedId = id;
             icon.sprite = app.Hud.Icon(id);
             root.SetActive(true); Refresh();
+            Canvas.ForceUpdateCanvases();
+            detail.GetComponentInParent<ScrollRect>().verticalNormalizedPosition = 1;
         }
         public void Close() { root.SetActive(false); }
         public void Refresh()

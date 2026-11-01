@@ -82,7 +82,7 @@ namespace ReactorDeCaos
             var dialogue = ReactorHud.Image("CinematicDialogue", surface.transform, new Color(.02f, .035f, .06f, 1), .035f, .15f, .965f, .455f);
             ReactorHud.Image("DialogueRule", dialogue.transform, ReactorHud.Cyan, 0, .985f, 1, 1);
             speaker = hud.Label("CinematicSpeaker", dialogue.transform, "", 30, ReactorHud.Cyan, .04f, .79f, .96f, .96f, TextAlignmentOptions.Left);
-            subtitle = hud.Label("CinematicSubtitle", dialogue.transform, "", 34, Color.white, .04f, .17f, .96f, .78f, TextAlignmentOptions.TopLeft);
+            subtitle = hud.ScrollableLabel("CinematicSubtitle", dialogue.transform, "", 34, Color.white, .04f, .17f, .96f, .78f);
             status = hud.Label("CinematicStatus", dialogue.transform, "", 23, new Color(.62f, .73f, .82f), .04f, .025f, .96f, .155f, TextAlignmentOptions.Left);
             SkipButton = ReactorHud.Button("CinematicSkip", surface.transform, new Color(.05f, .09f, .14f), .045f, .025f, .48f, .12f);
             skipLabel = hud.Label("CinematicSkipLabel", SkipButton.transform, "OMITIR ESCENA", 27, Color.white, .025f, .05f, .975f, .95f);
@@ -156,6 +156,8 @@ namespace ReactorDeCaos
             elapsed = 0;
             var beat = scene.beats[beatIndex];
             speaker.text = beat.speaker; subtitle.text = beat.text;
+            Canvas.ForceUpdateCanvases();
+            subtitle.GetComponentInParent<ScrollRect>().verticalNormalizedPosition = 1;
             portrait.sprite = hud.NarrativeArt.Portrait(scene.id == "intro" && beatIndex == 3 ? "core" : beat.portrait);
             speaker.color = beat.portrait == "mara" ? ReactorHud.Warm : beat.portrait == "memory" ? ReactorHud.Violet : ReactorHud.Cyan;
             orbit.color = speaker.color;

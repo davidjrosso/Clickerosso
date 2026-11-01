@@ -19,7 +19,7 @@ namespace ReactorDeCaos
             var surface = ReactorHud.Image("AchievementsPage", parent, new Color(.02f, .035f, .06f, .98f), .035f, .145f, .965f, .815f);
             surface.raycastTarget = true; root = surface.gameObject;
             hud.Label("AchievementsTitle", surface.transform, "LOGROS", 38, Color.white, .04f, .925f, .96f, .985f, TextAlignmentOptions.Left);
-            summary = hud.Label("AchievementsSummary", surface.transform, "", 26, ReactorHud.Cyan, .04f, .84f, .96f, .925f, TextAlignmentOptions.Left);
+            summary = hud.ScrollableLabel("AchievementsSummary", surface.transform, "", 26, ReactorHud.Cyan, .04f, .84f, .96f, .925f);
             var viewport = ReactorHud.Rect("AchievementsViewport", surface.transform, .025f, .08f, .975f, .825f);
             viewport.gameObject.AddComponent<RectMask2D>();
             var hit = viewport.gameObject.AddComponent<Image>(); hit.color = new Color(0, 0, 0, .01f);
@@ -47,7 +47,7 @@ namespace ReactorDeCaos
                 actions[i] = hud.Label("ClaimText", button.transform, "", 27, ReactorHud.Warm, .02f, .04f, .98f, .96f);
                 button.onClick.AddListener(() => app.ClaimAchievement(goal.id));
             }
-            message = hud.Label("AchievementsMessage", surface.transform, "", 24, ReactorHud.Warm, .035f, .005f, .965f, .075f);
+            message = hud.ScrollableLabel("AchievementsMessage", surface.transform, "", 24, ReactorHud.Warm, .035f, .005f, .965f, .075f);
             root.SetActive(false);
         }
         public void Open() { root.SetActive(true); message.text = "Las recompensas se conservan pendientes al ascender."; Refresh(); }
@@ -58,6 +58,7 @@ namespace ReactorDeCaos
             if (!IsOpen) return;
             GameEngine game = app.Game;
             int claimed = 0, visible = 0;
+            float top = 0;
             for (int i = 0; i < ClaimButtons.Length; i++)
             {
                 var goal = game.AchievementAt(i);
@@ -65,18 +66,23 @@ namespace ReactorDeCaos
                 bool revealed = game.CampaignAchievementVisible(goal);
                 card.gameObject.SetActive(revealed);
                 if (!revealed) continue;
-                card.anchoredPosition = new Vector2(0, -visible++ * 238);
+                visible++;
                 bool done = game.AchievementClaimed(goal.id), unlocked = game.AchievementUnlocked(goal.id);
                 if (done) claimed++;
                 double progress = game.AchievementProgress(goal);
-                descriptions[i].text = goal.title + "\n<size=80%><color=#BBCADD>" + goal.description
-                    + "\n" + NumberFormat.Compact(progress) + " / " + NumberFormat.Compact(goal.target) + "</color></size>";
+                descriptions[i].text = goal.title + "\n<color=#BBCADD>" + goal.description
+                    + "\n" + NumberFormat.Compact(progress) + " / " + NumberFormat.Compact(goal.target) + "</color>";
+                descriptions[i].enableAutoSizing = false;
+                float textHeight = descriptions[i].GetPreferredValues(descriptions[i].text,
+                    Mathf.Max(1, descriptions[i].rectTransform.rect.width), Mathf.Infinity).y;
+                card.sizeDelta = new Vector2(0, Mathf.Max(320, (textHeight + 24) / .75f));
+                card.anchoredPosition = new Vector2(0, -top); top += card.sizeDelta.y + 24;
                 fills[i].anchorMax = new Vector2(Mathf.Clamp01((float)(progress / goal.target)), 1);
                 ClaimButtons[i].interactable = game.CanClaimAchievement(goal.id);
                 actions[i].text = done ? "RECLAMADO" : (unlocked ? game.CanClaimAchievement(goal.id) ? "RECLAMAR" : "LÍMITE DE ENERGÍA" : "EN CURSO")
                     + "\n+" + NumberFormat.Compact(goal.energyReward) + " E";
             }
-            if (ClaimButtons.Length > 0) ((RectTransform)ClaimButtons[0].transform.parent.parent).sizeDelta = new Vector2(0, visible * 238);
+            if (ClaimButtons.Length > 0) ((RectTransform)ClaimButtons[0].transform.parent.parent).sizeDelta = new Vector2(0, top);
             summary.text = claimed + " / " + visible + " reclamados · " + game.AvailableAchievements + " disponibles"
                 + "\nCada recompensa se entrega una sola vez.";
         }

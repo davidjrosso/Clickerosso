@@ -32,11 +32,11 @@ namespace ReactorDeCaos
             app = owner;
             var surface = ReactorHud.Image("StoryPage", parent, new Color(.02f, .035f, .06f, .98f), .035f, .145f, .965f, .815f);
             surface.raycastTarget = true; root = surface.gameObject;
-            heading = hud.Label("StoryHeading", surface.transform, "ARCHIVO DE NARA", 34, Color.white, .04f, .925f, .96f, .985f, TextAlignmentOptions.Left);
+            heading = hud.ScrollableLabel("StoryHeading", surface.transform, "ARCHIVO DE NARA", 34, Color.white, .04f, .925f, .96f, .985f);
             stationButton = ReactorHud.Button("ArchiveStation", surface.transform, new Color(.035f, .14f, .19f), .68f, .86f, .97f, 1);
             hud.Label("ArchiveStationLabel", stationButton.transform, "ESTACIÓN", 26, Color.white, .025f, .05f, .975f, .95f);
             stationButton.onClick.AddListener(() => hud.SelectTab(5));
-            status = hud.Label("StoryStatus", surface.transform, "", 26, ReactorHud.Cyan, .04f, .865f, .96f, .925f, TextAlignmentOptions.Left);
+            status = hud.ScrollableLabel("StoryStatus", surface.transform, "", 26, ReactorHud.Cyan, .04f, .865f, .96f, .925f);
             var viewport = ReactorHud.Rect("StoryViewport", surface.transform, .025f, .33f, .975f, .855f);
             viewport.gameObject.AddComponent<RectMask2D>();
             viewport.gameObject.AddComponent<Image>().color = new Color(0, 0, 0, .01f);
@@ -151,8 +151,8 @@ namespace ReactorDeCaos
             var game = app.Game;
             bool stationAvailable = game.CampaignTabAvailable(5);
             stationButton.gameObject.SetActive(stationAvailable);
-            heading.rectTransform.anchorMax = new Vector2(stationAvailable ? .65f : .96f, .985f);
-            status.rectTransform.anchorMax = new Vector2(stationAvailable ? .65f : .96f, .925f);
+            ((RectTransform)heading.transform.parent).anchorMax = new Vector2(stationAvailable ? .65f : .96f, .985f);
+            ((RectTransform)status.transform.parent).anchorMax = new Vector2(stationAvailable ? .65f : .96f, .925f);
             bool epilogue = Chapter == StoryCatalog.Count;
             bool done = Chapter < game.StoryCompleted;
             heading.text = epilogue ? "DESPUÉS DEL RENACIMIENTO" : "ARCHIVO DE NARA · " + (Chapter + 1) + " / " + StoryCatalog.Count;

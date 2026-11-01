@@ -89,6 +89,120 @@ namespace ReactorDeCaos.Tests
         }
 
         [UnityTest]
+        public IEnumerator ShopDetailsDoNotSpendEnergyAndOnlyBuyButtonPurchases()
+        {
+            var app = Object.FindFirstObjectByType<ReactorApp>();
+            for (int i = 0; i < 100; i++) app.Tap();
+            app.Hud.SelectTab(1); yield return null; Canvas.ForceUpdateCanvases();
+            var buy = app.Hud.ShopButtons[0];
+            var description = buy.transform.parent.Find("Description").GetComponent<RectTransform>();
+            var pointer = new PointerEventData(EventSystem.current) {
+                position = description.TransformPoint(new Vector3(description.rect.center.x, description.rect.yMax - 20))
+            };
+            var hits = new List<RaycastResult>(); EventSystem.current.RaycastAll(pointer, hits);
+            Assert.That(hits.Count, Is.GreaterThan(0));
+            double before = app.Game.Energy;
+            ExecuteEvents.ExecuteHierarchy(hits[0].gameObject, pointer, ExecuteEvents.pointerClickHandler);
+            Assert.That(app.Hud.ModulePanel.IsOpen, Is.True);
+            Assert.That(app.Game.Energy, Is.EqualTo(before));
+            Assert.That(app.Game.Level("tap"), Is.Zero);
+            app.Hud.SelectTab(1); Canvas.ForceUpdateCanvases();
+            pointer.position = buy.transform.TransformPoint(((RectTransform)buy.transform).rect.center);
+            hits.Clear(); EventSystem.current.RaycastAll(pointer, hits);
+            Assert.That(hits[0].gameObject, Is.EqualTo(buy.gameObject));
+            double cost = app.Game.Cost("tap");
+            ExecuteEvents.ExecuteHierarchy(hits[0].gameObject, pointer, ExecuteEvents.pointerClickHandler);
+            Assert.That(app.Game.Level("tap"), Is.EqualTo(1));
+            Assert.That(app.Game.Energy, Is.EqualTo(before - cost));
+            LogAssert.NoUnexpectedReceived();
+        }
+
+        [UnityTest]
+        public IEnumerator FailedSaveSurvivesNoticesAndClearsOnlyAfterSuccessfulRetry()
+        {
+            var app = Object.FindFirstObjectByType<ReactorApp>();
+            var field = typeof(ReactorApp).GetField("saves", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            var original = field.GetValue(app);
+            string blocker = Path.Combine(Application.temporaryCachePath, "reactor-save-test-" + System.Guid.NewGuid().ToString("N"));
+            File.WriteAllText(blocker, "Test-only file blocks directory creation");
+            try
+            {
+                field.SetValue(app, new SaveStore(Path.Combine(blocker, "save.json"), new UnityJsonCodec()));
+                LogAssert.Expect(LogType.Warning, new System.Text.RegularExpressions.Regex("Reactor save failed:"));
+                app.Hud.RetrySaveButton.onClick.Invoke();
+                Assert.That(app.Hud.SaveFailed, Is.True);
+                app.Hud.ShowNotice("Otro aviso no debe ocultar el error");
+                yield return new WaitForSecondsRealtime(4.2f);
+                app.Hud.Refresh(app.Game, true);
+                Assert.That(app.Hud.RetrySaveButton.gameObject.activeInHierarchy, Is.True);
+                Assert.That(Label(app, "Notice").text, Does.Not.Contain("GUARDADO LOCAL"));
+                app.Hud.SelectTab(5); app.Hud.Menu.SetOpen(true); yield return null;
+                Assert.That(app.Hud.RetrySaveButton.transform.parent.GetSiblingIndex(),
+                    Is.EqualTo(app.Hud.SafeRoot.childCount - 1));
+                field.SetValue(app, original);
+                app.Hud.RetrySaveButton.onClick.Invoke();
+                Assert.That(app.Hud.SaveFailed, Is.False);
+                Assert.That(app.Hud.RetrySaveButton.gameObject.activeInHierarchy, Is.False);
+                Assert.That(Label(app, "Notice").text, Does.Contain("Guardado recuperado"));
+            }
+            finally { field.SetValue(app, original); File.Delete(blocker); }
+            LogAssert.NoUnexpectedReceived();
+        }
+
+        [UnityTest]
+        public IEnumerator StationFeedbackStaysVisibleAtBothEndsOfListAndAfterReopening()
+        {
+            var app = Object.FindFirstObjectByType<ReactorApp>();
+            app.Hud.SelectTab(5);
+            var message = Label(app, "StationMessage");
+            ScrollRect list = null;
+            foreach (var scroll in app.GetComponentsInChildren<ScrollRect>(true))
+                if (scroll.content.name == "StationContent") list = scroll;
+            Assert.That(list, Is.Not.Null);
+            Assert.That(message.transform.IsChildOf(list.content), Is.False);
+            foreach (float position in new[] { 0f, 1f })
+            {
+                list.verticalNormalizedPosition = position; yield return null;
+                app.Hud.Station.ShowMessage("No se pudo reclamar. Tu reserva sigue esperando.");
+                var feedback = (RectTransform)message.transform.parent.parent;
+                Vector3 center = feedback.TransformPoint(feedback.rect.center);
+                Assert.That(RectTransformUtility.RectangleContainsScreenPoint(list.viewport, center), Is.False);
+                Assert.That(RectTransformUtility.RectangleContainsScreenPoint(app.Hud.SafeRoot, center), Is.True);
+                Assert.That(message.gameObject.activeInHierarchy, Is.True);
+            }
+            app.Hud.SelectTab(0); app.Hud.SelectTab(5);
+            Assert.That(message.text, Does.Contain("Tu reserva sigue esperando"));
+            LogAssert.NoUnexpectedReceived();
+        }
+
+        [UnityTest]
+        public IEnumerator LongCriticalCopyGrowsWithoutShrinkingOrEllipsis()
+        {
+            var app = Object.FindFirstObjectByType<ReactorApp>();
+            app.enabled = false; // Keep the synthetic long text stable while the layout settles.
+            app.Hud.OpenModule("coil");
+            var detail = Label(app, "ModuleDetailsText");
+            string text = "Requisitos y advertencias completos.\n";
+            for (int i = 0; i < 7; i++) text += text;
+            detail.text = text;
+            yield return null; Canvas.ForceUpdateCanvases(); detail.ForceMeshUpdate();
+            var scroll = detail.GetComponentInParent<ScrollRect>();
+            Assert.That(detail.fontSize, Is.GreaterThanOrEqualTo(48));
+            Assert.That(detail.enableAutoSizing, Is.False);
+            Assert.That(detail.overflowMode, Is.EqualTo(TextOverflowModes.Overflow));
+            Assert.That(scroll.content.rect.height, Is.GreaterThan(scroll.viewport.rect.height));
+            Assert.That(detail.isTextOverflowing, Is.False);
+            scroll.verticalNormalizedPosition = 0; yield return null;
+            Assert.That(scroll.verticalNormalizedPosition, Is.EqualTo(0).Within(.001));
+            app.Hud.ModulePanel.Open("tap");
+            Assert.That(scroll.verticalNormalizedPosition, Is.EqualTo(1).Within(.001));
+            foreach (var nav in app.Hud.NavigationButtons)
+                Assert.That(nav.GetComponentInChildren<TextMeshProUGUI>(true).fontSizeMin, Is.GreaterThanOrEqualTo(48));
+            app.enabled = true;
+            LogAssert.NoUnexpectedReceived();
+        }
+
+        [UnityTest]
         public IEnumerator MainSceneSupportsTapPurchaseAndOverload()
         {
             var app = Object.FindFirstObjectByType<ReactorApp>();
@@ -183,7 +297,7 @@ namespace ReactorDeCaos.Tests
             Assert.That(app.Hud.ShopButtons[5].interactable, Is.True);
             app.Hud.ShopButtons[5].onClick.Invoke();
             Assert.That(app.Game.Level("quantum"), Is.EqualTo(1));
-            var row = app.Hud.ShopButtons[5].transform.Find("Description").GetComponent<TextMeshProUGUI>();
+            var row = app.Hud.ShopButtons[5].transform.parent.Find("Description").GetComponent<TextMeshProUGUI>();
             Assert.That(row.text, Does.Contain("TURBINA CUÁNTICA"));
             Assert.That(row.text, Does.Contain("60 a 123.6 E / s"));
             double energy = app.Game.Energy;
@@ -232,7 +346,7 @@ namespace ReactorDeCaos.Tests
             Assert.That(app.Hud.OverloadButton.transform.IsChildOf(mask.transform), Is.False);
             foreach (var button in app.Hud.ShopButtons)
             {
-                var icon = button.transform.Find("Icon").GetComponent<Image>();
+                var icon = button.transform.parent.Find("Icon").GetComponent<Image>();
                 Assert.That(icon.sprite, Is.Not.Null);
                 Assert.That(icon.raycastTarget, Is.False);
             }
