@@ -165,13 +165,74 @@ namespace ReactorDeCaos.Tests
             var catalog = new NetJsonCodec().Deserialize<NarrativeCatalog>(File.ReadAllText(Path.Combine(directory.FullName, "Assets/ReactorDeCaos/Resources/Narrative.json")));
 #endif
             Assert.DoesNotThrow(catalog.Validate);
-            int interactive = 0, lines = 0;
+            int interactive = 0, lines = 0, spoken = 0, silent = 0, records = 0;
             foreach (var scene in catalog.scenes)
-                foreach (var beat in scene.beats) { lines++; if (beat.interactive) interactive++; }
+                foreach (var beat in scene.beats)
+                {
+                    lines++; if (beat.interactive) interactive++;
+                    if (beat.Silent) { silent++; Assert.That(string.IsNullOrEmpty(beat.voice), Is.True); } else spoken++;
+                    if (beat.Record) records++;
+                }
             Assert.That(interactive, Is.EqualTo(1));
-            Assert.That(lines, Is.EqualTo(62));
+            Assert.That(lines, Is.EqualTo(76));
+            Assert.That(spoken, Is.EqualTo(74));
+            Assert.That(silent, Is.EqualTo(2));
+            Assert.That(records, Is.EqualTo(2));
+            for (int i = 0; i < StoryCatalog.Count; i++)
+                Assert.That(string.IsNullOrEmpty(catalog.Find("chapter_" + i).teaser), Is.False, "chapter " + i + " teaser");
             catalog.scenes[0].beats[0].voice = "../bad";
             Assert.Throws<ArgumentException>(catalog.Validate);
+        }
+        [Test]
+        public void AttunementVariantsShowOnlyTheChosenLineAndNeverTheOther()
+        {
+            var nara = new NarrativeBeat { condition = "nara" };
+            var crew = new NarrativeBeat { condition = "crew" };
+            var always = new NarrativeBeat();
+            Assert.That(always.Matches(0) && always.Matches(1) && always.Matches(2), Is.True);
+            Assert.That(nara.Matches(1), Is.True); Assert.That(nara.Matches(2), Is.False); Assert.That(nara.Matches(0), Is.False);
+            Assert.That(crew.Matches(2), Is.True); Assert.That(crew.Matches(1), Is.False);
+        }
+        [Test]
+        public void SilentBeatsCannotCarryVoiceAndUnknownModesAreRejected()
+        {
+            NarrativeCatalog Make(NarrativeBeat beat) => new NarrativeCatalog { scenes = new[] { new NarrativeScene {
+                id = "intro", title = "T", background = "reactor", mood = "quiet", beats = new[] { beat } } } };
+            Assert.Throws<ArgumentException>(Make(new NarrativeBeat { text = "x", portrait = "nara", mode = "fx", voice = "intro_0" }).Validate);
+            Assert.Throws<ArgumentException>(Make(new NarrativeBeat { text = "x", speaker = "NARA", portrait = "nara", mode = "loud", voice = "intro_0" }).Validate);
+            Assert.Throws<ArgumentException>(Make(new NarrativeBeat { text = "x", speaker = "NARA", portrait = "nara", condition = "nara", voice = "intro_0" }).Validate);
+        }
+        [Test]
+        public void CorruptedTeaserRevealsMonotonicallyAndCompletely()
+        {
+            const string line = "Esa voz... era la mía.";
+            string none = NarrativeText.Corrupted(line, 0), all = NarrativeText.Corrupted(line, 1);
+            Assert.That(none, Does.Contain("<mark="));
+            Assert.That(all, Is.EqualTo("\"" + line + "\""));
+            int previous = int.MaxValue;
+            for (int step = 0; step <= 20; step++)
+            {
+                string text = NarrativeText.Corrupted(line, step / 20.0);
+                int hidden = 0; bool inside = false;
+                for (int i = 0; i < text.Length; i++)
+                {
+                    if (text.Substring(i).StartsWith("<color=#00000000>")) { inside = true; i += 16; continue; }
+                    if (text.Substring(i).StartsWith("</color>")) { inside = false; i += 7; continue; }
+                    if (inside && char.IsLetterOrDigit(text[i])) hidden++;
+                }
+                Assert.That(hidden, Is.LessThanOrEqualTo(previous)); previous = hidden;
+            }
+            Assert.That(previous, Is.Zero);
+            Assert.That(NarrativeText.Corrupted(line, double.NaN), Does.Contain("<mark="));
+            Assert.That(NarrativeText.Corrupted("", .5), Is.EqualTo(""));
+        }
+        [TestCase(0.2, "1 s")]
+        [TestCase(41.2, "42 s")]
+        [TestCase(100, "1 min 40 s")]
+        [TestCase(7500, "2 h 05 min")]
+        public void DurationIsCompactForMissionEstimates(double seconds, string expected)
+        {
+            Assert.That(NarrativeText.Duration(seconds), Is.EqualTo(expected));
         }
     }
 }

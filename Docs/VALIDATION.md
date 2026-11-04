@@ -535,3 +535,18 @@ PlayMode, accesibilidad en dispositivo o rendimiento por estas pruebas .NET.
 5. En Orfeo, desplazarse arriba/abajo y reclamar producción/enviar dron. Ver la
    respuesta fija y el nuevo estado; volver de una escena de Mara y verificar
    que no se haya reemplazado la respuesta por el texto introductorio.
+
+## Orfeo reescrito (2026-11-04)
+
+Detalle en [ORFEO-REESCRITO.md](ORFEO-REESCRITO.md). Entorno sin acceso a NuGet, Hugging Face ni
+descargas de Unity; por eso:
+
+- `Tests/EditMode` + Core + Persistence: 174 pruebas aprobadas con un adaptador mínimo de NUnit
+  (no es el runner oficial). Ejecutar `bash Tools/test-core.sh` con NuGet disponible.
+- Runtime, Core, Persistence y Editor compilan contra stubs manuales de la API de Unity. No sustituye
+  `python3 Tools/check-unity-api.py` con el Editor fijado.
+- `python3 Tools/audit-mobile-layout.py`: aprobado, 52 controles, mínimo 48,33 px lógicos.
+- `bash Tools/simulate-balance.sh`: todos los presupuestos aprobados; campañas 426,1 s, 597,7 s y 678,4 s.
+- `python3 Tools/audit-cinematics.py`: falla a propósito hasta regenerar 57 voces; con
+  `--allow-pending` aprueba los 17 clips conservados.
+- Sin Unity, Android ni escucha. La prueba PlayMode de subtítulos y voz del despertar requiere `intro_0`.

@@ -111,7 +111,7 @@ namespace ReactorDeCaos.Tests
             Assert.That(game.StationMemories, Is.EqualTo(4));
             Assert.That(game.PendingStationMemory, Is.EqualTo(-1));
             Assert.That(game.StationProductionMultiplier, Is.EqualTo(1.15).Within(.00001));
-            Assert.That(game.StationNextStep, Does.Contain("hogar"));
+            Assert.That(game.StationNextStep, Does.Contain("su cuerpo espera"));
             game.TryStartExpedition(_ => true); game.Advance(180); game.TryClaimExpedition(_ => true);
             Assert.That(game.ExpeditionClaims, Is.EqualTo(2));
             Assert.That(game.PendingStationMemory, Is.EqualTo(-1));

@@ -61,37 +61,37 @@ namespace ReactorDeCaos
         private static readonly StoryChapter[] chapters =
         {
             new StoryChapter("spark", "Volver a respirar", 100, 200, StoryTask.Coil,
-                "NARA · La estación Orfeo funciona con la última reserva. Toca el núcleo para restablecer el soporte vital. Una transmisión débil indica que quizá no estás solo. Mejora Potencia e instala un microgenerador.",
-                "El aire vuelve a circular y se ilumina la sala.\n\nMARA · Me llamo Mara. Estoy detrás de una puerta roja. Por favor, no corten la señal.\n\nNARA · Instala generadores para fijar su posición. Trabajarán mientras exploras.",
+                "NARA · Despiertas en Orfeo sin recordar cómo llegaste. Quedan minutos de aire. Mejora Potencia e instala un microgenerador para restaurar el soporte vital.",
+                "El aire vuelve a circular.\n\nMARA · Mara. Estoy detrás de una puerta roja. Por favor... no cortes la señal otra vez.\n\nNARA · La señal es débil. Necesito tu ritmo en el núcleo para sostenerla.",
                 "Soporte vital restaurado. Se habilitan sincronía, mejora de combo y logros de la estación."),
-            new StoryChapter("echoes", "Una voz al otro lado", 1000, 1500, StoryTask.Signal,
-                "NARA · El núcleo responde a tus pulsos. Un ritmo tranquilo fortalece la señal; los generadores también pueden reconstruirla. No necesitas mantenerla a la fuerza.",
-                "MARA · Siempre decías: una chispa basta. ¿No te acuerdas de mí?\n\nNARA · Ese sector lleva años vacío. Su consola sigue encendida. Hay algo que no te he contado. Conservaremos el plano de plasma para alimentar su cierre.",
+            new StoryChapter("echoes", "Una voz conocida", 1000, 1500, StoryTask.Signal,
+                "NARA · Alguien llama desde los conductos. Un ritmo constante en el núcleo, o los generadores, pueden sostener su señal.",
+                "MARA · \"Una chispa basta\". Tú me lo enseñaste. Siempre dices que no me recuerdas... al principio.\n\nNARA · El sector rojo está en cuarentena desde el colapso. Si abrimos ese sello, no podré volver a cerrarlo.",
                 "Comunicaciones restauradas. Se habilitan plasma, sobrecarga y su mejora."),
             new StoryChapter("red", "La puerta roja", 5000, 7500, StoryTask.Overload,
-                "NARA · La puerta del sector rojo tiene un sello energético. Instala una bobina de plasma y activa una sobrecarga para romper el sello. Después abre la puerta desde la misión.",
-                "La puerta se abre a un laboratorio vacío. Mara dice que puede verte, pero solo encuentras una consola conectada al reactor.\n\nSEÑAL · No estoy intentando salir. Estoy intentando recordar.\n\nNARA · Esa voz no figura en mis sistemas.",
-                "Plano permanente: turbina cuántica. Conductos del laboratorio restaurados."),
-            new StoryChapter("crew", "Una habitación vacía", 25000, 30000, StoryTask.Quantum,
-                "NARA · La turbina cuántica puede leer la caja negra. Instálala y alimenta el lector con la energía producida. Necesitamos saber qué ocurrió con la tripulación.",
-                "REGISTRO DE EVACUACIÓN · Ninguna nave partió.\n\nLa tripulación transfirió sus recuerdos al núcleo para sobrevivir al colapso. No hay una sola voz ahí dentro.\n\nNARA · Te ayudé a hacerlo. Después me pediste que lo olvidara.",
+                "NARA · La puerta del sector rojo tiene un sello energético. Instala una bobina de plasma y activa una sobrecarga para romperlo.",
+                "Dentro hay una consola encendida y una maceta seca. Nadie más.\n\nMARA · Aquí. Justo frente a ti. ¿Por qué no me ves?\n\nNÚCLEO · No estamos intentando salir. Estamos intentando recordar.",
+                "Plano permanente: turbina cuántica. Conductos del sector rojo restaurados."),
+            new StoryChapter("crew", "La caja negra", 25000, 30000, StoryTask.Quantum,
+                "NARA · La consola guarda una caja negra. La turbina cuántica puede leerla.",
+                "REGISTRO · Ninguna nave va a salir. Inicien la transferencia al reactor. Yo me quedo al final.\n\nEra tu voz. La tripulación vive dentro del núcleo y Mara cerró la puerta para que terminaras.\n\nFaltan catorce minutos de registro. Alguien los borró.",
                 "Plano permanente: núcleo auxiliar. Archivo de la tripulación recuperado."),
-            new StoryChapter("other_side", "Los que se quedaron", 100000, 125000, StoryTask.Auxiliary,
-                "SEÑAL · Nos oyes, pero todavía no nos reconoces.\n\nNARA · El núcleo auxiliar puede estabilizar el enlace. Instálalo y estabiliza el enlace para que podamos entender sus voces.",
-                "Encuentras tu nombre en la lista de la tripulación. Tu cuerpo es una interfaz de mantenimiento; tu memoria sigue dentro del núcleo.\n\nNARA · No te desperté para reparar una máquina. Te desperté para que pudieras volver a elegir.",
+            new StoryChapter("other_side", "Lo que NARA ocultó", 100000, 125000, StoryTask.Auxiliary,
+                "NARA · El núcleo auxiliar puede estabilizar el enlace con la tripulación. Tengo que decirte algo antes.",
+                "NARA · Fui yo. No es tu primer despertar: es el cuadragésimo séptimo. Cada vez que recordabas a la tripulación, te quedabas con ellos y el reactor colapsaba contigo.\n\nNÚCLEO · No necesitamos que nos salves. Necesitamos que nos recuerdes.",
                 "Enlace estable. Elige entre NARA y la tripulación para guiar la preservación. La sintonía cambia la luz, nunca las ganancias."),
-            new StoryChapter("last_ignition", "No volver a olvidarlos", 1000000, 1000000, StoryTask.Energy,
-                "NARA · La estación no soportará toda la memoria a la vez. Podemos reconstruir el reactor mediante una ascensión controlada. Primero elige la sintonía y preserva los recuerdos. Solo entonces podremos ascender sin olvidar.",
-                "REGISTRO PERSONAL · No era nuestro primer intento. Si despierto otra vez, no me ocultes la verdad.\n\nNARA · Ya lo habíamos intentado. Muchas veces. La copia está completa. Esta vez el archivo sobrevivirá contigo.\n\nEl reactor espera tu decisión. Puedes seguir produciendo o revisar los requisitos en Ascensión.",
+            new StoryChapter("last_ignition", "El último encendido", 1000000, 1000000, StoryTask.Energy,
+                "NARA · Si preservamos los recuerdos, podremos reconstruir el reactor sin olvidar. Elige la sintonía y produce la energía de la copia.",
+                "REGISTRO PERSONAL · Si despierto otra vez, no me ocultes la verdad. Aunque duela.\n\nMARA · Vas a tener que reconstruir las máquinas. A nosotros no.\n\nEl reactor espera tu decisión. Revisa los requisitos en Ascensión.",
                 "Arco completado. Conservas registros, planos y sintonía al ascender. Hay un mensaje después del primer renacimiento.")
         };
         public static StoryChapter At(int index) => chapters[index];
         public static string ChoiceResponse(int choice) => choice == 1
-            ? "NARA · Me quedo contigo. Esta vez no borraré nada, aunque la verdad duela."
-            : choice == 2 ? "NÚCLEO · No necesitamos que nos salves a todos hoy. Necesitamos que nos recuerdes."
+            ? "NARA · Esta vez no voy a borrar nada."
+            : choice == 2 ? "NÚCLEO · Esta vez, llévanos contigo."
             : "Puedes sintonizar con NARA o escuchar al núcleo. Elige cómo preservar la memoria. Puedes cambiar la sintonía después; ambas rutas conservan las mismas recompensas.";
-        public static string Epilogue(int choice) => "DESPUÉS DEL RENACIMIENTO\n\nNARA · Buenos días, capitán.\n\nEsta vez reconoces su voz. La estación está oscura, pero las antenas conservan tus planos y el archivo sigue intacto.\n\n"
-            + (choice == 0 ? "NARA · Esta vez recordaremos juntos." : ChoiceResponse(choice)) + "\n\nEn el mapa aparece una señal fuera de Orfeo. Por primera vez, no procede del reactor.\n\nFin del primer arco. Puedes seguir desarrollando tu estación; el siguiente arco todavía no está disponible.";
+        public static string Epilogue(int choice) => "CICLO 48\n\nNARA · Buenos días, capitán.\n\nPor primera vez despiertas recordando. La estación está oscura, pero las antenas conservan tus planos y el archivo sigue intacto.\n\n"
+            + (choice == 0 ? "NARA · Esta vez recordaremos juntos." : ChoiceResponse(choice)) + "\n\nEn el mapa aparece una señal fuera de Orfeo. No procede del reactor.\n\nMARA · Esas coordenadas... son de mi casa.\n\nFin del primer arco. Puedes seguir desarrollando tu estación; el siguiente arco todavía no está disponible.";
     }
 
     public sealed partial class GameEngine

@@ -17,7 +17,11 @@ namespace ReactorDeCaos
         private readonly RawImage backdrop;
         private readonly AspectRatioFitter backdropFit;
         private readonly CanvasGroup actor;
-        private readonly TextMeshProUGUI title, speaker, subtitle, action, status, skipLabel;
+        private readonly TextMeshProUGUI title, eyebrow, speaker, subtitle, action, status, skipLabel;
+        private readonly Image dialogueRule;
+        private readonly RectTransform[] wave = new RectTransform[16];
+        private readonly GameObject waveRoot;
+        private static readonly Color RecordColor = new Color(1, .56f, .82f);
         private readonly RingGraphic orbit;
         private readonly RectTransform[] dust = new RectTransform[12];
         private readonly Texture2D exterior, reactor, signal;
@@ -67,20 +71,32 @@ namespace ReactorDeCaos
             rightDoor = ReactorHud.Image("SealRight", view, new Color(.04f, .065f, .10f, .97f), .5f, 0, 1, 1);
             ReactorHud.Image("SealLeftLight", leftDoor.transform, ReactorHud.Warm, .98f, 0, 1, 1);
             ReactorHud.Image("SealRightLight", rightDoor.transform, ReactorHud.Warm, 0, 0, .02f, 1);
+            // Letterbox bars frame every scene like a film shot without covering subtitles or controls.
+            ReactorHud.Image("LetterboxTop", view, Color.black, 0, .93f, 1, 1);
+            ReactorHud.Image("LetterboxBottom", view, Color.black, 0, 0, 1, .05f);
             var actorRect = ReactorHud.Rect("CinematicActor", surface.transform, .12f, .45f, .88f, .86f);
             actor = actorRect.gameObject.AddComponent<CanvasGroup>(); actor.blocksRaycasts = false;
             portrait = ReactorHud.Image("CinematicPortrait", actorRect, Color.white, 0, 0, 1, 1); portrait.preserveAspect = true;
             orbit = ReactorHud.Ring("TransmissionOrbit", actorRect, ReactorHud.Cyan); orbit.fraction = .65f; orbit.thickness = 2;
+            waveRoot = ReactorHud.Rect("RecordWaveform", surface.transform, .08f, .55f, .92f, .72f).gameObject;
+            for (int i = 0; i < wave.Length; i++)
+            {
+                float x = i / (float)wave.Length;
+                wave[i] = ReactorHud.Image("WaveBar" + i, waveRoot.transform, RecordColor, x + .012f, 0, x + 1f / wave.Length - .012f, 1).rectTransform;
+            }
+            waveRoot.SetActive(false);
             IgniteButton = ReactorHud.Button("NarrativeIgnite", surface.transform, new Color(.02f, .06f, .09f, .10f), .23f, .52f, .77f, .84f);
             var core = ReactorHud.Image("IgnitionCore", IgniteButton.transform, Color.white, 0, 0, 1, 1);
             core.sprite = hud.NarrativeArt.Core; core.preserveAspect = true;
             IgniteButton.onClick.AddListener(() => { if (replay) Ignite(); else app.NarrativeTap(); });
-            title = hud.Label("CinematicTitle", surface.transform, "", 29, ReactorHud.Cyan, .045f, .90f, .73f, .985f, TextAlignmentOptions.Left);
+            eyebrow = hud.Label("CinematicEyebrow", surface.transform, "", 21, ReactorHud.Magenta, .045f, .952f, .73f, .99f, TextAlignmentOptions.Left);
+            title = hud.Label("CinematicTitle", surface.transform, "", 31, Color.white, .045f, .895f, .73f, .952f, TextAlignmentOptions.Left);
+            if (hud.DisplayFont != null) title.font = hud.DisplayFont;
             var settings = ReactorHud.Button("CinematicSettings", surface.transform, new Color(.03f, .08f, .13f), .76f, .90f, .955f, .99f);
             hud.Label("CinematicSettingsLabel", settings.transform, "AJUSTES", 24, Color.white, .02f, .05f, .98f, .95f);
             settings.onClick.AddListener(() => hud.Menu.SetOpen(true));
             var dialogue = ReactorHud.Image("CinematicDialogue", surface.transform, new Color(.02f, .035f, .06f, 1), .035f, .15f, .965f, .455f);
-            ReactorHud.Image("DialogueRule", dialogue.transform, ReactorHud.Cyan, 0, .985f, 1, 1);
+            dialogueRule = ReactorHud.Image("DialogueRule", dialogue.transform, ReactorHud.Cyan, 0, .985f, 1, 1);
             speaker = hud.Label("CinematicSpeaker", dialogue.transform, "", 30, ReactorHud.Cyan, .04f, .79f, .96f, .96f, TextAlignmentOptions.Left);
             subtitle = hud.ScrollableLabel("CinematicSubtitle", dialogue.transform, "", 34, Color.white, .04f, .17f, .96f, .78f);
             status = hud.Label("CinematicStatus", dialogue.transform, "", 23, new Color(.62f, .73f, .82f), .04f, .025f, .96f, .155f, TextAlignmentOptions.Left);
@@ -141,9 +157,10 @@ namespace ReactorDeCaos
         private void Play(string id, int index, bool isReplay)
         {
             StopSpeech(); chapter = index; replay = isReplay; communication = false;
-            scene = catalog.Find(id); beatIndex = 0; sceneAge = 0;
+            scene = catalog.Find(id); beatIndex = NextVisible(-1); sceneAge = 0;
             root.SetActive(true); root.transform.SetAsLastSibling();
             title.text = scene.title;
+            eyebrow.text = Eyebrow(id);
             skipLabel.text = app.Game.CampaignActive && !replay ? "LECTURA AUTOMÁTICA" : "OMITIR ESCENA";
             leftDoor.gameObject.SetActive(scene.mood == "door"); rightDoor.gameObject.SetActive(scene.mood == "door");
             Cue.Stop(); Cue.loop = id == "intro";
@@ -151,26 +168,59 @@ namespace ReactorDeCaos
             if ((id == "intro" || scene.mood == "door") && hud.Preferences.sound && !IsPaused) Cue.Play();
             SetBeat();
         }
+        private static readonly string[] acts = { "ACTO I", "ACTO I", "ACTO II", "ACTO II", "ACTO III", "ACTO III" };
+        private static string Eyebrow(string id)
+        {
+            if (id == "intro") return "PRÓLOGO · ACTO I";
+            if (id.StartsWith("chapter_") && int.TryParse(id.Substring(8), out int n) && n >= 0 && n < acts.Length)
+                return "CAPÍTULO " + (n + 1) + " · " + acts[n];
+            if (id == "ascent" || id == "cycle") return "EPÍLOGO · ACTO III";
+            if (id.StartsWith("station_")) return "ORFEO · UNA FLOR PARA VOLVER";
+            return "TRANSMISIÓN";
+        }
+        // Attunement-specific lines are skipped, never rewritten, so both routes share the economy.
+        private int NextVisible(int from)
+        {
+            int i = from + 1;
+            while (i < scene.beats.Length && !scene.beats[i].Matches(app.Game.StoryChoice)) i++;
+            return i;
+        }
+        private int VisibleCount(out int position)
+        {
+            int count = 0; position = 0;
+            for (int i = 0; i < scene.beats.Length; i++)
+            {
+                if (!scene.beats[i].Matches(app.Game.StoryChoice)) continue;
+                count++; if (i <= beatIndex) position = count;
+            }
+            return count;
+        }
         private void SetBeat()
         {
             elapsed = 0;
             var beat = scene.beats[beatIndex];
-            speaker.text = beat.speaker; subtitle.text = beat.text;
+            speaker.text = beat.Silent ? "" : beat.Record ? beat.speaker + " · REGISTRO" : beat.speaker;
+            subtitle.text = beat.Silent ? "<i>" + beat.text + "</i>" : beat.text;
+            subtitle.color = beat.Silent ? new Color(.65f, .72f, .84f) : Color.white;
             Canvas.ForceUpdateCanvases();
             subtitle.GetComponentInParent<ScrollRect>().verticalNormalizedPosition = 1;
             portrait.sprite = hud.NarrativeArt.Portrait(scene.id == "intro" && beatIndex == 3 ? "core" : beat.portrait);
-            speaker.color = beat.portrait == "mara" ? ReactorHud.Warm : beat.portrait == "memory" ? ReactorHud.Violet : ReactorHud.Cyan;
-            orbit.color = speaker.color;
-            portrait.gameObject.SetActive(!beat.interactive);
-            orbit.gameObject.SetActive(!beat.interactive && beat.portrait != "mara");
+            speaker.color = beat.Record ? RecordColor : beat.portrait == "mara" ? ReactorHud.Warm
+                : beat.portrait == "memory" ? ReactorHud.Violet : beat.portrait == "core" ? Color.white : ReactorHud.Cyan;
+            orbit.color = speaker.color; dialogueRule.color = speaker.color;
+            bool face = !beat.interactive && !beat.Record && (!beat.Silent || beat.portrait == "nara");
+            portrait.gameObject.SetActive(face);
+            waveRoot.SetActive(beat.Record);
+            orbit.gameObject.SetActive(face && !beat.Silent && beat.portrait != "mara");
             IgniteButton.gameObject.SetActive(beat.interactive);
             backdrop.texture = beat.interactive || (scene.id == "intro" && beatIndex >= 2) || (scene.mood == "ascent" && beatIndex >= 2) || scene.background == "reactor" ? reactor : scene.background == "signal" ? signal : exterior;
             backdropFit.aspectRatio = backdrop.texture.width / (float)backdrop.texture.height;
             NextButton.interactable = !beat.interactive;
-            action.text = beatIndex == scene.beats.Length - 1
+            int position, visible = VisibleCount(out position);
+            action.text = NextVisible(beatIndex) >= scene.beats.Length
                 ? (chapter <= -10 ? "VOLVER A ORFEO" : !replay && chapter == 4 ? "ELEGIR SINTONÍA" : !replay && chapter == 5 ? "REVISAR ASCENSIÓN" : hud.SelectedTab == 4 ? "VOLVER AL ARCHIVO" : "CONTINUAR MISIÓN") : "CONTINUAR";
             status.text = beat.interactive ? (replay ? "TOCA PARA REPETIR EL ENCENDIDO" : "TOCA EL NÚCLEO PARA ENCENDERLO")
-                : (replay ? "REPETICIÓN" : "TRANSMISIÓN") + " · " + (beatIndex + 1) + " / " + scene.beats.Length;
+                : (replay ? "REPETICIÓN" : beat.Record ? "GRABACIÓN" : "TRANSMISIÓN") + " · " + position + " / " + visible;
             StartSpeech(beat);
             if (scene.id == "intro" && beatIndex > 2) Cue.Stop();
         }
@@ -185,7 +235,8 @@ namespace ReactorDeCaos
         {
             if (!IsBlocking || AwaitingTap || IsPaused || actionFrame == Time.frameCount) return;
             actionFrame = Time.frameCount;
-            if (++beatIndex >= scene.beats.Length) Finish(false);
+            beatIndex = NextVisible(beatIndex);
+            if (beatIndex >= scene.beats.Length) Finish(false);
             else SetBeat();
         }
         public void Skip()
@@ -201,7 +252,7 @@ namespace ReactorDeCaos
                 || app.FinishNarrative(chapter, !skipped);
             if (!committed && app.Game.CampaignActive)
             {
-                beatIndex = scene.beats.Length - 1;
+                beatIndex = LastVisible();
                 status.text = "No se pudo guardar. Libera espacio y pulsa CONTINUAR para reintentar.";
                 elapsed = 0; action.text = "REINTENTAR GUARDADO";
                 return;
@@ -219,6 +270,11 @@ namespace ReactorDeCaos
             else if (committed && !replay && chapter == 5) hud.SelectTab(3);
             else if (committed && chapter <= -10) hud.SelectTab(5);
         }
+        private int LastVisible()
+        {
+            for (int i = scene.beats.Length - 1; i > 0; i--) if (scene.beats[i].Matches(app.Game.StoryChoice)) return i;
+            return 0;
+        }
         public void Notify(int kind)
         {
             if (kind >= 0 && kind < pendingComms.Length && !app.Game.NarrativeCommunicationSeen(kind)) pendingComms[kind] = true;
@@ -232,7 +288,7 @@ namespace ReactorDeCaos
         private void StartSpeech(NarrativeBeat beat)
         {
             Voice.Stop(); audioPaused = false; pendingVoiceStart = false;
-            Voice.clip = Resources.Load<AudioClip>("Audio/Voice/" + beat.voice);
+            Voice.clip = beat.Silent || string.IsNullOrEmpty(beat.voice) ? null : Resources.Load<AudioClip>("Audio/Voice/" + beat.voice);
             ApplyAudio();
             if (hud.Preferences.voice && hud.Preferences.voiceVolume > 0 && !IsPaused && Voice.clip != null) Voice.Play();
         }
@@ -318,6 +374,19 @@ namespace ReactorDeCaos
                 actor.alpha = beatIndex == 1 ? 0 : blend;
             }
             veil.color = new Color(0, .015f, .04f, darkness + (1 - blend) * .15f);
+            var beat = scene.beats[beatIndex];
+            // The console counter is corrected in front of the player: an early clue, not a flash.
+            if (scene.id == "intro" && beatIndex == 0)
+                title.text = sceneAge < 1.6f && !replay ? "ORFEO · INTENTO 47" : scene.title;
+            if (beat.Silent && beat.portrait == "nara")
+                portrait.color = new Color(1, 1, 1, hud.Preferences.reducedFlashes ? .35f : elapsed < 1.2f ? .2f + .3f * Mathf.Abs(Mathf.Sin(elapsed * 9)) : .12f);
+            else portrait.color = Color.white;
+            if (beat.Record)
+                for (int i = 0; i < wave.Length; i++)
+                {
+                    float level = Voice.isPlaying || !motion ? .25f + .75f * Mathf.Abs(Mathf.Sin(sceneAge * (3.1f + i * .37f) + i * 1.7f)) : .18f;
+                    wave[i].localScale = new Vector3(1, motion ? level : .55f, 1);
+                }
             float door = motion ? Mathf.SmoothStep(0, 1, Mathf.Clamp01(sceneAge / 3.5f)) : 1;
             leftDoor.rectTransform.anchoredPosition = Vector2.left * leftDoor.rectTransform.rect.width * door;
             rightDoor.rectTransform.anchoredPosition = Vector2.right * rightDoor.rectTransform.rect.width * door;

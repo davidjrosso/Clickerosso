@@ -76,6 +76,7 @@ namespace ReactorDeCaos.Tests
             foreach (var scene in catalog.scenes)
                 foreach (var beat in scene.beats)
                 {
+                    if (beat.Silent) continue; // Stage directions are subtitles only.
                     var clip = Resources.Load<AudioClip>("Audio/Voice/" + beat.voice);
                     Assert.That(clip, Is.Not.Null, beat.voice); Assert.That(clip.length, Is.GreaterThan(.1f));
                 }

@@ -14,6 +14,7 @@ namespace ReactorDeCaos.Editor
     {
         public const string ScenePath = "Assets/ReactorDeCaos/Scenes/Main.unity";
         private const string FontPath = "Assets/ReactorDeCaos/Resources/Fonts/ReactorFont.asset";
+        private const string DisplayFontPath = "Assets/ReactorDeCaos/Resources/Fonts/ReactorDisplayFont.asset";
         private const string SettingsPath = "Assets/ReactorDeCaos/Resources/Economy.asset";
         private const string EssentialPackageName = "TMP Essential Resources";
         private static bool preparing;
@@ -191,6 +192,15 @@ namespace ReactorDeCaos.Editor
                 foreach (Texture2D atlas in font.atlasTextures) AssetDatabase.AddObjectToAsset(atlas, font);
                 font.atlasPopulationMode = AtlasPopulationMode.Static;
                 EditorUtility.SetDirty(font);
+            }
+            if (AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(DisplayFontPath) == null)
+            {
+                TMP_FontAsset display = ReactorFont.CreateRuntimeFont(ReactorFont.DisplaySource, "ReactorDisplayFont");
+                AssetDatabase.CreateAsset(display, DisplayFontPath);
+                AssetDatabase.AddObjectToAsset(display.material, display);
+                foreach (Texture2D atlas in display.atlasTextures) AssetDatabase.AddObjectToAsset(atlas, display);
+                display.atlasPopulationMode = AtlasPopulationMode.Static;
+                EditorUtility.SetDirty(display);
             }
             if (AssetDatabase.LoadAssetAtPath<EconomySettings>(SettingsPath) == null)
             {

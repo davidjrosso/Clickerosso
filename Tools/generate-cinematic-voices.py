@@ -78,7 +78,7 @@ def main():
                 raise ValueError(f"Mismatched voice ID: {beat['voice']}")
             if row.get("models") != MODELS:
                 raise ValueError(f"Stale model versions: {beat['voice']}")
-            if any(row[key] != beat[key] for key in ("text", "speaker")):
+            if any(row[key] != beat[key] for key in ("text", "speaker")) or row.get("mode", "") != beat.get("mode", ""):
                 raise ValueError(f"Stale dialogue: {beat['voice']}")
             if row["sha256"] != pcm.digest(path) or row["directionSha256"] != direction_hash:
                 raise ValueError(f"Stale audio/direction: {beat['voice']}")
@@ -134,6 +134,7 @@ def main():
         if args.take is None and path.exists() and path.with_suffix(".json").exists():
             previous = load_json(path.with_suffix(".json"))
             if (previous["text"] == beat["text"] and previous["speaker"] == beat["speaker"]
+                    and previous.get("mode", "") == beat.get("mode", "")
                     and previous.get("models") == MODELS
                     and previous["directionSha256"] == direction_hash
                     and previous["referenceSha256"] == pcm.digest(refs / (character + ".wav"))
@@ -168,7 +169,9 @@ def main():
             divisor = gcd(rate, 22050)
             signal = resample_poly(signal, 22050 // divisor, rate // divisor)
             sf.write(str(path), signal, 22050, subtype="PCM_16")
-            save_json(path.with_suffix(".json"), {"id": beat["voice"], "speaker": beat["speaker"],
+            if beat.get("mode") == "record":
+                pcm.radio(path)
+            save_json(path.with_suffix(".json"), {"id": beat["voice"], "speaker": beat["speaker"], "mode": beat.get("mode", ""),
                 "text": beat["text"], "character": character, "seed": seed, "take": args.take,
                 "batch": keys, "models": MODELS,
                 "directionSha256": direction_hash, "referenceSha256": pcm.digest(refs / (character + ".wav")),

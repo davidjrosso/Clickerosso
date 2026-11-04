@@ -9,10 +9,7 @@ internal static class StationSimulation
 {
     internal static bool Run(EconomyConfig config, string output)
     {
-        using var voice = JsonDocument.Parse(File.ReadAllText("Docs/Cinematics/voice.json"));
-        double SceneTime(string id) => voice.RootElement.GetProperty("clips").EnumerateArray()
-            .Where(x => x.GetProperty("id").GetString().StartsWith(id + "_", StringComparison.Ordinal))
-            .Sum(x => Math.Max(3.5, x.GetProperty("seconds").GetDouble() + 1.3));
+        double SceneTime(string id) => NarrativeTiming.SceneSeconds(id, 2);
         var reports = new List<object>(); bool allPassed = true;
         foreach (bool active in new[] { true, false })
         {

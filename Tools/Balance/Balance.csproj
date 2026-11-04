@@ -12,5 +12,6 @@
     <Compile Include="RebirthSimulation.cs" />
     <Compile Include="CampaignSimulation.cs" />
     <Compile Include="StationSimulation.cs" />
+    <Compile Include="NarrativeTiming.cs" />
   </ItemGroup>
 </Project>
