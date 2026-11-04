@@ -2,14 +2,16 @@
 
 El flujo local usa **Qwen3-TTS VoiceDesign 1.7B** para diseñar cuatro voces
 sintéticas originales y **Qwen3-TTS Base 0.6B** para mantener cada identidad en
-los 62 diálogos. La dirección pide español latinoamericano con pronunciación
-mexicana y actuación cinematográfica contenida. El cumplimiento del acento y
+los 74 diálogos de Orfeo reescrito. La dirección pide español latinoamericano
+y actuación cinematográfica contenida. El cumplimiento del acento y
 la interpretación requieren escuchar las muestras; no se deducen de un prompt.
-El usuario aprobó la muestra de NARA con este estilo; queda pendiente escuchar
-el catálogo completo dentro del juego.
+El usuario aprobó las cuatro muestras V2 el 4 de noviembre de 2026; queda pendiente
+escuchar el catálogo completo y la mezcla dentro del juego.
 
-`Tools/voice-direction.json` define NARA (serena, urgente), Mara (cálida,
-vulnerable), protagonista (desorientado, decidido) y memoria (grave, compasiva).
+`Tools/voice-direction.json` define NARA (IA femenina, serena, urgente y emotiva),
+Mara (astronauta rusa que habla español latinoamericano, cálida y vulnerable),
+protagonista (comandante masculino grave, áspero y decidido) y Núcleo (masculino,
+robótico, grave y compasivo). El Capitán es la misma identidad del protagonista.
 No se imita a personas reales. Las referencias son generadas, no grabaciones ajenas.
 El modelo Base hereda el estilo de la referencia; no admite dirección actoral
 independiente por línea, de modo que la interpretación puede necesitar nuevas tomas.
@@ -36,6 +38,13 @@ Copy-Item -Recurse Tools/VoiceReferences .voice-models/references
 
 En Linux usar `.voice-env/bin/python` y `cp -r Tools/VoiceReferences .voice-models/references`.
 Las referencias incluidas conservan los cuatro timbres sintéticos de esta entrega.
+Son las tomas secas de las muestras aprobadas: NARA conserva solo su presentación,
+sin la frase adicional descartada. El color robótico se aplica una sola vez al audio
+final, después de clonar la referencia. NARA usa modulación paralela a 73 Hz con
+profundidad 0,14; Núcleo a 53 Hz con profundidad 0,28, iguales a las muestras.
+Las dos líneas `mode: "record"` del Capitán añaden el filtro de radio existente.
+Las dos acotaciones `mode: "fx"` no generan voz. Se incluyen ambas líneas
+condicionales del desenlace, aunque cada partida reproduzca solo una.
 Para diseñar un elenco nuevo, editar `voice-direction.json` y ejecutar la fase `design`
 en lugar de copiar las referencias. Nunca usar grabaciones de personas sin autorización.
 Instalación y descarga requieren red;
@@ -44,7 +53,10 @@ fuera de Assets y Git. `render --only intro_0` permite preparar una muestra.
 El render se puede reanudar: comprueba texto, dirección, referencia y hash antes
 de reutilizar clips. Para repetir una toma, usar `render --only chapter_1_0 --take 1`
 (además de `--work-dir`); incrementar el número para otra interpretación.
+`--only` también acepta IDs separados por coma para revisar un grupo de tomas.
 Las tomas cercanas al límite de generación se rechazan para evitar audio truncado.
+Un lote inválido se repite una vez con otra semilla antes de detener la generación;
+no se instala ni se guarda ese lote hasta que todas sus tomas sean válidas.
 La opción `--batch-size 1` reduce la memoria necesaria; el valor predeterminado es 2.
 Las semillas se guardan por lote; cambiar los lotes puede cambiar la toma resultante.
 La instalación exige que estén todas las líneas del catálogo y que sus textos,
@@ -54,7 +66,8 @@ Se conservan las semillas y la dirección; los resultados pueden variar entre
 versiones y hardware. `Docs/Cinematics/voice.json` registra los archivos entregados.
 Las voces se convierten a mono PCM16, 22050 Hz; el pico queda por debajo de 0,5
 para respetar la mezcla existente. Se suavizan 12 ms en los bordes.
-No se añade reverberación ni se altera el tono artificialmente.
+No se añade reverberación ni se desplaza la altura de la voz. El color metálico
+de NARA/Núcleo y el filtro de las grabaciones son los tratamientos descritos arriba.
 
 Auditoría completa: instalar Pillow y ejecutar `python Tools/audit-cinematics.py`.
 Comprueba catálogo, hashes, formato, señal no silenciosa y extremos suavizados;
@@ -62,8 +75,11 @@ no escucha ni valida la actuación. El generador eSpeak histórico exige ahora
 `--allow-placeholder` para evitar que reemplace voces neuronales por accidente.
 
 Comprobación opcional del guion: instalar `faster-whisper==1.2.1`, descargar el
-modelo `Systran/faster-whisper-base` y ejecutar `Tools/audit-spoken-text.py` con
-`--model-dir`, `--audio-dir` y `--report`. La transcripción se hace offline en CPU;
+modelo Whisper y ejecutar `Tools/audit-spoken-text.py` con
+`--model-dir`, `--model-label`, `--audio-dir` y `--report`. Para la revisión V2 se usó
+`Systran/faster-whisper-small`, revisión `536b0662742c02347bc0e980a01041f333bce120`;
+el modelo base inicial producía falsos avisos con estos timbres. El informe incluye
+el SHA-256 de cada WAV revisado. La transcripción se hace offline en CPU;
 las diferencias son pistas para escuchar, no errores confirmados de pronunciación.
 
 ## Procedencia
@@ -94,10 +110,9 @@ la aplicación. El audio representa los textos originales del proyecto.
 
 ## Escucha y validación nativa pendientes
 
-Los 62 WAV entregados suman 7 min 19 s y pasan la auditoría de formato y manifiesto.
-La transcripción local señala `chapter_2_0`, `resume_0_0` y `resume_1_0` para revisar
-dicción y números; su coincidencia automática es menor a 0,85. Las otras 59 superan
-ese umbral. Esto no equivale a una aprobación auditiva de cada toma.
+Consultar `Docs/Cinematics/neural-media.json` para formato y manifiesto y
+`Docs/Cinematics/spoken-text.json` para diferencias de transcripción de esta entrega.
+La coincidencia automática no equivale a una aprobación auditiva de cada toma.
 
 En Unity 6000.0.85f1, abrir Main y reproducir despertar, escenas de Mara y memoria.
 Comprobar pronunciación de NARA/Orfeo, balance con música, avance automático al final,

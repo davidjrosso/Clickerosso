@@ -3,6 +3,7 @@
 import argparse
 import difflib
 import json
+import hashlib
 import re
 import unicodedata
 from pathlib import Path
@@ -16,6 +17,7 @@ def words(text):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--model-dir", required=True)
+    parser.add_argument("--model-label", default="local Whisper", help="Model name/revision recorded in the report")
     parser.add_argument("--audio-dir", required=True, type=Path)
     parser.add_argument("--report", required=True, type=Path)
     args = parser.parse_args()
@@ -27,6 +29,8 @@ def main():
     rows = []
     for scene in catalog["scenes"]:
         for beat in scene["beats"]:
+            if beat.get("mode") == "fx":
+                continue
             path = args.audio_dir / (beat["voice"] + ".wav")
             if not path.exists():
                 raise FileNotFoundError(f"Missing dialogue audio: {path}")
@@ -35,10 +39,12 @@ def main():
             actual = " ".join(segment.text.strip() for segment in segments)
             ratio = difflib.SequenceMatcher(None, words(beat["text"]), words(actual), autojunk=False).ratio()
             rows.append({"id": beat["voice"], "expected": beat["text"], "transcribed": actual,
-                         "wordSequenceSimilarity": round(ratio, 3), "review": ratio < .85})
+                         "wordSequenceSimilarity": round(ratio, 3), "review": ratio < .85,
+                         "sha256": hashlib.sha256(path.read_bytes()).hexdigest()})
             print(beat["voice"], round(ratio, 3), actual, flush=True)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps({"method": "Whisper base local CPU; heuristic text screening, not an accent or acting evaluation",
+    args.report.write_text(json.dumps({"method": "Local Whisper CPU; heuristic text screening, not an accent or acting evaluation",
+        "model": args.model_label,
         "clips": rows}, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 

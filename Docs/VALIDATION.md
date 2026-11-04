@@ -1,5 +1,35 @@
 # Evidencia de validación — 2026-10-20
 
+## Elenco V2 aprobado — 2026-11-04
+
+- Regeneradas las **74 líneas habladas** de Orfeo reescrito con las cuatro muestras
+  aprobadas por el usuario: NARA con timbre de IA, Mara astronauta rusa que habla
+  español latinoamericano, protagonista masculino de mando y Núcleo masculino robótico.
+  Duración total: **398,16 s (6 min 38 s)**. Generación local, sin créditos ni API de voz.
+- Las dos grabaciones del Capitán usan el timbre del protagonista y filtro de radio.
+  Se incluyen las dos variantes condicionales del desenlace; las dos acotaciones FX
+  permanecen sin voz. No se cambiaron guion, código de juego, economía ni guardados.
+- Referencias secas, dirección, parámetros metálicos y semillas registrados. Una toma
+  excedió el límite de duración y fue rechazada; se reanudó la generación y se compararon
+  alternativas. El generador ahora reintenta una vez los lotes inválidos.
+- `Tools/test-neural-voices.py`: **5 aprobadas**. Incluyen exclusión de acotaciones,
+  validación PCM y rechazo de modo de grabación/datos obsoletos antes de instalar.
+- `Tools/audit-cinematics.py`: **74 audios, 23 escenas, cero voces pendientes**;
+  manifiesto y hashes coincidentes, PCM16 mono 22050 Hz, señal no silenciosa,
+  picos menores que 0,5, extremos suavizados y GUIDs únicos. Se conservaron los
+  metadatos existentes y se añadieron los necesarios para los audios faltantes.
+- Revisión del guion con **faster-whisper-small**, revisión
+  `536b0662742c02347bc0e980a01041f333bce120`, local en CPU. Se comprobaron los hashes
+  de las 74 tomas seleccionadas. **71/74** superan similitud de palabras de 0,85.
+  Revisar por escucha `chapter_3_3` y `chapter_3_4`; `ascent_0` queda señalado por
+  transcribir la cuenta regresiva como cifras. El modelo base inicial produjo falsos
+  avisos que se contrastaron con small. ASR no certifica acento ni actuación.
+- No se ejecutaron Unity/PlayMode ni Android. Sigue pendiente escuchar el elenco
+  completo en la mezcla del juego y comprobar avance, pausa y controles de volumen.
+
+Los informes actuales `Docs/Cinematics/{voice,neural-media,spoken-text}.json`
+corresponden a V2. Las secciones siguientes conservan el historial de entregas anteriores.
+
 ## Voces latinoamericanas — 2026-10-29
 
 - Identificados 62 WAV de eSpeak NG, cargados por NarrativeDirector desde Resources.

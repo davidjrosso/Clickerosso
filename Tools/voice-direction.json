@@ -1,26 +1,35 @@
 {
   "language": "Spanish",
-  "accent": "Latin American Spanish, neutral Mexican pronunciation, seseo, no Castilian accent",
+  "accent": "Latin American Spanish, neutral pronunciation, seseo, no Castilian accent",
+  "approvedCast": "User-approved V2 samples, 2026-11-04",
   "characters": {
     "nara": {
       "seed": 128,
-      "referenceText": "¿Puedes oírme? Soy Nara. Estás en Orfeo. El soporte vital se está apagando. Necesito que me ayudes a recuperar la estación.",
-      "direction": "A mature female voice, smooth low mezzo register, precise diction, intimate and reassuring but carrying restrained urgency. A cinematic science-fiction performance: thoughtful pauses, subtle emotional shifts, controlled breathing. Speak natural neutral Latin American Spanish with Mexican pronunciation and seseo, never Castilian Spanish. Human warmth underneath a calm station intelligence. Dry studio dialogue, no music, no sound effects, no announcer delivery."
+      "referenceText": "¿Puedes oírme? Soy NARA. Estás en Orfeo y nos quedan minutos de aire.",
+      "direction": "A distinctly synthetic female artificial intelligence voice, smooth low mezzo, crystalline metallic timbre, precise articulation. Calm, intimate and reassuring, with restrained urgency and guilt beneath her composure. Emotionally nuanced phrasing and thoughtful pauses, never flat or comedic. Speak fluent natural neutral Latin American Spanish, seseo and clear vowels. No Castilian accent. Original voice, dry studio dialogue, no background music, no sound effects. Cinematic restrained acting, clear consonants, no shouting.",
+      "roboticTimbre": {
+        "depth": 0.14,
+        "frequencyHz": 73
+      }
     },
     "mara": {
       "seed": 256,
-      "referenceText": "¿Me oyen? Me llamo Mara. Las luces se encendieron. Estoy detrás de una puerta roja. Por favor, no corten la señal.",
-      "direction": "A young adult female voice, warm mid-high register, lightly breathy and textured, clearly different from a smooth low female voice. A cinematic dramatic performance with vulnerability, fragile hope and emotional subtext, small hesitations and natural breathing. Speak natural neutral Latin American Spanish with Mexican pronunciation and seseo, never Castilian Spanish. Intimate speech to someone she trusts, restrained fear, no shouting. Dry studio dialogue, no music, no sound effects, no announcer delivery."
+      "referenceText": "Mara. Estoy detrás de una puerta roja. Por favor... no cortes la señal otra vez. Ese es mi cuerpo. Sigue respirando... sin mí.",
+      "direction": "A young adult female Russian astronaut who speaks fluent Latin American Spanish. Her spoken accent is Latin American, not an exaggerated Russian accent. Warm mid-low female register, lightly husky and breathy. Professional composure giving way to vulnerability, familiarity, fragile hope and quiet astonishment. Intimate conversational delivery, natural breaths and small hesitations. Speak fluent natural neutral Latin American Spanish, seseo and clear vowels. No Castilian accent. Original voice, dry studio dialogue, no background music, no sound effects. Cinematic restrained acting, clear consonants, no shouting."
     },
     "core": {
       "seed": 512,
-      "referenceText": "No recuerdo cómo llegué. ¿Dónde están los demás? Voy a encontrarte. Dime cómo llegar.",
-      "direction": "An adult male voice, natural midrange baritone, slightly rough, close and grounded. Cinematic dramatic acting: disorientation turning into quiet determination, meaningful pauses and restrained emotion, conversational pacing. Speak natural neutral Latin American Spanish with Mexican pronunciation and seseo, never Castilian Spanish. Dry studio dialogue, no music, no sound effects, no theatrical announcer delivery."
+      "referenceText": "Alguien me está llamando. Voy a abrir. Entonces encendamos Orfeo una vez más. Recordando.",
+      "direction": "An original mature male starship commander voice. Deep chest-resonant bass-baritone, broad rounded vowels, slightly gravelly texture and weight, calm military authority. Slow deliberate confident delivery, grounded and human, with quiet determination and emotion. Conversational cinematic dialogue rather than a trailer announcer. Do not imitate any existing performer or fictional character. Speak fluent natural neutral Latin American Spanish, seseo and clear vowels. No Castilian accent. Original voice, dry studio dialogue, no background music, no sound effects. Cinematic restrained acting, clear consonants, no shouting."
     },
     "memory": {
       "seed": 1024,
-      "referenceText": "No estamos intentando salir. Estamos intentando recordar. No necesitamos que nos salves a todos hoy. Necesitamos que nos recuerdes.",
-      "direction": "An older male voice, deep resonant bass, soft weathered texture, unhurried and intimate. Cinematic science-fiction drama: a haunting recollection, sorrow with dignity and quiet compassion, deliberate meaningful pauses, never booming. Speak natural neutral Latin American Spanish with Mexican pronunciation and seseo, never Castilian Spanish. Dry studio dialogue, no music, no sound effects, no announcer delivery."
+      "referenceText": "No estamos intentando salir. Estamos intentando recordar. No necesitamos que nos salves. Necesitamos que nos recuerdes.",
+      "direction": "A distinctly robotic masculine voice, deep resonant bass with a metallic synthetic texture and stable machine-like precision. Unhurried, intimate and haunting, dignified sorrow and compassion. A collective memory speaking softly, with deliberate meaningful pauses. Clearly different from a female AI and a human commander. No booming trailer narration. Speak fluent natural neutral Latin American Spanish, seseo and clear vowels. No Castilian accent. Original voice, dry studio dialogue, no background music, no sound effects. Cinematic restrained acting, clear consonants, no shouting.",
+      "roboticTimbre": {
+        "depth": 0.28,
+        "frequencyHz": 53
+      }
     }
   }
 }

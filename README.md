@@ -4,7 +4,7 @@ MVP de un arcade incremental offline para Android, con Unity 2D y C#.
 Toca el núcleo, encadena combos, activa la sobrecarga e invierte en mejoras
 y generadores automáticos.
 
-**Revisión Orfeo reescrito:** historia en tres actos con el bucle de 47 despertares y HUD nuevo; ver [Docs/ORFEO-REESCRITO.md](Docs/ORFEO-REESCRITO.md). Hay voces pendientes de regenerar.
+**Revisión Orfeo reescrito:** historia en tres actos con el bucle de 47 despertares y HUD nuevo; ver [Docs/ORFEO-REESCRITO.md](Docs/ORFEO-REESCRITO.md). Las 74 líneas incluyen el elenco V2 aprobado.
 
 **Estado actual:** campaña de rescate en Orfeo. La partida empieza con el despertar
 interactivo de NARA; después se encadenan seis misiones, sus escenas y sus tecnologías.
@@ -24,9 +24,9 @@ Guía completa y recorrido de prueba: [Docs/CAMPAIGN.md](Docs/CAMPAIGN.md).
 **167 pruebas .NET aprobadas**, compilación de seis ensamblados contra las API de Unity,
 tres campañas, dos recorridos de la estación con regreso y 54 ciclos económicos simulados.
 La ejecución nativa del Editor sigue bloqueada por falta de licencia; no se afirma
-validación visual, sonora o Android. Los 62 diálogos incluyen voces neuronales con
+validación visual, sonora o Android. Los 74 diálogos incluyen voces neuronales con
 dirección cinematográfica latinoamericana, generadas localmente con Qwen3-TTS sin
-consumir créditos. El estilo de la muestra de NARA fue aprobado; la escucha completa
+consumir créditos. Las cuatro muestras V2 fueron aprobadas; la escucha completa
 y la mezcla en Unity/Android siguen pendientes.
 [Generación, atribución y límites de ElevenLabs](Docs/VOICES.md).
 
