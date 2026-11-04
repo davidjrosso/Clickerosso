@@ -11,10 +11,7 @@ internal static class CampaignSimulation
     {
         var reports = new List<object>(); bool passed = true;
         // Real shipped voice durations + reading margins, not a claim of audiovisual playback.
-        using var speech = JsonDocument.Parse(File.ReadAllText("Docs/Cinematics/voice.json"));
-        double SceneSeconds(string id) => speech.RootElement.GetProperty("clips").EnumerateArray()
-            .Where(x => x.GetProperty("id").GetString().StartsWith(id + "_", StringComparison.Ordinal))
-            .Sum(x => Math.Max(3.5, x.GetProperty("seconds").GetDouble() + 1.3));
+        double SceneSeconds(string id) => NarrativeTiming.SceneSeconds(id, 2);
         foreach (string profile in new[] { "active", "intermittent", "mostly_automatic" })
         {
             var game = new GameEngine(GameEngine.NewCampaignState(), config);

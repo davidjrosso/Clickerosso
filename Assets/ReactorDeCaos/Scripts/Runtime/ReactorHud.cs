@@ -65,6 +65,20 @@ namespace ReactorDeCaos
         public Button[] ShopButtons { get; private set; }
         private RectTransform safe;
         private TextMeshProUGUI energy, rate, combo, stage, milestone, overloadLabel, notice;
+        private TextMeshProUGUI cycle, tapGain, instruction, teaser, missionCtaLabel;
+        private Image comboChip, missionAvatar, missionCta;
+        private RingGraphic missionAvatarRing;
+        private RectTransform missionFill;
+        private Image[] tabIcons;
+        private GameObject[] tabBadges;
+        private TextMeshProUGUI[] tabBadgeLabels;
+        private Sprite roundSprite;
+        private Texture2D roundTexture;
+        private bool ownsDisplayFont;
+        private float cycleGlitchAt = 9;
+        private int lastMission = -1;
+        private NarrativeCatalog narrativeTeasers;
+        public TMP_FontAsset DisplayFont { get; private set; }
         private TextMeshProUGUI[] shopText;
         private RectTransform chargeFill;
         private float noticeUntil, nextTextUpdate;
@@ -87,6 +101,15 @@ namespace ReactorDeCaos
                 Font = ReactorFont.CreateRuntimeFont();
                 ownsRuntimeFont = true;
             }
+            DisplayFont = Resources.Load<TMP_FontAsset>("Fonts/ReactorDisplayFont");
+            if (DisplayFont == null && Resources.Load<Font>(ReactorFont.DisplaySource) != null)
+            {
+                try { DisplayFont = ReactorFont.CreateRuntimeFont(ReactorFont.DisplaySource, "ReactorDisplayFont Runtime"); ownsDisplayFont = true; }
+                catch (InvalidOperationException) { DisplayFont = null; }
+            }
+            CreateRoundSprite();
+            var teaserData = Resources.Load<TextAsset>("Narrative");
+            if (teaserData != null) narrativeTeasers = JsonUtility.FromJson<NarrativeCatalog>(teaserData.text);
             var cameraObject = new GameObject("Camera", typeof(Camera), typeof(AudioListener));
             cameraObject.transform.SetParent(transform);
             Camera camera = cameraObject.GetComponent<Camera>();
@@ -123,19 +146,23 @@ namespace ReactorDeCaos
             chamberVeil = Image("Veil", canvas, new Color(0, .015f, .04f, .15f), 0, 0, 1, 1);
             safe = Rect("SafeArea", canvas, 0, 0, 1, 1);
             ApplySafeArea();
-            Image("Header", safe, new Color(.025f, .045f, .075f, .85f), .035f, .825f, .965f, .98f);
-            Image("HeaderRule", safe, new Color(.18f, .92f, 1, .4f), .065f, .824f, .935f, .826f);
-            Label("Brand", safe, "Reactor de Caos", 26, Muted, .065f, .955f, .60f, .98f, TextAlignmentOptions.Left);
-            energy = Label("Energy", safe, "0", 78, Color.white, .06f, .895f, .78f, .95f, TextAlignmentOptions.Left);
-            Label("Unit", safe, "E", 22, Cyan, .62f, .955f, .77f, .98f);
-            rate = Label("Rate", safe, "0 / s", 32, Cyan, .065f, .827f, .66f, .890f, TextAlignmentOptions.Left);
-            stage = Label("Stage", safe, "", 32, Warm, .68f, .827f, .955f, .887f, TextAlignmentOptions.Right);
+            Image("Header", safe, new Color(.01f, .02f, .04f, .62f), 0, .812f, 1, 1);
+            Image("HeaderRule", safe, new Color(.18f, .92f, 1, .25f), .065f, .811f, .935f, .813f);
+            Round(Image("CycleChipBack", safe, new Color(1, .24f, .67f, .12f), .045f, .948f, .36f, .984f));
+            cycle = Label("CycleChip", safe, "CICLO 01", 22, Magenta, .045f, .948f, .36f, .984f);
+            energy = Label("Energy", safe, "0", 96, Color.white, .20f, .862f, .80f, .944f);
+            Round(Image("RateChip", safe, new Color(.18f, .92f, 1, .10f), .06f, .818f, .36f, .857f));
+            rate = Label("Rate", safe, "0 / s", 26, Cyan, .06f, .818f, .36f, .857f);
+            comboChip = Image("ComboChip", safe, new Color(.68f, .39f, 1, .14f), .38f, .818f, .94f, .857f);
+            Round(comboChip);
+            combo = Label("Combo", safe, "COMBO ×1", 26, Violet, .38f, .818f, .94f, .857f);
             reactorPage = Rect("ReactorPage", safe, 0, .145f, 1, .815f);
             shopPage = Rect("EngineeringPage", safe, .035f, .145f, .965f, .815f);
-            Image("EngineeringSurface", shopPage, new Color(.02f, .035f, .06f, .96f), 0, 0, 1, 1);
-            combo = Label("Combo", reactorPage, "COMBO ×1", 29, Cyan, .16f, .95f, .84f, .995f);
+            Round(Image("EngineeringSurface", shopPage, new Color(.02f, .035f, .06f, .90f), 0, 0, 1, 1));
+            stage = Label("Stage", reactorPage, "", 22, Warm, .045f, .955f, .45f, .995f, TextAlignmentOptions.Left);
+            tapGain = Label("TapGain", reactorPage, "", 22, Muted, .55f, .955f, .955f, .995f, TextAlignmentOptions.Right);
 
-            RectTransform reactorViewport = Rect("ReactorViewport", reactorPage, .025f, .305f, .975f, .94f);
+            RectTransform reactorViewport = Rect("ReactorViewport", reactorPage, 0, .36f, 1, .995f);
             reactorViewport.gameObject.AddComponent<RectMask2D>();
             station = Rect("StationRestoration", reactorViewport, 0, 0, 1, 1).gameObject.AddComponent<StationRestorationGraphic>();
             station.raycastTarget = false;
@@ -168,36 +195,58 @@ namespace ReactorDeCaos
             memoryCrystal = Image("RecoveredMemory", reactorViewport, Color.white, .445f, .84f, .555f, .96f);
             memoryCrystal.sprite = NarrativeArt.Portrait("memory"); memoryCrystal.preserveAspect = true;
             Assembly = new ReactorAssembly(this, reactorViewport, app.Game);
-            Label("ReactorInstruction", reactorViewport, "TOCA EL NÚCLEO", 23, Color.white, .22f, .245f, .78f, .30f);
+            instruction = Label("ReactorInstruction", reactorViewport, "TOCA EL NÚCLEO", 23, Color.white, .22f, .245f, .78f, .30f);
             EffectsRoot = Rect("Effects", reactorViewport, 0, 0, 1, 1);
-            StoryButton = Button("OpenStory", reactorPage, new Color(.035f, .08f, .12f, .94f), .05f, .17f, .95f, .30f);
+            // Mission card: who speaks, what is missing, the next corrupted line and how close it is.
+            StoryButton = Button("OpenStory", reactorPage, new Color(.035f, .06f, .10f, .96f), .03f, .015f, .97f, .222f);
+            Round(StoryButton.image);
             StoryButton.onClick.AddListener(app.CampaignAction);
-            Image("StoryAccent", StoryButton.transform, Cyan, 0, 0, .006f, 1);
-            tapHint = Label("TapHint", StoryButton.transform, "NARA · VER HISTORIA", 26, Cyan, .035f, .48f, .965f, .95f);
-            milestone = Label("Milestone", StoryButton.transform, "", 24, Color.white, .035f, .05f, .965f, .48f);
-            var missionViewport = Rect("MissionViewport", StoryButton.transform, .025f, .04f, .975f, .96f);
+            missionAvatarRing = Ring("MissionAvatarRing", StoryButton.transform, Warm);
+            missionAvatarRing.rectTransform.anchorMin = new Vector2(.02f, .46f); missionAvatarRing.rectTransform.anchorMax = new Vector2(.16f, .96f);
+            missionAvatarRing.thickness = 3; missionAvatarRing.fraction = 1;
+            missionAvatar = Image("MissionAvatar", missionAvatarRing.transform, Color.white, .08f, .08f, .92f, .92f);
+            missionAvatar.preserveAspect = true;
+            tapHint = Label("TapHint", StoryButton.transform, "NARA · VER HISTORIA", 22, Muted, .035f, .48f, .965f, .95f);
+            milestone = Label("Milestone", StoryButton.transform, "", 26, Color.white, .035f, .05f, .965f, .48f);
+            teaser = Label("MissionTeaser", StoryButton.transform, "", 26, Warm, .035f, .05f, .965f, .48f);
+            var missionViewport = Rect("MissionViewport", StoryButton.transform, .18f, .30f, .975f, .96f);
             missionViewport.gameObject.AddComponent<RectMask2D>();
             missionViewport.gameObject.AddComponent<Image>().color = new Color(0, 0, 0, .01f);
             var missionContent = Rect("MissionContent", missionViewport, 0, 1, 1, 1);
             missionContent.pivot = new Vector2(.5f, 1);
             var missionLayout = missionContent.gameObject.AddComponent<VerticalLayoutGroup>();
-            missionLayout.spacing = 12;
+            missionLayout.spacing = 6;
             missionLayout.childControlWidth = missionLayout.childControlHeight = true;
             missionLayout.childForceExpandHeight = false;
             missionContent.gameObject.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
             tapHint.transform.SetParent(missionContent, false); milestone.transform.SetParent(missionContent, false);
-            tapHint.enableAutoSizing = milestone.enableAutoSizing = false;
-            tapHint.alignment = milestone.alignment = TextAlignmentOptions.TopLeft;
+            teaser.transform.SetParent(missionContent, false);
+            tapHint.enableAutoSizing = milestone.enableAutoSizing = teaser.enableAutoSizing = false;
+            tapHint.alignment = milestone.alignment = teaser.alignment = TextAlignmentOptions.TopLeft;
+            if (DisplayFont != null) tapHint.font = DisplayFont;
+            tapHint.characterSpacing = 4;
             var missionScroll = missionViewport.gameObject.AddComponent<ScrollRect>();
             missionScroll.viewport = missionViewport; missionScroll.content = missionContent;
             missionScroll.horizontal = false; missionScroll.movementType = ScrollRect.MovementType.Clamped;
-            OverloadButton = Button("ActivateOverload", reactorPage, new Color(.13f, .07f, .23f, .98f), .055f, .02f, .945f, .16f);
+            Round(Image("MissionTrack", StoryButton.transform, new Color(.06f, .09f, .15f), .03f, .215f, .97f, .255f));
+            missionFill = Image("MissionFill", StoryButton.transform, Cyan, .03f, .215f, .03f, .255f).rectTransform;
+            Round(missionFill.GetComponent<Image>());
+            missionCta = Image("MissionCta", StoryButton.transform, new Color(.07f, .10f, .17f), .03f, .03f, .97f, .19f);
+            Round(missionCta);
+            missionCtaLabel = Label("MissionCtaLabel", missionCta.transform, "", 24, Muted, .02f, .02f, .98f, .98f);
+            if (DisplayFont != null) missionCtaLabel.font = DisplayFont;
+            OverloadButton = Button("ActivateOverload", reactorPage, new Color(.10f, .05f, .16f, .98f), .045f, .23f, .955f, .358f);
+            Round(OverloadButton.image);
             OverloadButton.onClick.AddListener(app.ActivateOverload);
-            overloadLabel = Label("OverloadLabel", OverloadButton.transform, "", 29, Color.white, .02f, .1f, .98f, .94f);
-            Image track = Image("ChargeTrack", reactorPage, new Color(.12f, .12f, .2f), .055f, .006f, .945f, .014f);
-            chargeFill = Image("Charge", track.transform, Violet, 0, 0, 0, 1).rectTransform;
-            Label("ShopTitle", shopPage, "MEJORAS", 38, Color.white, .04f, .925f, .96f, .985f, TextAlignmentOptions.Left);
-            ScrollableLabel("ShopHelp", shopPage, "Toca una tarjeta para ver detalles.\nSolo COMPRAR gasta energía. Desliza para explorar.", 26, Muted, .04f, .84f, .96f, .925f);
+            Image track = Image("ChargeTrack", OverloadButton.transform, new Color(0, 0, 0, 0), 0, 0, 1, 1);
+            chargeFill = Image("Charge", track.transform, new Color(1, .24f, .67f, .32f), 0, 0, 0, 1).rectTransform;
+            Round(chargeFill.GetComponent<Image>());
+            var overloadIcon = Image("OverloadIcon", OverloadButton.transform, Color.white, .015f, .08f, .11f, .92f);
+            overloadIcon.sprite = sprites.Icon("overload"); overloadIcon.preserveAspect = true;
+            overloadLabel = Label("OverloadLabel", OverloadButton.transform, "", 29, Color.white, .12f, .1f, .98f, .94f);
+            if (DisplayFont != null) overloadLabel.font = DisplayFont;
+            Label("ShopTitle", shopPage, "MEJORAS", 38, Color.white, .04f, .925f, .96f, .985f, TextAlignmentOptions.Left).font = DisplayFont ?? Font;
+            ScrollableLabel("ShopHelp", shopPage, "Toca una tarjeta para ver detalles. Solo el precio compra.", 26, Muted, .04f, .84f, .96f, .925f);
             RectTransform viewport = Rect("ShopViewport", shopPage, .025f, .025f, .975f, .825f);
             viewport.gameObject.AddComponent<RectMask2D>();
             Image viewportImage = viewport.gameObject.AddComponent<Image>();
@@ -222,58 +271,72 @@ namespace ReactorDeCaos
             {
                 lastLevels[i] = -1;
                 ShopEntry entry = app.Game.Shop[i];
-                var row = Image("ShopRow_" + entry.Id, content, Panel, 0, 1, 1, 1).rectTransform;
+                var rowImage = Image("ShopRow_" + entry.Id, content, Panel, 0, 1, 1, 1);
+                Round(rowImage);
+                var row = rowImage.rectTransform;
                 shopRows[i] = row; row.pivot = new Vector2(.5f, 1);
-                row.sizeDelta = new Vector2(0, 440);
+                row.sizeDelta = new Vector2(0, 260);
                 var details = Button("Details_" + entry.Id, row, Color.clear, 0, 0, 1, 1);
                 details.onClick.AddListener(() => { SelectTab(0); OpenModule(entry.Id); });
-                Image("Accent", row, entry.IsGenerator ? Violet : Cyan, 0, 0, .006f, 1);
-                Image icon = Image("Icon", row, Color.white, .015f, 1, .145f, 1);
-                icon.rectTransform.pivot = new Vector2(.5f, 1);
-                icon.rectTransform.sizeDelta = new Vector2(0, 140);
-                icon.rectTransform.anchoredPosition = new Vector2(0, -24);
+                var socket = Rect("IconSocket", row, .015f, .5f, .175f, .5f).gameObject.AddComponent<SocketGraphic>();
+                socket.raycastTarget = false;
+                socket.rectTransform.sizeDelta = new Vector2(0, 170);
+                Image icon = Image("Icon", row, Color.white, .03f, .5f, .16f, .5f);
+                icon.rectTransform.sizeDelta = new Vector2(0, 130);
                 icon.sprite = sprites.Icon(entry.Id); icon.preserveAspect = true;
-                shopText[i] = Label("Description", row, "", 36, Color.white, .16f, 1, .97f, 1, TextAlignmentOptions.TopLeft);
+                shopText[i] = Label("Description", row, "", 34, Color.white, .19f, 1, .70f, 1, TextAlignmentOptions.TopLeft);
                 shopText[i].enableAutoSizing = false;
                 shopText[i].rectTransform.pivot = new Vector2(.5f, 1);
-                shopText[i].rectTransform.anchoredPosition = new Vector2(0, -24);
-                Button button = Button("Buy" + entry.Id, row, new Color(.08f, .15f, .20f), .16f, 0, .97f, 0);
+                shopText[i].rectTransform.anchoredPosition = new Vector2(0, -34);
+                Button button = Button("Buy" + entry.Id, row, new Color(.08f, .15f, .20f), .715f, .5f, .975f, .5f);
+                Round(button.image);
                 var buttonRect = (RectTransform)button.transform;
-                buttonRect.pivot = new Vector2(.5f, 0);
                 buttonRect.sizeDelta = new Vector2(0, 164);
-                buttonRect.anchoredPosition = new Vector2(0, 20);
                 button.onClick.AddListener(() => app.Buy(entry.Id));
                 ShopButtons[i] = button;
-                shopPrices[i] = Label("PurchasePrice", button.transform, "", 36, Warm, .03f, .08f, .97f, .92f);
-
+                shopPrices[i] = Label("PurchasePrice", button.transform, "", 34, Warm, .04f, .06f, .96f, .94f);
+                if (DisplayFont != null) shopPrices[i].font = DisplayFont;
             }
             notice = ScrollableLabel("Notice", safe, "", 20, Warm, .045f, .108f, .955f, .14f);
-            NavigationButtons = new Button[5]; tabIndicators = new Image[5];
+            Round(Image("NavigationBar", safe, new Color(.02f, .035f, .065f, .94f), .02f, .008f, .98f, .112f));
+            NavigationButtons = new Button[5]; tabIndicators = new Image[5]; tabIcons = new Image[5]; tabBadges = new GameObject[5]; tabBadgeLabels = new TextMeshProUGUI[5];
             string[] tabNames = { "Núcleo", "Mejoras", "Logros", "Ciclo", "Archivo" };
+            string[] tabIconIds = { "tap", "coil", "reward", "combo", "memory" };
             for (int i = 0; i < 5; i++)
             {
                 int tab = i;
                 int column = i < 2 ? i : i == 4 ? 2 : i + 1;
-                var button = Button("Navigation" + i, safe, new Color(.025f, .045f, .075f, .98f), .035f + column * .186f, .015f, .211f + column * .186f, .105f);
+                var button = Button("Navigation" + i, safe, new Color(.06f, .12f, .19f, 0), .035f + column * .186f, .015f, .211f + column * .186f, .105f);
+                Round(button.image);
                 NavigationButtons[i] = button;
-                var text = Label("NavigationLabel", button.transform, tabNames[i], 24, Color.white, .01f, .06f, .99f, .94f);
-                tabIndicators[i] = Image("SelectedTab", button.transform, Cyan, .08f, .96f, .92f, 1);
+                tabIcons[i] = Image("NavigationIcon", button.transform, Color.white, .25f, .44f, .75f, .93f);
+                tabIcons[i].sprite = i == 4 ? NarrativeArt.Portrait("memory") : sprites.Icon(tabIconIds[i]);
+                tabIcons[i].preserveAspect = true;
+                var text = Label("NavigationLabel", button.transform, tabNames[i], 20, Color.white, .01f, .03f, .99f, .44f);
+                if (DisplayFont != null) text.font = DisplayFont;
+                tabIndicators[i] = Image("SelectedTab", button.transform, Cyan, .25f, .95f, .75f, 1);
+                var badge = Image("NavigationBadge", button.transform, Magenta, .62f, .66f, .92f, .98f);
+                Round(badge); tabBadges[i] = badge.gameObject;
+                tabBadgeLabels[i] = Label("NavigationBadgeLabel", badge.transform, "", 18, Color.white, 0, 0, 1, 1);
+                badge.gameObject.SetActive(false);
                 button.onClick.AddListener(() => SelectTab(tab == 4 && owner.Game.CampaignTabAvailable(5) ? 5 : tab));
                 if (i == 2) achievementsLabel = text;
                 if (i == 4) storyLabel = text;
                 if (i == 3) { ProgressionButton = button; progressionLabel = text; }
             }
-            Image card = Image("RewardCard", reactorPage, Panel, .05f, .175f, .95f, .30f);
+            Image card = Image("RewardCard", reactorPage, Panel, .03f, .015f, .97f, .222f);
+            Round(card);
             rewardCard = card.gameObject.AddComponent<CanvasGroup>();
             rewardCard.blocksRaycasts = false;
             Image rewardIcon = Image("RewardIcon", card.transform, Color.white, .015f, .04f, .14f, .96f);
             rewardIcon.sprite = sprites.Icon("reward"); rewardIcon.preserveAspect = true;
             rewardText = Label("RewardText", card.transform, "", 26, Warm, .16f, .03f, .98f, .97f, TextAlignmentOptions.Left);
             rewardCard.gameObject.SetActive(false);
-            SettingsButton = Button("Settings", safe, Panel, .79f, .89f, .955f, .98f);
-            Image settingsIcon = Image("SettingsIcon", SettingsButton.transform, Color.white, .27f, .4f, .73f, .94f);
+            SettingsButton = Button("Settings", safe, Panel, .80f, .893f, .965f, .985f);
+            Round(SettingsButton.image);
+            Image settingsIcon = Image("SettingsIcon", SettingsButton.transform, Color.white, .2f, .14f, .8f, .86f);
             settingsIcon.sprite = sprites.Icon("settings"); settingsIcon.preserveAspect = true;
-            Label("SettingsLabel", SettingsButton.transform, "Ajustes", 24, Cyan, .02f, .03f, .98f, .36f);
+            if (DisplayFont != null) { energy.font = DisplayFont; cycle.font = DisplayFont; }
             Menu = new PresentationMenu(this, safe, SettingsButton, Preferences);
             ModulePanel = new ReactorModulePanel(this, safe, app);
             Progression = new RebirthPanel(this, safe, app);
@@ -297,6 +360,9 @@ namespace ReactorDeCaos
         {
             sprites?.Dispose(); NarrativeArt?.Dispose();
             if (ownsRuntimeFont) ReactorFont.Release(Font);
+            if (ownsDisplayFont) ReactorFont.Release(DisplayFont);
+            if (roundSprite != null) Destroy(roundSprite);
+            if (roundTexture != null) Destroy(roundTexture);
         }
 
         public void ClosePanels()
@@ -314,8 +380,10 @@ namespace ReactorDeCaos
             shopPage.gameObject.SetActive(tab == 1);
             for (int i = 0; i < tabIndicators.Length; i++)
             {
-                tabIndicators[i].gameObject.SetActive(i == (tab == 5 ? 4 : tab));
-                NavigationButtons[i].image.color = i == (tab == 5 ? 4 : tab) ? new Color(.055f, .12f, .17f) : new Color(.025f, .045f, .075f, .98f);
+                bool selected = i == (tab == 5 ? 4 : tab);
+                tabIndicators[i].gameObject.SetActive(selected);
+                NavigationButtons[i].image.color = selected ? new Color(.06f, .14f, .21f, .95f) : new Color(.06f, .12f, .19f, 0);
+                tabIcons[i].color = selected ? Color.white : new Color(1, 1, 1, .5f);
             }
             if (tab == 2) Achievements.Open();
             if (tab == 3) Progression.Open();
@@ -382,8 +450,21 @@ namespace ReactorDeCaos
             StoryButton.gameObject.SetActive(false);
         }
 
+        // Before NARA's confession the counter briefly shows the real attempt; reduced flashes keep it steady.
+        private string CycleText(GameEngine game)
+        {
+            bool known = game.StoryCompleted >= 5 || game.RebirthCount > 0;
+            int number = known ? 47 + game.RebirthCount : 1;
+            if (!known && game.NarrativeIntroSeen && !Preferences.reducedFlashes && Time.unscaledTime >= cycleGlitchAt)
+            {
+                if (Time.unscaledTime < cycleGlitchAt + .14f) return "CICLO 47";
+                cycleGlitchAt = Time.unscaledTime + 11 + (Time.frameCount % 5);
+            }
+            return "CICLO " + number.ToString("00");
+        }
         private void Update()
         {
+            if (cycle != null && owner != null) cycle.text = CycleText(owner.Game);
             if (rewardCard == null || !rewardCard.gameObject.activeSelf) return;
             float remaining = rewardUntil - Time.unscaledTime;
             if (remaining <= 0)
@@ -411,7 +492,13 @@ namespace ReactorDeCaos
             chargeFill.anchorMax = new Vector2(Mathf.Clamp01(progress), 1);
             OverloadButton.interactable = game.OverloadAvailable && game.Overload.Ready;
             OverloadButton.gameObject.SetActive(game.OverloadAvailable);
-            combo.gameObject.SetActive(game.ComboAvailable);
+            ((RectTransform)StoryButton.transform).anchorMax = new Vector2(.97f, game.OverloadAvailable ? .222f : .345f);
+            ((RectTransform)rewardCard.transform).anchorMax = ((RectTransform)StoryButton.transform).anchorMax;
+            if (game.Overload.Ready && !game.Overload.Active && game.OverloadAvailable && !Preferences.reducedFlashes)
+                OverloadButton.image.color = Color.Lerp(new Color(.16f, .05f, .2f, .98f), new Color(.36f, .07f, .3f, .98f), .5f + .5f * Mathf.Sin(Time.unscaledTime * 4));
+            else OverloadButton.image.color = game.Overload.Active ? new Color(.36f, .07f, .3f, .98f) : new Color(.10f, .05f, .16f, .98f);
+            combo.gameObject.SetActive(game.ComboAvailable); comboChip.gameObject.SetActive(game.ComboAvailable);
+            instruction.gameObject.SetActive(game.Lifetime < 30);
             int tabCount = 0;
             for (int i = 0; i < NavigationButtons.Length; i++) if (game.CampaignTabAvailable(i)) tabCount++;
             int column = 0;
@@ -433,33 +520,40 @@ namespace ReactorDeCaos
             }
             for (int i = 0; i < shopRows.Length; i++)
                 shopRows[i].gameObject.SetActive(!game.CampaignActive || game.Unlocked(game.Shop[i].Id));
-            for (int i = 0; i < ShopButtons.Length; i++) ShopButtons[i].interactable = game.CanBuy(game.Shop[i].Id);
+            int affordableCount = 0;
+            for (int i = 0; i < ShopButtons.Length; i++)
+            {
+                bool can = game.CanBuy(game.Shop[i].Id);
+                ShopButtons[i].interactable = can;
+                ShopButtons[i].image.color = can ? Warm : new Color(.08f, .12f, .19f);
+                shopPrices[i].color = can ? new Color(.12f, .06f, 0) : Warm;
+                if (can && shopRows[i].gameObject.activeSelf) affordableCount++;
+            }
+            SetBadge(1, affordableCount > 0 ? affordableCount.ToString() : null);
+            SetBadge(2, game.AvailableAchievements > 0 ? game.AvailableAchievements.ToString() : null);
+            SetBadge(3, game.CanRebirth ? "!" : null);
+            SetBadge(4, (game.CampaignTabAvailable(5) ? game.ExpeditionReady || game.PendingOfflineEnergy > 0 || game.PendingStationMemory >= 0 : game.UnreadStory > 0) ? "!" : null);
             if (!force && Time.unscaledTime < nextTextUpdate) return;
             nextTextUpdate = Time.unscaledTime + .08f;
             energy.text = game.EnergyLimitReached ? "LÍMITE · " + NumberFormat.Compact(game.Energy) : NumberFormat.Compact(game.Energy);
-            rate.text = NumberFormat.Stat(game.Production) + " / s\n" + NumberFormat.Stat(game.CurrentTapGain) + " / toque";
+            rate.text = NumberFormat.Stat(game.Production) + " / s";
+            tapGain.text = "+" + NumberFormat.Stat(game.CurrentTapGain) + " / toque";
             combo.text = "COMBO ×" + NumberFormat.Stat(game.ComboMultiplier)
-                + (game.Combo.Decaying ? " · BAJANDO" : game.ComboMultiplier >= game.ComboCap ? " · MÁXIMO" : " · " + game.Combo.Count + " TOQUES");
+                + (game.Combo.Decaying ? " · BAJANDO" : game.ComboMultiplier >= game.ComboCap ? " · MÁX." : " · " + game.Combo.Count);
             combo.color = game.Combo.Decaying ? Muted : Cyan;
             if (game.Stage != lastStage)
             {
                 lastStage = game.Stage;
-                stage.text = shortStages[Mathf.Clamp(game.Stage, 0, shortStages.Length - 1)];
+                stage.text = shortStages[Mathf.Clamp(game.Stage, 0, shortStages.Length - 1)].ToUpperInvariant();
             }
-            progressionLabel.text = game.CanRebirth ? "Ciclo\nListo" : "Ciclo";
-            achievementsLabel.text = "Logros" + (game.AvailableAchievements > 0 ? "\n" + game.AvailableAchievements : "");
-            storyLabel.text = game.CampaignTabAvailable(5) ? "Orfeo" + (game.ExpeditionReady || game.PendingOfflineEnergy > 0 || game.PendingStationMemory >= 0 ? "\nListo" : "")
-                : "Archivo" + (game.UnreadStory > 0 ? "\nNuevo" : "");
+            progressionLabel.text = "Ciclo";
+            achievementsLabel.text = "Logros";
+            storyLabel.text = game.CampaignTabAvailable(5) ? "Orfeo" : "Archivo";
             ModulePanel.Refresh(); Progression.Refresh(); Achievements.Refresh(); Story.Refresh(); Station.Refresh();
             tapHint.text = game.UnreadStory > 0 ? "NARA · NUEVA TRANSMISIÓN" : "MISIÓN · " + NarrativeMission(game.StoryCompleted);
             milestone.text = game.StoryCompleted == StoryCatalog.Count ? "Archivo recuperado · " + game.StoryRead + " / 6 leídos"
                 : NumberFormat.Compact(game.AllTimeEnergy) + " E · " + (game.StoryProgressFraction(game.CurrentStoryChapter) * 100).ToString("0") + "% · VER OBJETIVO";
-            if (game.CampaignActive)
-            {
-                tapHint.text = (game.CampaignRequirementsMet ? "LISTO · " : "MISIÓN · ") + game.CampaignAction;
-                milestone.text = game.CampaignHint;
-                StoryButton.image.color = game.CampaignRequirementsMet ? new Color(.035f, .19f, .21f, .97f) : new Color(.035f, .08f, .12f, .94f);
-            }
+            RefreshMission(game);
             if (transmission != null) milestone.text = transmission;
             overloadLabel.text = game.Overload.Active
                 ? "SOBRECARGA ×" + NumberFormat.Stat(game.OverloadMultiplier) + "  ·  " + game.Overload.Remaining.ToString("0.0") + " s"
@@ -480,16 +574,16 @@ namespace ReactorDeCaos
                 lastAffordable[i] = affordable; lastUnlocked[i] = unlocked;
                 string price = level >= EconomyConfig.MaxLevel ? "MÁX."
                     : NumberFormat.Compact(cost) + " E";
-                if (!unlocked) price += " · BLOQUEADO";
                 double current = game.EffectAtLevel(item, level);
                 double next = game.EffectAtLevel(item, Math.Min(EconomyConfig.MaxLevel, level + 1));
                 string effect = NumberFormat.Stat(current) + " a " + NumberFormat.Stat(next) + " " + entry.Unit;
                 if (level >= EconomyConfig.MaxLevel) effect = NumberFormat.Stat(current) + " " + entry.Unit + " · MÁXIMO";
-                string description = unlocked ? entry.Description : "Requiere " + game.UnlockDescription(item);
+                // Compact card: name, level and before/after effect. The full description lives in the module sheet.
                 shopText[i].text = entry.Name + " <color=#74E6F2>· NV. " + level + "</color>"
-                    + "\n<color=#BBCADD>" + description + "\n" + effect + "</color>";
-                shopPrices[i].text = !unlocked ? price : level >= EconomyConfig.MaxLevel ? "MÁXIMO"
-                    : (affordable ? "COMPRAR" : "NECESITAS") + "\n" + price;
+                    + "\n<color=#7CF2B0>" + (unlocked ? effect : "Requiere " + game.UnlockDescription(item)) + "</color>";
+                double wait = game.Production > 0 && cost > game.Energy ? (cost - game.Energy) / game.Production : -1;
+                shopPrices[i].text = !unlocked ? "—" : level >= EconomyConfig.MaxLevel ? "MÁXIMO"
+                    : affordable ? price : price + "\n<size=70%>" + (wait > 0 && wait < 360000 ? "en " + NarrativeText.Duration(wait) : "falta energía") + "</size>";
 
             }
             if (Time.unscaledTime > noticeUntil) notice.text = SaveFailed ? "GUARDADO PENDIENTE" : "JUEGO SIN CONEXIÓN";
@@ -505,17 +599,86 @@ namespace ReactorDeCaos
             {
                 var row = shopRows[i];
                 if (!row.gameObject.activeSelf) continue;
-                float height = Mathf.Max(180, shopText[i].GetPreferredValues(shopText[i].text,
+                float height = Mathf.Max(150, shopText[i].GetPreferredValues(shopText[i].text,
                     Mathf.Max(1, shopText[i].rectTransform.rect.width), Mathf.Infinity).y);
                 shopText[i].rectTransform.sizeDelta = new Vector2(0, height);
-                row.sizeDelta = new Vector2(0, height + 224);
+                row.sizeDelta = new Vector2(0, Mathf.Max(230, height + 68));
                 row.anchoredPosition = new Vector2(0, -top);
-                top += row.sizeDelta.y + 24;
+                top += row.sizeDelta.y + 18;
             }
             if (shopRows.Length > 0) ((RectTransform)shopRows[0].parent).sizeDelta = new Vector2(0, top);
         }
 
-        private static readonly string[] missionNames = { "SOPORTE VITAL", "COMUNICACIONES", "SECTOR ROJO", "CAJA NEGRA", "ENLACE DE MEMORIA", "NUEVO ENCENDIDO", "ORFEO RECUERDA" };
+        private static readonly string[] missionNames = { "SOPORTE VITAL", "COMUNICACIONES", "SECTOR ROJO", "CAJA NEGRA", "ENLACE DE MEMORIA", "EL ÚLTIMO ENCENDIDO", "ORFEO RECUERDA" };
+        private static readonly string[] missionActs = { "ACTO I", "ACTO I", "ACTO II", "ACTO II", "ACTO III", "ACTO III", "EPÍLOGO" };
+        private static readonly string[] missionVoices = { "nara", "mara", "mara", "nara", "nara", "nara", "mara" };
+        private void SetBadge(int tab, string text)
+        {
+            tabBadges[tab].SetActive(text != null && NavigationButtons[tab].gameObject.activeSelf);
+            if (text != null) tabBadgeLabels[tab].text = text;
+        }
+        private void RefreshMission(GameEngine game)
+        {
+            int mission = Mathf.Clamp(game.StoryCompleted, 0, missionNames.Length - 1);
+            if (mission != lastMission)
+            {
+                lastMission = mission;
+                missionAvatar.sprite = NarrativeArt.Portrait(missionVoices[mission]);
+                missionAvatarRing.color = missionVoices[mission] == "mara" ? Warm : Cyan;
+            }
+            double progress = game.StoryProgressFraction(game.CurrentStoryChapter);
+            if (game.StoryCompleted >= StoryCatalog.Count) progress = 1;
+            missionFill.anchorMax = new Vector2(.03f + .94f * (float)Math.Max(0, Math.Min(1, progress)), .255f);
+            string act = missionActs[mission];
+            if (!game.CampaignActive)
+            {
+                tapHint.text = act + " · " + tapHint.text; teaser.text = "";
+                missionCtaLabel.text = "VER HISTORIA"; missionCta.color = new Color(.07f, .10f, .17f); missionCtaLabel.color = Muted;
+                return;
+            }
+            bool ready = game.CampaignRequirementsMet || game.CampaignMissionReady;
+            tapHint.text = "MISIÓN " + (mission + 1) + " · " + game.CampaignAction;
+            milestone.text = ready ? "<color=#FFB045>Todo preparado.</color>" : game.CampaignHint;
+            NarrativeScene next = game.StoryCompleted < StoryCatalog.Count ? narrativeTeasers?.Find("chapter_" + game.StoryCompleted) : null;
+            teaser.text = next != null && !string.IsNullOrEmpty(next.teaser) && game.NarrativeIntroSeen ? NarrativeText.Corrupted(next.teaser, ready ? 1 : progress) : "";
+            teaser.gameObject.SetActive(teaser.text.Length > 0);
+            string eta = "";
+            if (!ready && game.StoryCompleted < StoryCatalog.Count && game.Production > 0)
+            {
+                double remaining = StoryCatalog.At(game.StoryCompleted).Energy - game.AllTimeEnergy;
+                if (remaining > 0) eta = "PRÓXIMA TRANSMISIÓN EN " + NarrativeText.Duration(remaining / game.Production);
+            }
+            missionCtaLabel.text = ready ? game.CampaignAction + " · TOCA" : eta.Length > 0 ? eta : (progress * 100).ToString("0") + "% · " + missionNames[mission];
+            missionCta.color = ready ? Warm : new Color(.07f, .10f, .17f);
+            missionCtaLabel.color = ready ? new Color(.12f, .06f, 0) : Muted;
+            StoryButton.image.color = ready ? new Color(.06f, .09f, .12f, .97f) : new Color(.035f, .06f, .10f, .96f);
+        }
+        // One 9-sliced rounded texture shared by chips, cards and buttons; created once per HUD.
+        private void CreateRoundSprite()
+        {
+            const int size = 64; const float radius = 30;
+            roundTexture = new Texture2D(size, size, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp, filterMode = FilterMode.Bilinear, name = "RoundedPanel" };
+            var pixels = new Color32[size * size];
+            for (int y = 0; y < size; y++)
+                for (int x = 0; x < size; x++)
+                {
+                    float dx = Mathf.Max(0, Mathf.Max(radius - x - .5f, x + .5f - (size - radius)));
+                    float dy = Mathf.Max(0, Mathf.Max(radius - y - .5f, y + .5f - (size - radius)));
+                    float alpha = Mathf.Clamp01(radius - Mathf.Sqrt(dx * dx + dy * dy) + .5f);
+                    pixels[y * size + x] = new Color32(255, 255, 255, (byte)(alpha * 255));
+                }
+            roundTexture.SetPixels32(pixels); roundTexture.Apply(false, true);
+            roundSprite = Sprite.Create(roundTexture, new Rect(0, 0, size, size), new Vector2(.5f, .5f), 100, 0,
+                SpriteMeshType.FullRect, new Vector4(31, 31, 31, 31));
+            roundSprite.name = "RoundedPanel";
+        }
+        internal Image Round(Image image, float radius = 1)
+        {
+            if (image == null || roundSprite == null) return image;
+            image.sprite = roundSprite; image.type = UnityEngine.UI.Image.Type.Sliced;
+            image.pixelsPerUnitMultiplier = 1.6f / radius;
+            return image;
+        }
         public static string NarrativeMission(int chapter) => missionNames[Mathf.Clamp(chapter, 0, missionNames.Length - 1)];
         public void ShowTransmission(string name, string text, Sprite avatar)
         {

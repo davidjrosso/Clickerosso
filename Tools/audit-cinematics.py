@@ -6,10 +6,14 @@ from PIL import Image
 root=Path(__file__).resolve().parents[1];assets=root/'Assets/ReactorDeCaos/Resources'
 catalog=json.loads((assets/'Narrative.json').read_text());ids=[];voices=[]
 manifest={x['id']:x for x in json.loads((root/'Docs/Cinematics/voice.json').read_text())['clips']}
+import sys;pending=[];allow_pending='--allow-pending' in sys.argv
 for scene in catalog['scenes']:
  for beat in scene['beats']:
+  assert len(beat['text'])<=180
+  if beat.get('mode')=='fx':assert not beat.get('voice');continue
   key=beat['voice'];assert key not in ids;ids.append(key)
-  path=assets/'Audio/Voice'/(key+'.wav');assert len(beat['text'])<=180
+  path=assets/'Audio/Voice'/(key+'.wav')
+  if not path.exists() or key not in manifest:pending.append(key);continue
   assert manifest[key]['text']==beat['text'] and manifest[key]['speaker']==beat['speaker']
   assert manifest[key]['sha256']==hashlib.sha256(path.read_bytes()).hexdigest()
   with wave.open(str(path)) as w:
@@ -20,7 +24,8 @@ for scene in catalog['scenes']:
   assert 0<peak<.5 and rms>0
   assert abs(samples[0])<5 and abs(samples[-1])<5
   voices.append(dict(id=key,seconds=round(frames/rate,3),peak=round(peak,4),rms=round(rms,4)))
-assert len(ids)==62
+assert len(ids)==74
+assert allow_pending or not pending,('voices pending generation',pending)
 image_reports=[]
 for name,alpha in [('NarrativeAtlas',True),('OrfeoExterior',False)]:
  path=assets/'Art'/(name+'.png');im=Image.open(path)
@@ -37,4 +42,4 @@ for p in assets_root.rglob('*'):
   match=re.search(r'^guid: (\w+)',p.read_text(),re.M)
   if match:assert match[1] not in guids;guids.add(match[1])
  elif p.is_file():assert Path(str(p)+'.meta').exists(),p
-print(json.dumps(dict(method='static media and PCM inspection; not native rendering or auditory validation',sceneDefinitions=len(catalog['scenes']),spokenLines=len(ids),voices=voices,images=image_reports,metadataUnique=True,voiceManifestMatches=True),ensure_ascii=False,indent=2))
+print(json.dumps(dict(method='static media and PCM inspection; not native rendering or auditory validation',sceneDefinitions=len(catalog['scenes']),spokenLines=len(ids),pendingVoices=pending,voices=voices,images=image_reports,metadataUnique=True,voiceManifestMatches=True),ensure_ascii=False,indent=2))

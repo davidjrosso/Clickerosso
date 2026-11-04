@@ -4,6 +4,8 @@ MVP de un arcade incremental offline para Android, con Unity 2D y C#.
 Toca el núcleo, encadena combos, activa la sobrecarga e invierte en mejoras
 y generadores automáticos.
 
+**Revisión Orfeo reescrito:** historia en tres actos con el bucle de 47 despertares y HUD nuevo; ver [Docs/ORFEO-REESCRITO.md](Docs/ORFEO-REESCRITO.md). Hay voces pendientes de regenerar.
+
 **Estado actual:** campaña de rescate en Orfeo. La partida empieza con el despertar
 interactivo de NARA; después se encadenan seis misiones, sus escenas y sus tecnologías.
 El objetivo inicial es recuperar la estación y encontrar a Mara. Acumular energía no

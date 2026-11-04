@@ -80,7 +80,7 @@ namespace ReactorDeCaos
             : RestoredRooms == 0 ? "Restaura el invernadero para recuperar el jardín de Mara"
             : ExpeditionClaims == 0 ? ExpeditionReady ? "El dron volvió · recoge la cápsula" : ExpeditionActive ? "El dron busca una cápsula en el jardín exterior" : "Envía el dron al jardín exterior"
             : RestoredRooms == 1 ? "Restaura la enfermería para reparar la cápsula"
-            : RestoredRooms == 2 ? "Restaura el observatorio para iluminar el jardín" : "La flor de Mara vive · Orfeo vuelve a ser un hogar";
+            : RestoredRooms == 2 ? "Restaura el observatorio para iluminar el jardín" : "La flor de Mara vive · su cuerpo espera en la enfermería";
         public string RoomRequirement(int index)
         {
             var room = StationCatalog.Room(index);

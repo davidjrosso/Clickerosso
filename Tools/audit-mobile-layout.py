@@ -73,7 +73,7 @@ for name,w,h,top,bottom in profiles:
     controls['settingsOption']=(0,0,menu[2]*.9,164*scale)
     controls['volumeSlider']=(0,0,menu[2]*.9,180*scale)
     shop=rect(safe,anchors('ReactorHud.cs','EngineeringPage'))
-    controls['shopPurchase']=(0,0,shop[2]*.95*.81,164*scale)
+    controls['shopPurchase']=(0,0,shop[2]*.95*(.975-.715),164*scale)
     assert 'new Vector2(0, 164)' in (runtime/'ReactorHud.cs').read_text(encoding='utf-8')
     achievements=rect(safe,anchors('AchievementPanel.cs','AchievementsPage'))
     card=(0,0,achievements[2]*.95,222*scale)
@@ -114,7 +114,7 @@ for name,w,h,top,bottom in profiles:
     for button in nav: assert not overlap(button,stationview)
     small={key:[round(b[2],2),round(b[3],2)] for key,b in controls.items() if min(b[2:]) < 48-0.01}
     assert not small,(name,small)
-    header=[rect(safe,anchors('ReactorHud.cs',key)) for key in ['Brand','Unit','Energy','Rate','Stage','Settings']]
+    header=[rect(safe,anchors('ReactorHud.cs',key)) for key in ['CycleChip','Energy','Rate','Combo','Settings']]
     for i,a in enumerate(header):
         for b in header[i+1:]: assert not overlap(a,b),(name,'header boxes overlap')
     assert not overlap(controls['ascensionClose'],rect(prog,anchors('RebirthPanel.cs','ProgressionMessage')))

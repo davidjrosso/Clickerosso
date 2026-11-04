@@ -2,13 +2,13 @@
   "scenes": [
     {
       "id": "intro",
-      "title": "ORFEO · RESERVA DE EMERGENCIA",
+      "title": "ORFEO · INTENTO 01",
       "background": "exterior",
       "mood": "quiet",
       "beats": [
         {
           "speaker": "NARA",
-          "text": "¿Puedes oírme? Soy Nara. Estás en Orfeo. El soporte vital se está apagando. Necesito que me ayudes a recuperar la estación.",
+          "text": "¿Puedes oírme? Soy NARA. Estás en Orfeo y nos quedan minutos de aire.",
           "portrait": "nara",
           "interactive": false,
           "voice": "intro_0"
@@ -22,21 +22,21 @@
         },
         {
           "speaker": "NARA",
-          "text": "Primero, la luz. Frente a ti hay un reactor. Toca su núcleo; yo estabilizaré el encendido.",
+          "text": "Primero, la luz. Toca el núcleo.",
           "portrait": "nara",
           "interactive": true,
           "voice": "intro_2"
         },
         {
           "speaker": "NARA",
-          "text": "Una chispa. Ahora instala Potencia y un microgenerador en Mejoras. Reuniremos cien unidades para devolver el aire a la estación.",
+          "text": "Una chispa. Bien. Es la primera vez que despiertas; no te asustes si todo te parece familiar.",
           "portrait": "nara",
           "interactive": false,
           "voice": "intro_3"
         },
         {
           "speaker": "NARA",
-          "text": "Hay una transmisión muy débil entre los conductos. Si alguien sigue aquí, necesita que restauremos primero el soporte vital.",
+          "text": "Devolvamos el aire a la estación. Después hablaremos de los demás.",
           "portrait": "nara",
           "interactive": false,
           "voice": "intro_4"
@@ -45,37 +45,45 @@
     },
     {
       "id": "chapter_0",
-      "title": "SOPORTE VITAL RESTABLECIDO",
+      "title": "SOPORTE VITAL · UNA VOZ EN LOS CONDUCTOS",
       "background": "reactor",
       "mood": "quiet",
+      "teaser": "Por favor... no cortes la señal otra vez.",
       "beats": [
         {
           "speaker": "NARA",
-          "text": "El aire vuelve a circular. Ya no dependemos de la reserva. Buen trabajo.",
+          "text": "El aire vuelve a circular. Ya no dependemos de la reserva.",
           "portrait": "nara",
           "interactive": false,
           "voice": "chapter_0_0"
         },
         {
           "speaker": "MARA",
-          "text": "¿Me oyen? Me llamo Mara. Las luces se encendieron. Estoy detrás de una puerta roja. Por favor, no corten la señal.",
+          "text": "...¿Hola? ¿Hay alguien? Las luces... se encendieron.",
           "portrait": "mara",
           "interactive": false,
           "voice": "chapter_0_1"
         },
         {
           "speaker": "TÚ",
-          "text": "Voy a encontrarte. Dime cómo llegar.",
+          "text": "Te escucho. ¿Quién eres?",
           "portrait": "core",
           "interactive": false,
           "voice": "chapter_0_2"
         },
         {
-          "speaker": "NARA",
-          "text": "Activé la sincronía. Un combo de uno y medio o cinco unidades por segundo reconstruirán la señal. Reúne mil unidades y localizaremos a Mara.",
-          "portrait": "nara",
+          "speaker": "MARA",
+          "text": "Mara. Estoy detrás de una puerta roja. Por favor... no cortes la señal otra vez.",
+          "portrait": "mara",
           "interactive": false,
           "voice": "chapter_0_3"
+        },
+        {
+          "speaker": "NARA",
+          "text": "La señal es débil. Necesito tu ritmo en el núcleo para sostenerla.",
+          "portrait": "nara",
+          "interactive": false,
+          "voice": "chapter_0_4"
         }
       ]
     },
@@ -84,63 +92,94 @@
       "title": "COMUNICACIONES · UNA VOZ CONOCIDA",
       "background": "signal",
       "mood": "quiet",
+      "teaser": "Siempre dices eso al principio.",
       "beats": [
         {
           "speaker": "MARA",
-          "text": "Te reconozco. Siempre decías: una chispa basta. ¿De verdad no te acuerdas de mí?",
+          "text": "Esa forma de encender el núcleo... \"Una chispa basta\". Tú me lo enseñaste.",
           "portrait": "mara",
           "interactive": false,
           "voice": "chapter_1_0"
         },
         {
-          "speaker": "NARA",
-          "text": "La señal viene del sector rojo. Lleva años vacío, pero el reloj de esa consola sigue contando. Hay algo que no te he contado.",
-          "portrait": "nara",
+          "speaker": "TÚ",
+          "text": "Lo siento. No te recuerdo.",
+          "portrait": "core",
           "interactive": false,
           "voice": "chapter_1_1"
         },
         {
-          "speaker": "TÚ",
-          "text": "Si puede oírnos, no la voy a abandonar.",
-          "portrait": "core",
+          "speaker": "MARA",
+          "text": "Ya lo sé. Siempre dices eso al principio.",
+          "portrait": "mara",
           "interactive": false,
           "voice": "chapter_1_2"
         },
         {
           "speaker": "NARA",
-          "text": "Recuperé plasma y sobrecarga. Instala una bobina y activa una sobrecarga para romper el sello. Con cinco mil unidades podremos abrir la puerta.",
+          "text": "El sector rojo está en cuarentena desde el colapso. Nadie debería seguir vivo ahí.",
           "portrait": "nara",
           "interactive": false,
           "voice": "chapter_1_3"
+        },
+        {
+          "speaker": "NARA",
+          "text": "Si abrimos ese sello, no podré volver a cerrarlo.",
+          "portrait": "nara",
+          "interactive": false,
+          "voice": "chapter_1_4"
+        },
+        {
+          "speaker": "TÚ",
+          "text": "Alguien me está llamando. Voy a abrir.",
+          "portrait": "core",
+          "interactive": false,
+          "voice": "chapter_1_5"
         }
       ]
     },
     {
       "id": "chapter_2",
-      "title": "SECTOR ROJO · APERTURA DEL SELLO",
+      "title": "SECTOR ROJO · LA PUERTA",
       "background": "reactor",
       "mood": "door",
+      "teaser": "¿Por qué no me ves?",
       "beats": [
         {
           "speaker": "NARA",
-          "text": "Cierre alimentado. Retirando el sello. Quédate detrás del campo de protección.",
+          "text": "Sello alimentado. Retirando cierres. Quédate detrás del campo.",
           "portrait": "nara",
           "interactive": false,
           "voice": "chapter_2_0"
         },
         {
+          "speaker": "",
+          "text": "Las hojas del sello se separan. Dentro hay una consola encendida y una maceta seca.",
+          "portrait": "core",
+          "interactive": false,
+          "voice": "",
+          "mode": "fx"
+        },
+        {
+          "speaker": "TÚ",
+          "text": "Mara, ya abrí. ¿Dónde estás?",
+          "portrait": "core",
+          "interactive": false,
+          "voice": "chapter_2_2"
+        },
+        {
           "speaker": "MARA",
-          "text": "Te veo. Pero la puerta de mi habitación sigue cerrada. ¿Por qué no puedo tocarte?",
+          "text": "Aquí. Justo frente a ti. ¿Por qué no me ves?",
           "portrait": "mara",
           "interactive": false,
           "voice": "chapter_2_1"
         },
         {
           "speaker": "TÚ",
-          "text": "Aquí no hay nadie. Solo una consola conectada al núcleo.",
+          "text": "No hay nadie. Solo una consola conectada al núcleo.",
           "portrait": "core",
           "interactive": false,
-          "voice": "chapter_2_2"
+          "voice": "chapter_2_4"
         },
         {
           "speaker": "NÚCLEO",
@@ -148,13 +187,6 @@
           "portrait": "memory",
           "interactive": false,
           "voice": "chapter_2_3"
-        },
-        {
-          "speaker": "NARA",
-          "text": "La consola guarda una caja negra. Recuperé la turbina cuántica. Instálala y reúne veinticinco mil unidades para leer el registro.",
-          "portrait": "nara",
-          "interactive": false,
-          "voice": "chapter_2_4"
         }
       ]
     },
@@ -163,67 +195,106 @@
       "title": "CAJA NEGRA · EVACUACIÓN CANCELADA",
       "background": "signal",
       "mood": "quiet",
+      "teaser": "Esa voz... era la mía.",
       "beats": [
         {
           "speaker": "NARA",
-          "text": "Ninguna nave salió de Orfeo. La tripulación transfirió sus recuerdos al reactor para sobrevivir al colapso.",
+          "text": "Registro de la caja negra. Día del colapso. Reproduciendo.",
           "portrait": "nara",
           "interactive": false,
           "voice": "chapter_3_0"
         },
         {
+          "speaker": "CAPITÁN",
+          "text": "Ninguna nave va a salir. Inicien la transferencia al reactor. Yo me quedo al final.",
+          "portrait": "core",
+          "interactive": false,
+          "voice": "chapter_3_4",
+          "mode": "record"
+        },
+        {
           "speaker": "MARA",
-          "text": "Ya recuerdo la puerta. Yo la cerré desde dentro. Nos quedamos para que tú pudieras terminar la transferencia.",
+          "text": "Yo cerré la puerta roja desde dentro. Nos quedamos para que tú pudieras terminar.",
           "portrait": "mara",
           "interactive": false,
           "voice": "chapter_3_1"
         },
         {
           "speaker": "TÚ",
-          "text": "No hay una habitación donde rescatarte. Pero sigues aquí. No voy a dejar que tu voz se apague.",
+          "text": "Esa voz... era la mía.",
           "portrait": "core",
           "interactive": false,
           "voice": "chapter_3_2"
         },
         {
           "speaker": "NARA",
-          "text": "Yo dirigí la transferencia. Y después oculté el registro. Instala el núcleo auxiliar; con cien mil unidades podremos estabilizar las memorias.",
+          "text": "Faltan catorce minutos de registro. Están borrados.",
           "portrait": "nara",
           "interactive": false,
           "voice": "chapter_3_3"
+        },
+        {
+          "speaker": "TÚ",
+          "text": "¿Quién los borró, NARA?",
+          "portrait": "core",
+          "interactive": false,
+          "voice": "chapter_3_5"
+        },
+        {
+          "speaker": "",
+          "text": "Silencio. El retrato de NARA parpadea y se apaga un segundo.",
+          "portrait": "nara",
+          "interactive": false,
+          "voice": "",
+          "mode": "fx"
         }
       ]
     },
     {
       "id": "chapter_4",
-      "title": "ENLACE ESTABLE · TU NOMBRE",
+      "title": "ENLACE ESTABLE · LO QUE NARA OCULTÓ",
       "background": "signal",
       "mood": "quiet",
+      "teaser": "No es tu primer despertar.",
       "beats": [
         {
-          "speaker": "MARA",
-          "text": "Tu nombre está junto al mío. Tú también estabas dentro. El cuerpo que usas es una interfaz de mantenimiento.",
-          "portrait": "mara",
+          "speaker": "NARA",
+          "text": "Fui yo. Borré esos minutos.",
+          "portrait": "nara",
           "interactive": false,
           "voice": "chapter_4_0"
         },
         {
           "speaker": "NARA",
-          "text": "También preservé tu memoria. Ahora elige quién nos guiará: mi protocolo o las voces de la tripulación. Ambos caminos conservan a todos.",
+          "text": "No es tu primer despertar. Es el cuadragésimo séptimo.",
           "portrait": "nara",
           "interactive": false,
           "voice": "chapter_4_1"
         },
         {
+          "speaker": "NARA",
+          "text": "Cada vez que recordabas a la tripulación, te quedabas con ellos en el núcleo. Y el reactor colapsaba contigo.",
+          "portrait": "nara",
+          "interactive": false,
+          "voice": "chapter_4_4"
+        },
+        {
+          "speaker": "MARA",
+          "text": "Te estaba protegiendo de nosotros.",
+          "portrait": "mara",
+          "interactive": false,
+          "voice": "chapter_4_5"
+        },
+        {
           "speaker": "NÚCLEO",
-          "text": "No necesitamos que nos salves a todos hoy. Necesitamos que nos recuerdes.",
+          "text": "No necesitamos que nos salves. Necesitamos que nos recuerdes.",
           "portrait": "memory",
           "interactive": false,
           "voice": "chapter_4_2"
         },
         {
           "speaker": "NARA",
-          "text": "Elige la sintonía en el archivo. Luego reúne un millón de unidades y preservaremos los recuerdos antes de reconstruir el reactor.",
+          "text": "Elige quién guía el enlace: mi protocolo o sus voces. Esta vez no voy a decidir por ti.",
           "portrait": "nara",
           "interactive": false,
           "voice": "chapter_4_3"
@@ -235,31 +306,49 @@
       "title": "EL ÚLTIMO ENCENDIDO",
       "background": "exterior",
       "mood": "quiet",
+      "teaser": "Si despierto otra vez, no me ocultes la verdad.",
       "beats": [
         {
           "speaker": "NARA",
-          "text": "La copia está completa. Encontré tu mensaje: si despierto otra vez, no me ocultes la verdad. Esta vez viajará contigo.",
+          "text": "La copia está completa. Encontré un mensaje tuyo, de un ciclo anterior.",
           "portrait": "nara",
           "interactive": false,
           "voice": "chapter_5_0"
         },
         {
+          "speaker": "CAPITÁN",
+          "text": "Si despierto otra vez, no me ocultes la verdad. Aunque duela.",
+          "portrait": "core",
+          "interactive": false,
+          "voice": "chapter_5_4",
+          "mode": "record"
+        },
+        {
+          "speaker": "NARA",
+          "text": "Esta vez no voy a borrar nada.",
+          "portrait": "nara",
+          "interactive": false,
+          "voice": "chapter_5_5",
+          "condition": "nara"
+        },
+        {
+          "speaker": "NÚCLEO",
+          "text": "Esta vez, llévanos contigo.",
+          "portrait": "memory",
+          "interactive": false,
+          "voice": "chapter_5_6",
+          "condition": "crew"
+        },
+        {
           "speaker": "MARA",
-          "text": "No perderemos lo vivido. Los recuerdos y los planos están a salvo. Solo tendremos que reconstruir las máquinas.",
+          "text": "Vas a tener que reconstruir las máquinas. A nosotros no.",
           "portrait": "mara",
           "interactive": false,
           "voice": "chapter_5_1"
         },
         {
-          "speaker": "NARA",
-          "text": "La ascensión reconstruye el reactor. Antes de decidir, revisa qué se reinicia y qué conservas en Ascender.",
-          "portrait": "nara",
-          "interactive": false,
-          "voice": "chapter_5_2"
-        },
-        {
           "speaker": "TÚ",
-          "text": "No voy a olvidarlos. Cuando estemos listos, encenderemos la estación una vez más.",
+          "text": "Entonces encendamos Orfeo una vez más. Recordando.",
           "portrait": "core",
           "interactive": false,
           "voice": "chapter_5_3"
@@ -281,7 +370,7 @@
         },
         {
           "speaker": "MARA",
-          "text": "Si todo se apaga, sigue mi voz. Estoy aquí.",
+          "text": "Si todo se apaga, sigue mi voz.",
           "portrait": "mara",
           "interactive": false,
           "voice": "ascent_1"
@@ -295,17 +384,24 @@
         },
         {
           "speaker": "TÚ",
-          "text": "Esta vez sí. Y me acuerdo de ti.",
+          "text": "Buenos días, NARA. Esta vez me acuerdo de todo.",
           "portrait": "core",
           "interactive": false,
           "voice": "ascent_3"
         },
         {
           "speaker": "NARA",
-          "text": "El archivo sobrevivió. Hay una señal fuera de Orfeo. Por primera vez, no procede del reactor.",
+          "text": "Hay una señal fuera de Orfeo. Por primera vez, no viene del reactor.",
           "portrait": "nara",
           "interactive": false,
           "voice": "ascent_4"
+        },
+        {
+          "speaker": "MARA",
+          "text": "Esas coordenadas... son de mi casa.",
+          "portrait": "mara",
+          "interactive": false,
+          "voice": "ascent_5"
         }
       ]
     },
@@ -317,7 +413,7 @@
       "beats": [
         {
           "speaker": "MARA",
-          "text": "Te estábamos esperando. Conservamos los recuerdos; ahora reconstruyamos las máquinas.",
+          "text": "Volviste. Esta vez no tuvimos que esperarte.",
           "portrait": "mara",
           "interactive": false,
           "voice": "cycle_0"
@@ -332,7 +428,7 @@
       "beats": [
         {
           "speaker": "NARA",
-          "text": "Primero el aire. Mejora Potencia e instala un microgenerador. Al producir cien unidades, restaura el soporte vital desde la misión del núcleo.",
+          "text": "Primero, el aire. Mejora Potencia e instala un microgenerador.",
           "portrait": "nara",
           "interactive": false,
           "voice": "resume_0_0"
@@ -347,7 +443,7 @@
       "beats": [
         {
           "speaker": "NARA",
-          "text": "Mara espera una respuesta. Sincroniza un combo de uno y medio o genera cinco unidades por segundo. Con mil unidades podremos localizarla.",
+          "text": "Mara sigue en la línea. Sostén el ritmo del núcleo para no perderla.",
           "portrait": "nara",
           "interactive": false,
           "voice": "resume_1_0"
@@ -362,7 +458,7 @@
       "beats": [
         {
           "speaker": "NARA",
-          "text": "Mara está detrás del sello rojo. Instala plasma y activa una sobrecarga. Con cinco mil unidades, abre la puerta desde la misión.",
+          "text": "Mara llama desde detrás del sello. Una sobrecarga puede romperlo.",
           "portrait": "nara",
           "interactive": false,
           "voice": "resume_2_0"
@@ -377,7 +473,7 @@
       "beats": [
         {
           "speaker": "NARA",
-          "text": "La habitación estaba vacía. Instala la turbina cuántica y produce veinticinco mil unidades para leer la caja negra.",
+          "text": "La habitación estaba vacía, pero la consola guarda un registro. Necesita la turbina.",
           "portrait": "nara",
           "interactive": false,
           "voice": "resume_3_0"
@@ -392,7 +488,7 @@
       "beats": [
         {
           "speaker": "NARA",
-          "text": "La tripulación vive en el núcleo. Instala el núcleo auxiliar y produce cien mil unidades para estabilizar sus memorias.",
+          "text": "Faltan minutos del registro. Con el núcleo auxiliar podremos sostener sus memorias.",
           "portrait": "nara",
           "interactive": false,
           "voice": "resume_4_0"
@@ -401,13 +497,13 @@
     },
     {
       "id": "resume_5",
-      "title": "Preparar el siguiente encendido",
+      "title": "Preservar los recuerdos",
       "background": "reactor",
       "mood": "quiet",
       "beats": [
         {
           "speaker": "NARA",
-          "text": "Elige quién guiará el enlace. Después, al producir un millón de unidades, preserva los recuerdos. Esa copia nos permitirá ascender sin olvidar.",
+          "text": "Ya sabes la verdad. Elige quién guía el enlace y preparemos la copia.",
           "portrait": "nara",
           "interactive": false,
           "voice": "resume_5_0"
@@ -416,13 +512,13 @@
     },
     {
       "id": "resume_6",
-      "title": "Explorar nuevos ciclos",
+      "title": "Ciclo nuevo",
       "background": "reactor",
       "mood": "quiet",
       "beats": [
         {
           "speaker": "NARA",
-          "text": "El archivo permanece. Puedes seguir desarrollando Orfeo y revisar la ascensión cuando estés listo.",
+          "text": "El archivo permanece. Hay una señal fuera de Orfeo esperando.",
           "portrait": "nara",
           "interactive": false,
           "voice": "resume_6_0"
@@ -437,7 +533,7 @@
       "beats": [
         {
           "speaker": "NARA",
-          "text": "Microgenerador conectado. Produce sin que mantengas pulsado el núcleo. Esa energía alimentará la recuperación de Orfeo.",
+          "text": "Microgenerador en línea. Ahora el reactor trabaja aunque descanses.",
           "portrait": "nara",
           "interactive": false,
           "voice": "buy_0"
@@ -452,7 +548,7 @@
       "beats": [
         {
           "speaker": "MARA",
-          "text": "¡Lo sentí! La señal es más clara cuando intensificas el núcleo.",
+          "text": "¡Lo sentí! Cuando el núcleo arde, te escucho más cerca.",
           "portrait": "mara",
           "interactive": false,
           "voice": "overload_0"
@@ -467,7 +563,7 @@
       "beats": [
         {
           "speaker": "NARA",
-          "text": "El núcleo reconoce tu ritmo. Puedes descansar; el enlace no depende de tocar sin parar.",
+          "text": "El núcleo reconoce tu ritmo. Curioso... es el mismo de siempre.",
           "portrait": "nara",
           "interactive": false,
           "voice": "combo_0"
@@ -560,18 +656,32 @@
           "voice": "station_2_0"
         },
         {
+          "speaker": "NARA",
+          "text": "Hay algo más. Una cápsula criogénica sellada, con constantes mínimas. La etiqueta dice Mara.",
+          "portrait": "nara",
+          "interactive": false,
+          "voice": "station_2_4"
+        },
+        {
           "speaker": "MARA",
-          "text": "No la plantes todavía. Le prometí un cielo, no otra lámpara. El observatorio podía seguir la estrella de mi casa.",
+          "text": "Ese es mi cuerpo. Sigue respirando... sin mí.",
           "portrait": "mara",
           "interactive": false,
-          "voice": "station_2_1"
+          "voice": "station_2_5"
         },
         {
           "speaker": "TÚ",
-          "text": "Voy a encenderlo. Esta vez no estamos reparando algo solo para sobrevivir.",
+          "text": "Tu voz está en el reactor y tu cuerpo, aquí. Entonces todavía puedes volver.",
           "portrait": "core",
           "interactive": false,
-          "voice": "station_2_2"
+          "voice": "station_2_6"
+        },
+        {
+          "speaker": "MARA",
+          "text": "Primero la flor. Le prometí un cielo, no otra lámpara. El observatorio podía seguir la estrella de mi casa.",
+          "portrait": "mara",
+          "interactive": false,
+          "voice": "station_2_1"
         },
         {
           "speaker": "NARA",

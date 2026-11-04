@@ -14,7 +14,8 @@ def digest(path):
 
 
 def validate_beats(catalog):
-    beats = [beat for scene in catalog["scenes"] for beat in scene["beats"]]
+    # Stage directions (mode "fx") are subtitles only: they have no speaker profile or audio.
+    beats = [beat for scene in catalog["scenes"] for beat in scene["beats"] if beat.get("mode") != "fx"]
     seen = set()
     for beat in beats:
         key = beat["voice"]
@@ -26,6 +27,17 @@ def validate_beats(catalog):
     if not beats:
         raise ValueError("Empty narrative catalog")
     return beats
+
+
+def radio(path):
+    """Archived recordings (mode "record") get a band-limited radio colour, offline and deterministic."""
+    import numpy as np
+    import soundfile as sf
+    from scipy.signal import butter, sosfiltfilt
+    signal, rate = sf.read(str(path), dtype="float64")
+    sos = butter(4, [320, 3400], btype="bandpass", fs=rate, output="sos")
+    shaped = np.tanh(sosfiltfilt(sos, signal) * 1.6) / 1.6
+    sf.write(str(path), shaped, rate, subtype="PCM_16")
 
 
 def finish_pcm(path):
