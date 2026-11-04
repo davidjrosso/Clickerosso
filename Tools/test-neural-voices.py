@@ -32,6 +32,11 @@ class VoiceTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             neural.validate_beats(catalog)
 
+    def test_stage_directions_are_not_spoken(self):
+        catalog = self.catalog()
+        catalog["scenes"][0]["beats"].append(dict(mode="fx", voice="", speaker="", text="Silencio."))
+        self.assertEqual([b["voice"] for b in neural.validate_beats(catalog)], ["intro_0"])
+
     def test_silence_rejected_and_peak_bounded_with_fades(self):
         with tempfile.TemporaryDirectory() as folder:
             path = Path(folder) / "speech.wav"
@@ -82,7 +87,7 @@ class VoiceTests(unittest.TestCase):
             second = work / "rendered/second.json"
             valid = second.read_text(encoding="utf-8")
             with patch.object(cinema, "ROOT", root), patch.object(sys, "argv", ["generator", "install", "--work-dir", str(work)]):
-                for field in ("text", "sha256", "directionSha256", "referenceSha256", "models"):
+                for field in ("text", "sha256", "directionSha256", "referenceSha256", "models", "mode"):
                     row = json.loads(valid)
                     row[field] = "stale"
                     second.write_text(json.dumps(row), encoding="utf-8")

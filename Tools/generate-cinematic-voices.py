@@ -40,7 +40,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("phase", choices=["download", "design", "render", "install"])
     parser.add_argument("--work-dir", required=True, type=Path)
-    parser.add_argument("--only", help="Render one voice ID for audition; install requires every catalog ID")
+    parser.add_argument("--only", help="Render one or comma-separated voice IDs; install requires every catalog ID")
     parser.add_argument("--take", type=int, help="New deterministic take for --only; bypass its cache")
     parser.add_argument("--batch-size", type=int, choices=[1, 2, 3, 4], default=2)
     args = parser.parse_args()
@@ -62,8 +62,10 @@ def main():
     os.environ["TRANSFORMERS_OFFLINE"] = "1"
     direction = load_json(ROOT / "Tools/voice-direction.json")
     beats = pcm.validate_beats(load_json(ROOT / "Assets/ReactorDeCaos/Resources/Narrative.json"))
-    if args.only and args.only not in {beat['voice'] for beat in beats}:
-        parser.error(f"Unknown voice ID: {args.only}")
+    requested = {key.strip() for key in args.only.split(",")} if args.only else set()
+    unknown = requested - {beat['voice'] for beat in beats}
+    if unknown:
+        parser.error(f"Unknown voice IDs: {sorted(unknown)}")
     refs = work / "references"
     stage = work / "rendered"
     refs.mkdir(exist_ok=True)
@@ -126,7 +128,7 @@ def main():
     prompts = {}
     pending = []
     for beat in beats:
-        if args.only and args.only != beat["voice"]:
+        if requested and beat["voice"] not in requested:
             continue
         character = beat["portrait"]
         profile = direction["characters"][character]
@@ -154,12 +156,19 @@ def main():
         if args.take is not None:
             seed_key += f"|take:{args.take}"
         seed = int(hashlib.sha256(seed_key.encode()).hexdigest()[:8], 16)
-        torch.manual_seed(seed)
         started = time.monotonic()
-        wavs, rate = model.generate_voice_clone(text=[beat["text"] for beat in batch], language="Spanish",
-            voice_clone_prompt=[prompts[beat["portrait"]][0] for beat in batch], max_new_tokens=480)
-        if len(wavs) != len(batch):
-            raise ValueError("Incomplete generated batch")
+        for attempt in range(2):
+            torch.manual_seed(seed)
+            wavs, rate = model.generate_voice_clone(text=[beat["text"] for beat in batch], language="Spanish",
+                voice_clone_prompt=[prompts[beat["portrait"]][0] for beat in batch], max_new_tokens=480)
+            if len(wavs) != len(batch):
+                raise ValueError("Incomplete generated batch")
+            if all(np.isfinite(wav).all() and .1 < len(wav) / rate < 38 for wav in wavs):
+                break
+            if attempt == 1:
+                raise ValueError(f"Invalid speech after two attempts: {keys}; retry with --only and --take")
+            seed = (seed + 1) % (2 ** 32)
+            print(f"Rejected invalid batch {keys}; retrying with seed {seed}", flush=True)
         for beat, wav in zip(batch, wavs):
             character = beat["portrait"]
             path = stage / (beat["voice"] + ".wav")
@@ -168,6 +177,15 @@ def main():
                 raise ValueError(f"Invalid speech duration/samples: {beat['voice']}")
             divisor = gcd(rate, 22050)
             signal = resample_poly(signal, 22050 // divisor, rate // divisor)
+            effect = direction["characters"][character].get("roboticTimbre", {})
+            if effect:
+                # Apply the approved metallic colour once, after cloning a dry reference.
+                depth = effect["depth"]
+                frequency = effect["frequencyHz"]
+                if not 0 <= depth <= 1 or not 0 < frequency < 11025:
+                    raise ValueError(f"Invalid robotic timbre: {character}")
+                carrier = np.sin(2 * np.pi * frequency * np.arange(len(signal)) / 22050)
+                signal = (1 - depth) * signal + depth * signal * carrier
             sf.write(str(path), signal, 22050, subtype="PCM_16")
             if beat.get("mode") == "record":
                 pcm.radio(path)

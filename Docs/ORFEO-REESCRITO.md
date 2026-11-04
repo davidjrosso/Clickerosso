@@ -49,24 +49,19 @@ misión (pasan a la tarjeta de misión) y cada escena cierra con intriga.
 
 No se implementó el selector ×1/×10/MÁX de la maqueta: requiere compras múltiples en el motor.
 
-## Voces pendientes
+## Voces V2 incorporadas — 2026-11-04
 
-Cambiaron 57 líneas habladas y se agregaron nuevas. Los WAV obsoletos se retiraron para que no
-suene un texto distinto al subtítulo; hasta regenerarlos, esas líneas se muestran con subtítulo y
-temporización por longitud de texto. Se conservan 17 clips válidos (arco de Mara y dos líneas).
+Las 74 líneas habladas ya tienen audio con el elenco aprobado. Se reemplazaron también
+los 17 clips anteriores para mantener los nuevos timbres en todas las escenas. Las dos
+acotaciones FX siguen sin voz y ambas variantes del desenlace tienen su grabación.
 
-Regenerar en la PC con GPU NVIDIA, desde la raíz del repo (ver [VOICES.md](VOICES.md)):
+NARA y Núcleo llevan el tratamiento robótico aprobado; Mara conserva su voz cálida
+y vulnerable en español latinoamericano; el protagonista y el Capitán comparten voz,
+con filtro de radio en las dos grabaciones archivadas.
 
-```powershell
-.voice-env/Scripts/python Tools/generate-cinematic-voices.py render --work-dir .voice-models
-# escuchar .voice-models/rendered/
-.voice-env/Scripts/python Tools/generate-cinematic-voices.py install --work-dir .voice-models
-python Tools/create-meta.py
-python Tools/audit-cinematics.py
-```
-
-`audit-cinematics.py` falla mientras falten clips; `--allow-pending` muestra la lista.
-Pendientes: ascent_0, ascent_1, ascent_3, ascent_4, ascent_5, buy_0, chapter_0_0, chapter_0_1, chapter_0_2, chapter_0_3, chapter_0_4, chapter_1_0, chapter_1_1, chapter_1_2, chapter_1_3, chapter_1_4, chapter_1_5, chapter_2_0, chapter_2_1, chapter_2_2, chapter_2_4, chapter_3_0, chapter_3_1, chapter_3_2, chapter_3_3, chapter_3_4, chapter_3_5, chapter_4_0, chapter_4_1, chapter_4_2, chapter_4_3, chapter_4_4, chapter_4_5, chapter_5_0, chapter_5_1, chapter_5_3, chapter_5_4, chapter_5_5, chapter_5_6, combo_0, cycle_0, intro_0, intro_2, intro_3, intro_4, overload_0, resume_0_0, resume_1_0, resume_2_0, resume_3_0, resume_4_0, resume_5_0, resume_6_0, station_2_1, station_2_4, station_2_5, station_2_6.
+La auditoría de audio no tiene archivos pendientes. La escucha completa y la prueba
+en Unity/Android siguen pendientes. Ver [VOICES.md](VOICES.md) para regeneración
+y [VALIDATION.md](VALIDATION.md) para resultados y observaciones de transcripción.
 
 ## Validación en esta entrega
 
